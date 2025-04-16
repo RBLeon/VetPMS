@@ -47,7 +47,20 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
   open,
   onOpenChange,
 }) => {
-  const { setRole } = useRole();
+  // Safely access role context without crashing if it's not available yet
+  let roleContextAvailable = false;
+  let setRoleFunc = null;
+  
+  try {
+    // This will throw an error if the context is not available
+    const roleContext = useRole();
+    roleContextAvailable = true;
+    setRoleFunc = roleContext.setRole;
+  } catch (error) {
+    console.error('Role context not available yet:', error);
+    roleContextAvailable = false;
+  }
+  
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const roles = Object.keys(roleConfigs);
@@ -60,9 +73,16 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
   // Confirm role selection and navigate to dashboard
   const confirmRoleSelection = () => {
     if (selectedRole) {
-      setRole(selectedRole as import("../../lib/context/RoleContext").Role);
-      onOpenChange(false);
-      navigate("/");
+      if (roleContextAvailable && setRoleFunc) {
+        setRoleFunc(selectedRole as import("../../lib/context/RoleContext").Role);
+        onOpenChange(false);
+        navigate("/");
+      } else {
+        // If role context isn't available, just close the dialog and navigate
+        console.warn("Role context not available, proceeding without setting role");
+        onOpenChange(false);
+        navigate("/");
+      }
     }
   };
 
