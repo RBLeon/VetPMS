@@ -1,0 +1,66 @@
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant ContextProvider
+    participant UIAdapterFactory
+    participant RoleSpecificAdapter
+    participant ComponentRegistry
+    participant APIGateway
+
+    %% Initial login and role selection
+    User->>Frontend: Login successfully
+    Frontend->>ContextProvider: initializeContext(user, tenant)
+    ContextProvider->>ContextProvider: loadUserPermissions()
+    ContextProvider->>ContextProvider: determineAvailableRoles()
+    
+    alt Multiple roles available
+        Frontend->>User: Display role selection dialog
+        User->>Frontend: Select role (e.g., Veterinarian)
+    else Single role
+        ContextProvider->>ContextProvider: setDefaultRole()
+    end
+    
+    %% Context-aware UI adaptation
+    Frontend->>ContextProvider: setActiveRole(selectedRole)
+    ContextProvider->>UIAdapterFactory: getAdapter(activeRole)
+    UIAdapterFactory->>RoleSpecificAdapter: create(contextProvider)
+    RoleSpecificAdapter->>ComponentRegistry: getComponentsForRole(role)
+    ComponentRegistry->>RoleSpecificAdapter: return role-specific components
+    RoleSpecificAdapter->>Frontend: return adapted interface structure
+    Frontend->>Frontend: render role-optimized dashboard
+    Frontend->>User: Display role-specific interface
+
+    %% User navigates to a specific area
+    User->>Frontend: Navigate to patient record
+    Frontend->>ContextProvider: updateContext(patientContext)
+    ContextProvider->>RoleSpecificAdapter: adaptView("patient", patientContext)
+    
+    alt Role is Veterinarian
+        RoleSpecificAdapter->>Frontend: return clinical view components
+        Frontend->>APIGateway: fetchClinicalData(patientId)
+    else Role is Receptionist
+        RoleSpecificAdapter->>Frontend: return client management components
+        Frontend->>APIGateway: fetchClientData(clientId)
+    else Role is Nurse
+        RoleSpecificAdapter->>Frontend: return treatment components
+        Frontend->>APIGateway: fetchTreatmentData(patientId)
+    end
+    
+    APIGateway->>Frontend: return role-appropriate data
+    Frontend->>User: Display context-aware patient view
+    
+    %% Role switching during session
+    User->>Frontend: Request role switch
+    Frontend->>User: Display role selection
+    User->>Frontend: Select new role (e.g., Manager)
+    Frontend->>ContextProvider: setActiveRole(newRole)
+    ContextProvider->>UIAdapterFactory: getAdapter(newRole)
+    UIAdapterFactory->>RoleSpecificAdapter: create(contextProvider) for Manager
+    RoleSpecificAdapter->>Frontend: return manager-adapted interface
+    Frontend->>User: Display manager interface with same context
+    
+    %% Context sharing between roles
+    Note over Frontend,ContextProvider: Context state is preserved when switching roles
+    Frontend->>ContextProvider: getSharedContext()
+    ContextProvider->>Frontend: return stateful context data
+    Frontend->>Frontend: apply shared context to new role view

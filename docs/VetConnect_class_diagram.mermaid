@@ -1,0 +1,265 @@
+classDiagram
+    %% Multi-Tenant & Identity Management Domain
+    class Tenant {
+        +string id
+        +string name
+        +string contactEmail
+        +string contactPhone
+        +TenantType type
+        +string parentTenantId
+        +boolean isActive
+        +TenantSettings settings
+        +DateTime createdAt
+        +DateTime updatedAt
+        +addUser(User user) void
+        +removeUser(string userId) void
+        +updateSettings(TenantSettings settings) void
+    }
+
+    class TenantType {
+        <<enumeration>>
+        FRANCHISE
+        PRACTICE
+        DEPARTMENT
+    }
+
+    class TenantSettings {
+        +string timezone
+        +string defaultLanguage
+        +string currencyCode
+        +boolean enableClientPortal
+        +boolean enableOnlineBooking
+        +Map~string,object~ customSettings
+    }
+
+    class User {
+        +string id
+        +string email
+        +string firstName
+        +string lastName
+        +string phoneNumber
+        +boolean isActive
+        +DateTime createdAt
+        +DateTime lastLoginAt
+        +List~Role~ roles
+        +List~string~ tenantIds
+        +boolean hasRole(string roleName, string tenantId)
+        +void addRole(string roleName, string tenantId)
+        +void removeRole(string roleName, string tenantId)
+    }
+
+    class Role {
+        +string id
+        +string name
+        +string description
+        +boolean isSystemRole
+        +List~Permission~ permissions
+        +void addPermission(Permission permission)
+        +void removePermission(string permissionId)
+    }
+
+    class Permission {
+        +string id
+        +string resource
+        +string action
+        +boolean isGranted
+    }
+
+    %% Patient and Client Management Domain
+    class Client {
+        +string id
+        +string tenantId
+        +string firstName
+        +string lastName
+        +string email
+        +string phoneNumber
+        +string alternatePhone
+        +Address address
+        +List~Patient~ patients
+        +boolean isActive
+        +DateTime createdAt
+        +DateTime updatedAt
+        +addPatient(Patient patient)
+        +updateContactInfo(ContactInfo info)
+    }
+
+    class Patient {
+        +string id
+        +string tenantId
+        +string clientId
+        +string name
+        +PatientType animalType
+        +string species
+        +string breed
+        +string sex
+        +DateTime dateOfBirth
+        +double weight
+        +string weightUnit
+        +boolean isActive
+        +List~MedicalRecord~ medicalHistory
+        +DateTime createdAt
+        +DateTime updatedAt
+        +addMedicalRecord(MedicalRecord record)
+        +updateDemographics(PatientDetails details)
+    }
+
+    class MedicalRecord {
+        +string id
+        +string patientId
+        +string tenantId
+        +DateTime recordDate
+        +string attendingVetId
+        +string consultationType
+        +string chiefComplaint
+        +string diagnosis
+        +string treatment
+        +string notes
+        +List~Prescription~ prescriptions
+        +List~LabResult~ labResults
+        +List~Document~ documents
+        +DateTime createdAt
+        +DateTime updatedAt
+        +addPrescription(Prescription prescription)
+        +addLabResult(LabResult result)
+        +addDocument(Document document)
+    }
+
+    %% Appointment and Scheduling Domain
+    class Appointment {
+        +string id
+        +string tenantId
+        +string title
+        +DateTime startTime
+        +DateTime endTime
+        +string clientId
+        +string patientId
+        +string appointmentTypeId
+        +List~string~ resourceIds
+        +AppointmentStatus status
+        +string notes
+        +string createdById
+        +DateTime createdAt
+        +DateTime updatedAt
+        +reschedule(DateTime newStart, DateTime newEnd) boolean
+        +cancel(string reason) boolean
+        +confirm() boolean
+        +addResource(string resourceId) boolean
+        +removeResource(string resourceId) boolean
+    }
+
+    class AppointmentType {
+        +string id
+        +string tenantId
+        +string name
+        +int defaultDuration
+        +string color
+        +string description
+        +List~string~ requiredCapabilities
+        +boolean isActive
+        +calculateDuration(string patientId) int
+    }
+
+    class Resource {
+        +string id
+        +string tenantId
+        +string name
+        +ResourceType type
+        +string description
+        +boolean isActive
+        +List~ResourceAvailability~ availability
+        +List~ResourceCapability~ capabilities
+        +isAvailableAt(DateTime time) boolean
+        +hasCapability(string capability) boolean
+    }
+
+    class ResourceType {
+        <<enumeration>>
+        STAFF
+        ROOM
+        EQUIPMENT
+    }
+
+    %% Integration Framework Domain
+    class IntegrationHub {
+        +registerConnector(Connector connector)
+        +removeConnector(string connectorId)
+        +getConnector(string connectorId) Connector
+        +getAvailableConnectors() List~Connector~
+        +executeSync(SyncJob job) SyncResult
+        +scheduleSync(SyncJob job, DateTime scheduledTime) string
+    }
+
+    class Connector {
+        +string id
+        +string name
+        +string type
+        +string version
+        +ConnectorStatus status
+        +Map~string,string~ connectionParams
+        +boolean isConfigured
+        +connect() boolean
+        +disconnect() boolean
+        +testConnection() boolean
+        +sync(SyncDirection direction, EntityType entityType, Map params) SyncResult
+    }
+
+    class AnimanaConnector {
+        +string apiKey
+        +string apiSecret
+        +string baseUrl
+        +authenticate()
+        +getClients(Map params) List~Client~
+        +getPatients(Map params) List~Patient~
+        +getAppointments(Map params) List~Appointment~
+        +createAppointment(AppointmentData data) string
+        +updateAppointment(string id, AppointmentData data) boolean
+        +getMedicalRecords(string patientId) List~MedicalRecord~
+    }
+
+    class SyncJob {
+        +string id
+        +string connectorId
+        +string tenantId
+        +SyncDirection direction
+        +EntityType entityType
+        +Map~string,string~ parameters
+        +DateTime createdAt
+        +DateTime scheduledAt
+        +DateTime startedAt
+        +DateTime completedAt
+        +SyncJobStatus status
+        +string errorMessage
+        +int itemsProcessed
+        +int itemsSucceeded
+        +int itemsFailed
+        +start()
+        +complete(SyncResult result)
+        +fail(string error)
+        +cancel()
+    }
+
+    class UIAdaptationService {
+        +getUserInterface(string userId, string tenantId, List~string~ roles) UIConfiguration
+        +saveUserPreferences(string userId, UIPreferences preferences)
+        +resetToDefaultUI(string userId, string roleId)
+        +getAvailableWidgets(string roleId) List~Widget~
+        +getDefaultLayout(string roleId) LayoutConfig
+    }
+
+    %% Relationships
+    Tenant "1" -- "*" User : contains
+    User "*" -- "*" Role : has
+    Role "1" -- "*" Permission : contains
+    Tenant "1" -- "1" TenantSettings : has
+    Tenant "*" -- "1" TenantType : isOfType
+    
+    Client "1" -- "*" Patient : owns
+    Patient "1" -- "*" MedicalRecord : has
+    
+    Appointment "*" -- "1" AppointmentType : isOfType
+    Appointment "*" -- "*" Resource : uses
+    Resource "1" -- "1" ResourceType : isOfType
+    
+    IntegrationHub "1" -- "*" Connector : manages
+    IntegrationHub "1" -- "*" SyncJob : executes
+    AnimanaConnector --|> Connector : extends

@@ -1,0 +1,103 @@
+sequenceDiagram
+    participant User as User
+    participant UI as VetConnectUI
+    participant Auth as AuthService
+    participant Context as ContextService
+    participant IAM as IdentityService
+    participant Tenant as TenantService
+    participant UIAdapter as UIAdaptationService
+    participant API as APIGateway
+    participant AppSvc as AppointmentService
+    participant IntHub as IntegrationHub
+    participant Animana as AnimanaConnector
+    participant AnimanaAPI as AnimanaAPI
+    
+    %% Authentication and Context-Aware UI Loading
+    User->>UI: Access Application
+    UI->>Auth: InitiateAuthentication()
+    Auth->>User: Present Login Form
+    User->>Auth: Submit Credentials
+    Auth->>IAM: AuthenticateUser(credentials)
+    IAM-->>Auth: Authentication Result + User Info
+    
+    alt Authentication Successful
+        Auth->>Context: EstablishUserContext(userId)
+        Context->>IAM: GetUserRoles(userId)
+        IAM-->>Context: User Roles
+        Context->>Tenant: GetUserTenants(userId)
+        Tenant-->>Context: Available Tenants
+        
+        alt Multiple Tenants Available
+            Context->>User: Prompt for Tenant Selection
+            User->>Context: Select Tenant
+        end
+        
+        Context->>UIAdapter: GetAdaptedUI(userId, tenantId, roles)
+        UIAdapter->>IAM: GetRolePermissions(roles, tenantId)
+        IAM-->>UIAdapter: Permissions
+        UIAdapter->>UIAdapter: GenerateUIConfiguration(permissions)
+        UIAdapter-->>Context: Adapted UI Configuration
+        Context-->>UI: UserContext + UI Configuration
+        UI->>UI: Render Adapted Interface
+        UI-->>User: Present Role-Optimized Dashboard
+    else Authentication Failed
+        Auth-->>UI: Authentication Error
+        UI-->>User: Error Message
+    end
+    
+    %% Appointment Creation with Animana Integration
+    Note over User,AnimanaAPI: Appointment Creation with Animana Backend
+    User->>UI: Create New Appointment
+    UI->>API: CreateAppointment(appointmentData)
+    API->>AppSvc: ProcessAppointmentCreation(appointmentData)
+    AppSvc->>AppSvc: ValidateAppointmentData()
+    
+    AppSvc->>IntHub: SyncAppointmentCreation(appointmentData)
+    IntHub->>Animana: CreateAppointment(mappedData)
+    Animana->>AnimanaAPI: POST /appointments
+    AnimanaAPI-->>Animana: Appointment Created (id)
+    Animana-->>IntHub: AppointmentCreatedInAnimana(id)
+    IntHub->>IntHub: MapAnimanaToVetConnectFormat(animanaData)
+    IntHub->>AppSvc: AppointmentSynced(vetConnectData)
+    
+    AppSvc->>AppSvc: StoreAppointmentLocally(vetConnectData)
+    AppSvc-->>API: AppointmentCreated(appointmentId)
+    API-->>UI: AppointmentCreationResponse
+    UI-->>User: Show Success Confirmation
+    
+    %% Role-Based Context Adaptation
+    Note over User,AnimanaAPI: Role Switching
+    User->>UI: Switch to Veterinarian Role View
+    UI->>Context: SwitchRoleContext("Veterinarian")
+    Context->>IAM: ValidateRoleAccess(userId, "Veterinarian")
+    IAM-->>Context: AccessValidated
+    
+    Context->>UIAdapter: GetAdaptedUI(userId, tenantId, ["Veterinarian"])
+    UIAdapter->>IAM: GetRolePermissions(["Veterinarian"], tenantId)
+    IAM-->>UIAdapter: VeterinarianPermissions
+    UIAdapter->>UIAdapter: GenerateVetUIConfiguration()
+    UIAdapter-->>Context: VetUIConfiguration
+    Context-->>UI: UpdatedContext + UIConfiguration
+    
+    UI->>UI: RenderVeterinarianInterface()
+    UI-->>User: Display Vet-Optimized View
+    
+    %% Global Integration with Third-Party System
+    Note over User,AnimanaAPI: Integration with Lab System
+    User->>UI: Request Lab Results
+    UI->>API: GetLabResults(patientId)
+    API->>IntHub: FetchLabResults(patientId)
+    
+    IntHub->>IntHub: DetermineLabConnector(patientId)
+    IntHub->>Animana: GetLabResultsFromAnimana(patientId)
+    Animana->>AnimanaAPI: GET /patients/{id}/lab_results
+    AnimanaAPI-->>Animana: Raw Lab Data
+    Animana-->>IntHub: FormattedLabResults
+    
+    alt Results Need Enhancement
+        IntHub->>IntHub: EnrichLabData(labResults)
+    end
+    
+    IntHub-->>API: ComprehensiveLabResults
+    API-->>UI: LabResultsResponse
+    UI-->>User: Display Enhanced Lab Results
