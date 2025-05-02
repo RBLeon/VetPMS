@@ -3,5 +3,41 @@ description:
 globs: 
 alwaysApply: true
 ---
-Before writing code check the @docs folder
-Make sure that when you write code you follow the product requirements, the system design etc specified in there. When working on the MVP or when nothing is said assume we're working on the MVP use the root files in that folder and the @mvp folder.
+# Code Development Rules
+
+## Documentation First Approach
+Before writing any code, developers must review the relevant documentation in the following locations:
+
+### Core Documentation
+- `/docs/VetPMS_PRD.md` - Product Requirements Document
+- `/docs/vetpms-overview.md` - System Overview
+- `/docs/vetpms-development-roadmap.md` - Development Timeline and Milestones
+
+### Design Documentation
+- `/docs/vetpms-frontend-design.md` - Frontend Architecture
+- `/docs/vetpms-backend-design.md` - Backend Architecture
+- `/docs/vetpms-data-design.md` - Data Model and Database Design
+- `/docs/vetpms-ai-integration-design.md` - AI Integration Specifications
+
+### MVP-Specific Documentation
+When working on MVP features, refer to:
+- `/docs/mvp/vetpms-mvp-design.md` - MVP Architecture and Design
+- `/docs/mvp/vetpms-mvp-api.md` - MVP API Specifications
+- `/docs/mvp/vetpms-mvp-ui-components.md` - MVP UI Component Library
+- `/docs/mvp/vetpms-mvp-class-diagram.md` - MVP Class Structure
+- `/docs/mvp/vetpms-mvp-sequence-diagram.md` - MVP Process Flows
+- `/docs/mvp/vetpms-mvp-handoff.md` - MVP Handoff Documentation
+- `/docs/mvp/vetpms-mvp-user-guide.md` - MVP User Guide
+
+## Development Guidelines
+1. Always start with the MVP documentation when no specific phase is mentioned
+2. Ensure all code changes align with the product requirements and system design
+3. Follow the development roadmap for feature prioritization
+4. Maintain consistency with the established architecture patterns
+5. Document any deviations from the design specifications
+
+## Quality Assurance
+1. Write tests before implementing features
+2. Ensure all code changes are covered by appropriate tests
+3. Follow the testing guidelines specified in the documentation
+4. Maintain code quality standards as defined in the project documentation
