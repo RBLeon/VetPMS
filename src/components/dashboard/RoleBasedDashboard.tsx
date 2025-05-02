@@ -2,19 +2,19 @@ import React from "react";
 import { useRole } from "../../lib/context/RoleContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  Calendar, 
-  Users, 
-  FileText, 
-  Stethoscope, 
-  BarChart3, 
+import {
+  Calendar,
+  Users,
+  FileText,
+  Stethoscope,
+  BarChart3,
   Database,
   CreditCard,
   CheckSquare,
   ClipboardList,
   UserPlus,
   Heart,
-  Settings
+  Settings,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -37,16 +37,16 @@ export function RoleBasedDashboard() {
   }
 
   // Return different dashboard based on role
-  switch(role) {
-    case 'veterinarian':
+  switch (role) {
+    case "veterinarian":
       return <VeterinarianDashboard />;
-    case 'receptionist':
+    case "receptionist":
       return <ReceptionistDashboard />;
-    case 'nurse':
+    case "nurse":
       return <NurseDashboard />;
-    case 'manager':
+    case "manager":
       return <ManagerDashboard />;
-    case 'admin':
+    case "admin":
       return <AdminDashboard />;
     default:
       return <DefaultDashboard />;
@@ -58,7 +58,9 @@ function VeterinarianDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Veterinarian Dashboard</h2>
+        <h2 className="text-3xl font-bold tracking-tight">
+          Veterinarian Dashboard
+        </h2>
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm">
             <Calendar className="mr-2 h-4 w-4" />
@@ -66,11 +68,13 @@ function VeterinarianDashboard() {
           </Button>
         </div>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Upcoming Appointments</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Upcoming Appointments
+            </CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -82,7 +86,9 @@ function VeterinarianDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Test Results</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Pending Test Results
+            </CardTitle>
             <ClipboardList className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -94,7 +100,9 @@ function VeterinarianDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Critical Patients</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Critical Patients
+            </CardTitle>
             <Heart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -117,13 +125,23 @@ function VeterinarianDashboard() {
                     <AvatarFallback>{["MX", "BL", "CH"][i]}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <h4 className="font-semibold">{["Max", "Bella", "Charlie"][i]}</h4>
-                    <p className="text-sm text-muted-foreground">{["German Shepherd", "Labrador", "Maine Coon"][i]}</p>
+                    <h4 className="font-semibold">
+                      {["Max", "Bella", "Charlie"][i]}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      {["German Shepherd", "Labrador", "Maine Coon"][i]}
+                    </p>
                   </div>
                 </div>
                 <div className="mt-2">
                   <p className="text-sm">
-                    {["Post-operative care for TPLO surgery", "Routine checkup and vaccinations", "Respiratory issue follow-up"][i]}
+                    {
+                      [
+                        "Post-operative care for TPLO surgery",
+                        "Routine checkup and vaccinations",
+                        "Respiratory issue follow-up",
+                      ][i]
+                    }
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
                     Last visit: {["Today", "Yesterday", "3 days ago"][i]}
@@ -133,11 +151,19 @@ function VeterinarianDashboard() {
               <div className="w-1/3 bg-muted p-4 border-l">
                 <h5 className="text-sm font-medium mb-2">Quick Actions</h5>
                 <div className="space-y-2">
-                  <Button size="sm" variant="outline" className="w-full justify-start">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full justify-start"
+                  >
                     <FileText className="h-3.5 w-3.5 mr-1" />
                     <span className="text-xs">Medical Record</span>
                   </Button>
-                  <Button size="sm" variant="outline" className="w-full justify-start">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full justify-start"
+                  >
                     <Stethoscope className="h-3.5 w-3.5 mr-1" />
                     <span className="text-xs">New SOAP Note</span>
                   </Button>
@@ -155,7 +181,9 @@ function ReceptionistDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Reception Dashboard</h2>
+        <h2 className="text-3xl font-bold tracking-tight">
+          Reception Dashboard
+        </h2>
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm">
             <Calendar className="mr-2 h-4 w-4" />
@@ -163,11 +191,13 @@ function ReceptionistDashboard() {
           </Button>
         </div>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today's Appointments</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Today's Appointments
+            </CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -191,19 +221,21 @@ function ReceptionistDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Payments</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Pending Payments
+            </CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">5</div>
-            <p className="text-xs text-muted-foreground">
-              Total: $1,240.00
-            </p>
+            <p className="text-xs text-muted-foreground">Total: $1,240.00</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Callbacks Needed</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Callbacks Needed
+            </CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -221,10 +253,21 @@ function ReceptionistDashboard() {
             <CardTitle>Check-In Queue</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            {["10:00 AM - Max (Dr. Wilson)", "10:15 AM - Bella (Dr. Martinez)", "10:30 AM - Charlie (Dr. Wilson)"].map((appointment, i) => (
-              <div key={i} className="flex items-center justify-between p-2 border rounded-md">
+            {[
+              "10:00 AM - Max (Dr. Wilson)",
+              "10:15 AM - Bella (Dr. Martinez)",
+              "10:30 AM - Charlie (Dr. Wilson)",
+            ].map((appointment, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between p-2 border rounded-md"
+              >
                 <div className="flex items-center">
-                  <div className={`w-2 h-2 rounded-full mr-2 ${i === 0 ? "bg-red-500" : "bg-green-500"}`} />
+                  <div
+                    className={`w-2 h-2 rounded-full mr-2 ${
+                      i === 0 ? "bg-red-500" : "bg-green-500"
+                    }`}
+                  />
                   <span>{appointment}</span>
                 </div>
                 <Button size="sm" variant="ghost">
@@ -234,7 +277,7 @@ function ReceptionistDashboard() {
             ))}
           </CardContent>
         </Card>
-        
+
         <Card className="col-span-1">
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
@@ -275,11 +318,13 @@ function NurseDashboard() {
           Tasks
         </Button>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Assigned Tasks</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Assigned Tasks
+            </CardTitle>
             <ClipboardList className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -291,7 +336,9 @@ function NurseDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Patients Under Care</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Patients Under Care
+            </CardTitle>
             <Heart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -303,7 +350,9 @@ function NurseDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Medication Schedule</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Medication Schedule
+            </CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -321,22 +370,54 @@ function NurseDashboard() {
         </CardHeader>
         <CardContent className="space-y-3">
           {[
-            { time: "11:00 AM", patient: "Max", task: "IV Medication", room: "Room 3", priority: "high" },
-            { time: "11:30 AM", patient: "Bella", task: "Post-op check", room: "Room 1", priority: "medium" },
-            { time: "12:00 PM", patient: "Charlie", task: "Bandage change", room: "Room 4", priority: "medium" },
+            {
+              time: "11:00 AM",
+              patient: "Max",
+              task: "IV Medication",
+              room: "Room 3",
+              priority: "high",
+            },
+            {
+              time: "11:30 AM",
+              patient: "Bella",
+              task: "Post-op check",
+              room: "Room 1",
+              priority: "medium",
+            },
+            {
+              time: "12:00 PM",
+              patient: "Charlie",
+              task: "Bandage change",
+              room: "Room 4",
+              priority: "medium",
+            },
           ].map((task, i) => (
-            <div key={i} className="flex items-center justify-between p-3 border rounded-md">
+            <div
+              key={i}
+              className="flex items-center justify-between p-3 border rounded-md"
+            >
               <div className="flex items-center space-x-3">
-                <div className={`w-2 h-2 rounded-full ${
-                  task.priority === "high" ? "bg-red-500" : 
-                  task.priority === "medium" ? "bg-amber-500" : "bg-green-500"
-                }`} />
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    task.priority === "high"
+                      ? "bg-red-500"
+                      : task.priority === "medium"
+                      ? "bg-amber-500"
+                      : "bg-green-500"
+                  }`}
+                />
                 <div>
-                  <p className="font-medium">{task.time} - {task.patient}</p>
-                  <p className="text-sm text-muted-foreground">{task.task} ({task.room})</p>
+                  <p className="font-medium">
+                    {task.time} - {task.patient}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {task.task} ({task.room})
+                  </p>
                 </div>
               </div>
-              <Button size="sm" variant="outline">Complete</Button>
+              <Button size="sm" variant="outline">
+                Complete
+              </Button>
             </div>
           ))}
         </CardContent>
@@ -349,24 +430,26 @@ function ManagerDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Practice Manager Dashboard</h2>
+        <h2 className="text-3xl font-bold tracking-tight">
+          Practice Manager Dashboard
+        </h2>
         <Button variant="outline" size="sm">
           <BarChart3 className="mr-2 h-4 w-4" />
           Full Reports
         </Button>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today's Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Today's Revenue
+            </CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">$3,240</div>
-            <p className="text-xs text-muted-foreground">
-              +12% from yesterday
-            </p>
+            <p className="text-xs text-muted-foreground">+12% from yesterday</p>
           </CardContent>
         </Card>
         <Card>
@@ -376,9 +459,7 @@ function ManagerDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">24</div>
-            <p className="text-xs text-muted-foreground">
-              4 new clients
-            </p>
+            <p className="text-xs text-muted-foreground">4 new clients</p>
           </CardContent>
         </Card>
         <Card>
@@ -395,7 +476,9 @@ function ManagerDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Inventory Alerts</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Inventory Alerts
+            </CardTitle>
             <Database className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -415,7 +498,9 @@ function ManagerDashboard() {
           <CardContent className="h-[200px] flex items-center justify-center">
             <div className="text-center">
               <p className="text-muted-foreground">Revenue Chart Placeholder</p>
-              <p className="text-xs text-muted-foreground mt-2">Exams: 45%, Surgery: 30%, Labs: 15%, Other: 10%</p>
+              <p className="text-xs text-muted-foreground mt-2">
+                Exams: 45%, Surgery: 30%, Labs: 15%, Other: 10%
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -426,13 +511,24 @@ function ManagerDashboard() {
           </CardHeader>
           <CardContent className="space-y-3">
             {[
-              { title: "Staff Meeting", message: "Tomorrow at 8:30 AM in the conference room" },
-              { title: "Inventory Order", message: "Surgical supplies arriving Thursday" },
-              { title: "Quarterly Review", message: "Financial review due next Friday" }
+              {
+                title: "Staff Meeting",
+                message: "Tomorrow at 8:30 AM in the conference room",
+              },
+              {
+                title: "Inventory Order",
+                message: "Surgical supplies arriving Thursday",
+              },
+              {
+                title: "Quarterly Review",
+                message: "Financial review due next Friday",
+              },
             ].map((notice, i) => (
               <div key={i} className="p-3 border rounded-md">
                 <h4 className="font-medium">{notice.title}</h4>
-                <p className="text-sm text-muted-foreground">{notice.message}</p>
+                <p className="text-sm text-muted-foreground">
+                  {notice.message}
+                </p>
               </div>
             ))}
           </CardContent>
@@ -446,13 +542,15 @@ function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">System Administrator Dashboard</h2>
+        <h2 className="text-3xl font-bold tracking-tight">
+          System Administrator Dashboard
+        </h2>
         <Button variant="outline" size="sm">
           <Settings className="mr-2 h-4 w-4" />
           System Settings
         </Button>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -473,14 +571,14 @@ function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">14</div>
-            <p className="text-xs text-muted-foreground">
-              Currently logged in
-            </p>
+            <p className="text-xs text-muted-foreground">Currently logged in</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Database Storage</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Database Storage
+            </CardTitle>
             <Database className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -492,7 +590,9 @@ function AdminDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Updates</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Pending Updates
+            </CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -511,8 +611,12 @@ function AdminDashboard() {
           </CardHeader>
           <CardContent className="h-[200px] flex items-center justify-center">
             <div className="text-center">
-              <p className="text-muted-foreground">Performance Graph Placeholder</p>
-              <p className="text-xs text-muted-foreground mt-2">CPU: 32%, Memory: 48%, Network: Stable</p>
+              <p className="text-muted-foreground">
+                Performance Graph Placeholder
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                CPU: 32%, Memory: 48%, Network: Stable
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -523,22 +627,47 @@ function AdminDashboard() {
           </CardHeader>
           <CardContent className="space-y-3">
             {[
-              { type: "info", message: "Daily backup completed successfully", time: "3:00 AM" },
-              { type: "warning", message: "High database load detected", time: "Yesterday, 2:34 PM" },
-              { type: "error", message: "Failed login attempts (IP: 192.168.1.45)", time: "Yesterday, 10:12 AM" }
+              {
+                type: "info",
+                message: "Daily backup completed successfully",
+                time: "3:00 AM",
+              },
+              {
+                type: "warning",
+                message: "High database load detected",
+                time: "Yesterday, 2:34 PM",
+              },
+              {
+                type: "error",
+                message: "Failed login attempts (IP: 192.168.1.45)",
+                time: "Yesterday, 10:12 AM",
+              },
             ].map((alert, i) => (
-              <div key={i} className={`p-3 border rounded-md ${
-                alert.type === "error" ? "border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-900/30" :
-                alert.type === "warning" ? "border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-900/30" :
-                "border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-900/30"
-              }`}>
+              <div
+                key={i}
+                className={`p-3 border rounded-md ${
+                  alert.type === "error"
+                    ? "border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-900/30"
+                    : alert.type === "warning"
+                    ? "border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-900/30"
+                    : "border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-900/30"
+                }`}
+              >
                 <div className="flex justify-between">
-                  <p className={`font-medium ${
-                    alert.type === "error" ? "text-red-700 dark:text-red-300" :
-                    alert.type === "warning" ? "text-amber-700 dark:text-amber-300" :
-                    "text-blue-700 dark:text-blue-300"
-                  }`}>{alert.message}</p>
-                  <span className="text-xs text-muted-foreground">{alert.time}</span>
+                  <p
+                    className={`font-medium ${
+                      alert.type === "error"
+                        ? "text-red-700 dark:text-red-300"
+                        : alert.type === "warning"
+                        ? "text-amber-700 dark:text-amber-300"
+                        : "text-blue-700 dark:text-blue-300"
+                    }`}
+                  >
+                    {alert.message}
+                  </p>
+                  <span className="text-xs text-muted-foreground">
+                    {alert.time}
+                  </span>
                 </div>
               </div>
             ))}
@@ -552,13 +681,16 @@ function AdminDashboard() {
 function DefaultDashboard() {
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold tracking-tight">Welcome to VetConnect</h2>
+      <h2 className="text-2xl font-bold tracking-tight">Welcome to VetPMS</h2>
       <Card>
         <CardContent className="pt-6">
-          <p>Please select an action from the navigation menu or quick actions below.</p>
+          <p>
+            Please select an action from the navigation menu or quick actions
+            below.
+          </p>
         </CardContent>
       </Card>
-      
+
       <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
         <Card className="flex flex-col items-center justify-center p-6 hover:bg-muted/50 cursor-pointer">
           <Calendar className="h-8 w-8 mb-2 text-blue-500" />

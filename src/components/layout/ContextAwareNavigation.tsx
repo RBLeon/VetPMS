@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ChevronRight,
-  Menu,
-  X,
-  PlusCircle,
-} from "lucide-react";
+import { ChevronRight, Menu, X, PlusCircle } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { cn } from "../../lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "../../components/ui/avatar";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useRole } from "../../lib/context/RoleContext";
 import { fadeAnimation } from "../../lib/motion";
@@ -19,7 +18,9 @@ interface ContextAwareNavigationProps {
   className?: string;
 }
 
-export function ContextAwareNavigation({ className }: ContextAwareNavigationProps) {
+export function ContextAwareNavigation({
+  className,
+}: ContextAwareNavigationProps) {
   const location = useLocation();
   const { user } = useAuth();
   const { roleConfig, userNavItems, quickActions } = useRole();
@@ -43,7 +44,11 @@ export function ContextAwareNavigation({ className }: ContextAwareNavigationProp
               exit="hidden"
               variants={fadeAnimation}
             >
-              <Button size="lg" className="h-14 w-14 rounded-full shadow-lg" onClick={() => setIsOpen(true)}>
+              <Button
+                size="lg"
+                className="h-14 w-14 rounded-full shadow-lg"
+                onClick={() => setIsOpen(true)}
+              >
                 <Menu className="h-6 w-6" />
               </Button>
             </motion.div>
@@ -104,7 +109,12 @@ export function ContextAwareNavigation({ className }: ContextAwareNavigationProp
                       className="flex h-auto w-auto items-center gap-2 rounded-full bg-white px-4 py-3 shadow-md dark:bg-slate-900"
                       onClick={action.onClick}
                     >
-                      <div className={cn("flex h-8 w-8 items-center justify-center rounded-full", action.color)}>
+                      <div
+                        className={cn(
+                          "flex h-8 w-8 items-center justify-center rounded-full",
+                          action.color
+                        )}
+                      >
                         <action.icon className="h-4 w-4" />
                       </div>
                       <span>{action.title}</span>
@@ -116,7 +126,12 @@ export function ContextAwareNavigation({ className }: ContextAwareNavigationProp
                       asChild
                     >
                       <Link to={action.href}>
-                        <div className={cn("flex h-8 w-8 items-center justify-center rounded-full", action.color)}>
+                        <div
+                          className={cn(
+                            "flex h-8 w-8 items-center justify-center rounded-full",
+                            action.color
+                          )}
+                        >
                           <action.icon className="h-4 w-4" />
                         </div>
                         <span>{action.title}</span>
@@ -177,9 +192,13 @@ export function ContextAwareNavigation({ className }: ContextAwareNavigationProp
                     <path d="M14.5 10.5c1 0 1.5.5 1.5 1.5s-.5 1.5-1.5 1.5-1.5-.5-1.5-1.5.5-1.5 1.5-1.5z" />
                   </svg>
                 </div>
-                <h1 className="text-xl font-semibold tracking-tight">VetConnect</h1>
+                <h1 className="text-xl font-semibold tracking-tight">VetPMS</h1>
               </div>
-              <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsOpen(false)}
+              >
                 <X className="h-5 w-5" />
               </Button>
             </div>
@@ -188,12 +207,17 @@ export function ContextAwareNavigation({ className }: ContextAwareNavigationProp
               <Avatar className="h-12 w-12">
                 <AvatarImage src="" alt={user?.firstName} />
                 <AvatarFallback>
-                  {user?.firstName?.[0]}{user?.lastName?.[0] || ''}
+                  {user?.firstName?.[0]}
+                  {user?.lastName?.[0] || ""}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <div className="font-medium">{user?.firstName} {user?.lastName}</div>
-                <div className="text-sm text-muted-foreground">{roleConfig.displayName}</div>
+                <div className="font-medium">
+                  {user?.firstName} {user?.lastName}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {roleConfig.displayName}
+                </div>
               </div>
             </div>
 
@@ -203,10 +227,11 @@ export function ContextAwareNavigation({ className }: ContextAwareNavigationProp
                 <nav className="grid gap-2">
                   {userNavItems.map((item) => {
                     // Check if the current path matches this item
-                    const isActive = item.href === '/' 
-                      ? location.pathname === '/'
-                      : location.pathname.includes(item.href);
-                      
+                    const isActive =
+                      item.href === "/"
+                        ? location.pathname === "/"
+                        : location.pathname.includes(item.href);
+
                     return (
                       <Link
                         key={item.title}
@@ -215,10 +240,15 @@ export function ContextAwareNavigation({ className }: ContextAwareNavigationProp
                           "flex items-center gap-3 rounded-lg p-3 transition-colors",
                           isActive
                             ? "bg-primary text-primary-foreground"
-                            : "hover:bg-muted text-muted-foreground hover:text-foreground",
+                            : "hover:bg-muted text-muted-foreground hover:text-foreground"
                         )}
                       >
-                        <div className={cn("flex h-8 w-8 items-center justify-center rounded-full", item.color)}>
+                        <div
+                          className={cn(
+                            "flex h-8 w-8 items-center justify-center rounded-full",
+                            item.color
+                          )}
+                        >
                           <item.icon className="h-5 w-5" />
                         </div>
                         <span>{item.title}</span>
@@ -232,7 +262,7 @@ export function ContextAwareNavigation({ className }: ContextAwareNavigationProp
               <div className="space-y-2">
                 <h2 className="text-lg font-medium">Quick Actions</h2>
                 <div className="grid gap-2">
-                  {quickActions.map((action) => (
+                  {quickActions.map((action) =>
                     action.onClick ? (
                       <Button
                         key={action.title}
@@ -240,7 +270,12 @@ export function ContextAwareNavigation({ className }: ContextAwareNavigationProp
                         variant="ghost"
                         className="flex w-full items-center justify-start gap-3 p-3 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                       >
-                        <div className={cn("flex h-8 w-8 items-center justify-center rounded-full", action.color)}>
+                        <div
+                          className={cn(
+                            "flex h-8 w-8 items-center justify-center rounded-full",
+                            action.color
+                          )}
+                        >
                           <action.icon className="h-5 w-5" />
                         </div>
                         <span>{action.title}</span>
@@ -251,21 +286,29 @@ export function ContextAwareNavigation({ className }: ContextAwareNavigationProp
                         to={action.href}
                         className="flex items-center gap-3 rounded-lg p-3 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                       >
-                        <div className={cn("flex h-8 w-8 items-center justify-center rounded-full", action.color)}>
+                        <div
+                          className={cn(
+                            "flex h-8 w-8 items-center justify-center rounded-full",
+                            action.color
+                          )}
+                        >
                           <action.icon className="h-5 w-5" />
                         </div>
                         <span>{action.title}</span>
                       </Link>
                     )
-                  ))}
+                  )}
                 </div>
               </div>
 
               <FeatureGated feature="showAdvancedClinical">
                 <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
-                  <h3 className="mb-2 font-medium text-amber-800 dark:text-amber-300">Clinical Mode Active</h3>
+                  <h3 className="mb-2 font-medium text-amber-800 dark:text-amber-300">
+                    Clinical Mode Active
+                  </h3>
                   <p className="text-sm text-amber-700 dark:text-amber-400">
-                    You have access to advanced clinical features based on your role as {roleConfig.displayName}.
+                    You have access to advanced clinical features based on your
+                    role as {roleConfig.displayName}.
                   </p>
                 </div>
               </FeatureGated>

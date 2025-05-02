@@ -19,7 +19,11 @@ import {
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { cn } from "../../lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "../../components/ui/avatar";
 import { useAuth } from "../../lib/context/AuthContext";
 import { fadeAnimation } from "../../lib/motion";
 
@@ -51,20 +55,24 @@ export function ModernNavigation({ className }: ModernNavigationProps) {
       href: "/appointments",
       icon: Calendar,
       active: location.pathname.includes("/appointments"),
-      color: "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
+      color:
+        "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
     },
     {
       title: "Calendar View",
       href: "/calendar",
       icon: CalendarRange,
       active: location.pathname.includes("/calendar"),
-      color: "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
+      color:
+        "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
     },
     {
       title: "Clients & Patients",
       href: "/clients",
       icon: Users,
-      active: location.pathname.includes("/clients") || location.pathname.includes("/patients"),
+      active:
+        location.pathname.includes("/clients") ||
+        location.pathname.includes("/patients"),
       color: "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
     },
     {
@@ -72,14 +80,16 @@ export function ModernNavigation({ className }: ModernNavigationProps) {
       href: "/medical",
       icon: Stethoscope,
       active: location.pathname.includes("/medical"),
-      color: "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
+      color:
+        "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
     },
     {
       title: "Settings",
       href: "/settings",
       icon: Settings,
       active: location.pathname.includes("/settings"),
-      color: "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
+      color:
+        "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
     },
   ];
 
@@ -100,13 +110,15 @@ export function ModernNavigation({ className }: ModernNavigationProps) {
       title: "New Patient",
       href: "/patients/new",
       icon: User,
-      color: "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
+      color:
+        "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
     },
     {
       title: "Search",
       href: "#",
       icon: Search,
-      color: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300",
+      color:
+        "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300",
       onClick: () => {
         // Trigger search functionality
         setIsOpen(false);
@@ -134,7 +146,11 @@ export function ModernNavigation({ className }: ModernNavigationProps) {
               exit="hidden"
               variants={fadeAnimation}
             >
-              <Button size="lg" className="h-14 w-14 rounded-full shadow-lg" onClick={() => setIsOpen(true)}>
+              <Button
+                size="lg"
+                className="h-14 w-14 rounded-full shadow-lg"
+                onClick={() => setIsOpen(true)}
+              >
                 <Menu className="h-6 w-6" />
               </Button>
             </motion.div>
@@ -195,7 +211,12 @@ export function ModernNavigation({ className }: ModernNavigationProps) {
                       className="flex h-auto w-auto items-center gap-2 rounded-full bg-white px-4 py-3 shadow-md dark:bg-slate-900"
                       onClick={action.onClick}
                     >
-                      <div className={cn("flex h-8 w-8 items-center justify-center rounded-full", action.color)}>
+                      <div
+                        className={cn(
+                          "flex h-8 w-8 items-center justify-center rounded-full",
+                          action.color
+                        )}
+                      >
                         <action.icon className="h-4 w-4" />
                       </div>
                       <span>{action.title}</span>
@@ -207,7 +228,12 @@ export function ModernNavigation({ className }: ModernNavigationProps) {
                       asChild
                     >
                       <Link to={action.href}>
-                        <div className={cn("flex h-8 w-8 items-center justify-center rounded-full", action.color)}>
+                        <div
+                          className={cn(
+                            "flex h-8 w-8 items-center justify-center rounded-full",
+                            action.color
+                          )}
+                        >
                           <action.icon className="h-4 w-4" />
                         </div>
                         <span>{action.title}</span>
@@ -268,9 +294,13 @@ export function ModernNavigation({ className }: ModernNavigationProps) {
                     <path d="M14.5 10.5c1 0 1.5.5 1.5 1.5s-.5 1.5-1.5 1.5-1.5-.5-1.5-1.5.5-1.5 1.5-1.5z" />
                   </svg>
                 </div>
-                <h1 className="text-xl font-semibold tracking-tight">VetConnect</h1>
+                <h1 className="text-xl font-semibold tracking-tight">VetPMS</h1>
               </div>
-              <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsOpen(false)}
+              >
                 <X className="h-5 w-5" />
               </Button>
             </div>
@@ -279,12 +309,17 @@ export function ModernNavigation({ className }: ModernNavigationProps) {
               <Avatar className="h-12 w-12">
                 <AvatarImage src="" alt={user?.firstName} />
                 <AvatarFallback>
-                  {user?.firstName?.[0]}{user?.lastName?.[0]}
+                  {user?.firstName?.[0]}
+                  {user?.lastName?.[0]}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <div className="font-medium">{user?.firstName} {user?.lastName}</div>
-                <div className="text-sm text-muted-foreground">{user?.role || "Veterinarian"}</div>
+                <div className="font-medium">
+                  {user?.firstName} {user?.lastName}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {user?.role || "Veterinarian"}
+                </div>
               </div>
             </div>
 
@@ -300,10 +335,15 @@ export function ModernNavigation({ className }: ModernNavigationProps) {
                         "flex items-center gap-3 rounded-lg p-3 transition-colors",
                         item.active
                           ? "bg-primary text-primary-foreground"
-                          : "hover:bg-muted text-muted-foreground hover:text-foreground",
+                          : "hover:bg-muted text-muted-foreground hover:text-foreground"
                       )}
                     >
-                      <div className={cn("flex h-8 w-8 items-center justify-center rounded-full", item.color)}>
+                      <div
+                        className={cn(
+                          "flex h-8 w-8 items-center justify-center rounded-full",
+                          item.color
+                        )}
+                      >
                         <item.icon className="h-5 w-5" />
                       </div>
                       <span>{item.title}</span>
@@ -316,7 +356,7 @@ export function ModernNavigation({ className }: ModernNavigationProps) {
               <div className="space-y-2">
                 <h2 className="text-lg font-medium">Quick Actions</h2>
                 <div className="grid gap-2">
-                  {quickActions.map((action) => (
+                  {quickActions.map((action) =>
                     action.onClick ? (
                       <Button
                         key={action.title}
@@ -324,7 +364,12 @@ export function ModernNavigation({ className }: ModernNavigationProps) {
                         variant="ghost"
                         className="flex w-full items-center justify-start gap-3 p-3 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                       >
-                        <div className={cn("flex h-8 w-8 items-center justify-center rounded-full", action.color)}>
+                        <div
+                          className={cn(
+                            "flex h-8 w-8 items-center justify-center rounded-full",
+                            action.color
+                          )}
+                        >
                           <action.icon className="h-5 w-5" />
                         </div>
                         <span>{action.title}</span>
@@ -335,13 +380,18 @@ export function ModernNavigation({ className }: ModernNavigationProps) {
                         to={action.href}
                         className="flex items-center gap-3 rounded-lg p-3 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                       >
-                        <div className={cn("flex h-8 w-8 items-center justify-center rounded-full", action.color)}>
+                        <div
+                          className={cn(
+                            "flex h-8 w-8 items-center justify-center rounded-full",
+                            action.color
+                          )}
+                        >
                           <action.icon className="h-5 w-5" />
                         </div>
                         <span>{action.title}</span>
                       </Link>
                     )
-                  ))}
+                  )}
                 </div>
               </div>
             </div>

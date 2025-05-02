@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../lib/context/AuthContext";
 import { RoleSelector } from "../role-selection/RoleSelector";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
@@ -28,7 +35,7 @@ const LoginPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password) return;
-    
+
     setIsSubmitting(true);
     try {
       await login(username, password);
@@ -45,15 +52,15 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary">VetConnect PMS</h1>
+          <h1 className="text-3xl font-bold text-primary">VetPMS PMS</h1>
           <p className="text-muted-foreground mt-2">
             Modern Practice Management for Veterinarians
           </p>
         </div>
-        
+
         {/* Show Role Selector after successful login */}
-        <RoleSelector 
-          open={showRoleSelector} 
+        <RoleSelector
+          open={showRoleSelector}
           onOpenChange={setShowRoleSelector}
         />
 
@@ -64,7 +71,7 @@ const LoginPage: React.FC = () => {
               Enter your credentials to access the system
             </CardDescription>
           </CardHeader>
-          
+
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               {error && (
@@ -73,7 +80,7 @@ const LoginPage: React.FC = () => {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              
+
               <div className="space-y-2">
                 <Label htmlFor="username">Username</Label>
                 <Input
@@ -83,7 +90,7 @@ const LoginPage: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -95,19 +102,15 @@ const LoginPage: React.FC = () => {
                 />
               </div>
             </CardContent>
-            
+
             <CardFooter>
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isSubmitting}
-              >
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? "Signing in..." : "Sign In"}
               </Button>
             </CardFooter>
           </form>
         </Card>
-        
+
         <div className="mt-4 text-center text-sm text-muted-foreground">
           <p>Demo credentials: username: demo, password: demo</p>
         </div>

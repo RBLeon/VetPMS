@@ -1,6 +1,6 @@
 sequenceDiagram
     participant User as User
-    participant UI as VetConnectUI
+    participant UI as VetPMSUI
     participant Auth as AuthService
     participant Context as ContextService
     participant IAM as IdentityService
@@ -57,10 +57,10 @@ sequenceDiagram
     Animana->>AnimanaAPI: POST /appointments
     AnimanaAPI-->>Animana: Appointment Created (id)
     Animana-->>IntHub: AppointmentCreatedInAnimana(id)
-    IntHub->>IntHub: MapAnimanaToVetConnectFormat(animanaData)
-    IntHub->>AppSvc: AppointmentSynced(vetConnectData)
+    IntHub->>IntHub: MapAnimanaToVetPMSFormat(animanaData)
+    IntHub->>AppSvc: AppointmentSynced(VetPMSData)
     
-    AppSvc->>AppSvc: StoreAppointmentLocally(vetConnectData)
+    AppSvc->>AppSvc: StoreAppointmentLocally(VetPMSData)
     AppSvc-->>API: AppointmentCreated(appointmentId)
     API-->>UI: AppointmentCreationResponse
     UI-->>User: Show Success Confirmation

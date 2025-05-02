@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 export interface Tenant {
   id: string;
@@ -38,7 +44,7 @@ export const TenantProvider: React.FC<TenantProviderProps> = ({ children }) => {
         const mockTenants: Tenant[] = [
           {
             id: "1",
-            name: "VetConnect Main Franchise",
+            name: "VetPMS Main Franchise",
             code: "VC-MAIN",
             type: "FRANCHISE",
             isActive: true,
@@ -62,11 +68,12 @@ export const TenantProvider: React.FC<TenantProviderProps> = ({ children }) => {
         ];
 
         setAccessibleTenants(mockTenants);
-        
+
         // Set default tenant (would be determined by user preference or role)
-        const defaultTenant = mockTenants.find(t => t.type === "PRACTICE") || mockTenants[0];
+        const defaultTenant =
+          mockTenants.find((t) => t.type === "PRACTICE") || mockTenants[0];
         setCurrentTenant(defaultTenant);
-        
+
         setIsLoading(false);
       } catch {
         setError("Failed to load tenant information");
@@ -78,7 +85,7 @@ export const TenantProvider: React.FC<TenantProviderProps> = ({ children }) => {
   }, []);
 
   const hasAccess = (tenantId: string): boolean => {
-    return accessibleTenants.some(tenant => tenant.id === tenantId);
+    return accessibleTenants.some((tenant) => tenant.id === tenantId);
   };
 
   const value = {
@@ -90,7 +97,9 @@ export const TenantProvider: React.FC<TenantProviderProps> = ({ children }) => {
     hasAccess,
   };
 
-  return <TenantContext.Provider value={value}>{children}</TenantContext.Provider>;
+  return (
+    <TenantContext.Provider value={value}>{children}</TenantContext.Provider>
+  );
 };
 
 export const useTenant = (): TenantContextType => {

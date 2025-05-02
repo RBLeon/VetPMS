@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 export interface User {
   id: string;
@@ -22,7 +28,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  backendType: "animana" | "vetconnect";
+  backendType: "animana" | "VetPMS";
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   toggleBackendType: () => void;
@@ -39,7 +45,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [backendType, setBackendType] = useState<"animana" | "vetconnect">("animana");
+  const [backendType, setBackendType] = useState<"animana" | "VetPMS">(
+    "animana"
+  );
 
   useEffect(() => {
     // Check for existing session
@@ -48,11 +56,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // In real app, validate token with API
         const storedUser = localStorage.getItem("vc_user");
         const storedBackend = localStorage.getItem("vc_backend");
-        
+
         if (storedUser) {
           setUser(JSON.parse(storedUser));
-          if (storedBackend === "vetconnect") {
-            setBackendType("vetconnect");
+          if (storedBackend === "VetPMS") {
+            setBackendType("VetPMS");
           }
         }
       } catch {
@@ -75,7 +83,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const mockUser: User = {
           id: "1",
           username: "demo",
-          email: "demo@vetconnect.example",
+          email: "demo@VetPMS.example",
           firstName: "Demo",
           lastName: "User",
           roles: [
@@ -83,9 +91,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               id: "1",
               name: "Veterinarian",
               tenantId: "2", // Amsterdam clinic
-              permissions: ["appointments.read", "appointments.write", "patients.read", "patients.write", "medical_records.read", "medical_records.write"]
-            }
-          ]
+              permissions: [
+                "appointments.read",
+                "appointments.write",
+                "patients.read",
+                "patients.write",
+                "medical_records.read",
+                "medical_records.write",
+              ],
+            },
+          ],
         };
 
         setUser(mockUser);
@@ -107,7 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const toggleBackendType = () => {
-    const newType = backendType === "animana" ? "vetconnect" : "animana";
+    const newType = backendType === "animana" ? "VetPMS" : "animana";
     setBackendType(newType);
     localStorage.setItem("vc_backend", newType);
   };
@@ -115,7 +130,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const hasPermission = (permission: string, tenantId?: string): boolean => {
     if (!user) return false;
 
-    return user.roles.some(role => {
+    return user.roles.some((role) => {
       // Check if role is for the specified tenant or any tenant if not specified
       const tenantMatch = tenantId ? role.tenantId === tenantId : true;
       return tenantMatch && role.permissions.includes(permission);
