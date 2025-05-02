@@ -1,0 +1,7 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Before writing code check the @docs folder
+Make sure that when you write code you follow the product requirements, the system design etc specified in there. When working on the MVP or when nothing is said assume we're working on the MVP use the root files in that folder and the @mvp folder.
