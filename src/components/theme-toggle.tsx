@@ -1,5 +1,4 @@
 // src/components/theme-toggle.tsx
-import React from "react";
 import { useUi } from "../lib/context/UiContext";
 import { Button } from "./ui/button";
 import { MoonIcon, SunIcon } from "lucide-react";
@@ -11,7 +10,16 @@ import {
 } from "./ui/dropdown-menu";
 
 export function ThemeToggle() {
-  const { toggleDarkMode } = useUi(); // Removed isDarkMode since it's not directly used
+  const { toggleDarkMode, isDarkMode } = useUi();
+
+  const handleSystemTheme = () => {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    if (prefersDark !== isDarkMode) {
+      toggleDarkMode();
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -23,21 +31,13 @@ export function ThemeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => toggleDarkMode(false)}>
+        <DropdownMenuItem onClick={() => !isDarkMode && toggleDarkMode()}>
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => toggleDarkMode(true)}>
+        <DropdownMenuItem onClick={() => isDarkMode && toggleDarkMode()}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => {
-          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            toggleDarkMode(false);
-          } else {
-            toggleDarkMode(true);
-          }
-        }}>
-          System
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSystemTheme}>System</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

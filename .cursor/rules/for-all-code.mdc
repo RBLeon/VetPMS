@@ -36,6 +36,18 @@ When working on MVP features, refer to:
 4. Maintain consistency with the established architecture patterns
 5. Document any deviations from the design specifications
 
+## Component Development
+1. Before creating a new component:
+   - Search the codebase for existing similar components
+   - Review existing components' functionality and design
+   - Consider enhancing existing components instead of creating new ones
+   - If creating new components is necessary, ensure they follow the established patterns
+2. When enhancing existing components:
+   - Maintain backward compatibility
+   - Document changes and improvements
+   - Update tests to cover new functionality
+   - Consider impact on related components
+
 ## Quality Assurance
 1. Write tests before implementing features
 2. Ensure all code changes are covered by appropriate tests

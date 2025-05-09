@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useUi } from "../../lib/context/UiContext";
 import { useTenant } from "../../lib/context/TenantContext";
-import {
-  Card,
-  CardContent,
-} from "../../components/ui/card";
+import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import {
   Dialog,
@@ -70,25 +67,35 @@ interface Appointment {
   clientName: string;
   providerId: string;
   resourceIds: string[];
+  typeId: string;
   type: AppointmentType;
-  startTime: string;
-  endTime: string;
+  startTime: Date;
+  endTime: Date;
   notes?: string;
-  status: "SCHEDULED" | "CHECKED_IN" | "IN_PROGRESS" | "COMPLETED" | "CANCELED" | "NO_SHOW";
+  status:
+    | "SCHEDULED"
+    | "CHECKED_IN"
+    | "IN_PROGRESS"
+    | "COMPLETED"
+    | "CANCELED"
+    | "NO_SHOW";
 }
 
 const AppointmentScheduler: React.FC = () => {
   const { setCurrentWorkspace } = useUi();
   const { currentTenant } = useTenant();
-  
+
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isLoading, setIsLoading] = useState(true);
   const [resources, setResources] = useState<Resource[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [appointmentTypes, setAppointmentTypes] = useState<AppointmentType[]>([]);
-  
+  const [appointmentTypes, setAppointmentTypes] = useState<AppointmentType[]>(
+    []
+  );
+
   // New appointment form state
-  const [isNewAppointmentModalOpen, setIsNewAppointmentModalOpen] = useState(false);
+  const [isNewAppointmentModalOpen, setIsNewAppointmentModalOpen] =
+    useState(false);
   const [newAppointmentForm, setNewAppointmentForm] = useState({
     patientId: "",
     patientName: "",
@@ -99,13 +106,15 @@ const AppointmentScheduler: React.FC = () => {
     date: new Date(),
     startTime: "09:00",
     duration: 30,
-    notes: ""
+    notes: "",
   });
-  
+
   // Patient search state
   const [isPatientSearchOpen, setIsPatientSearchOpen] = useState(false);
   const [patientSearchQuery, setPatientSearchQuery] = useState("");
-  const [patientSearchResults, setPatientSearchResults] = useState<Patient[]>([]);
+  const [patientSearchResults, setPatientSearchResults] = useState<Patient[]>(
+    []
+  );
 
   // Set appointments as current workspace and fetch data
   useEffect(() => {
@@ -115,7 +124,7 @@ const AppointmentScheduler: React.FC = () => {
 
   const fetchResourcesAndAppointments = async () => {
     setIsLoading(true);
-    
+
     try {
       // In a real implementation, this would be API calls
       // Mock implementation with setTimeout to simulate API latency
@@ -129,16 +138,21 @@ const AppointmentScheduler: React.FC = () => {
           { id: "5", name: "Exam Room 3", type: "ROOM" },
           { id: "6", name: "Ultrasound", type: "EQUIPMENT" },
         ];
-        
+
         // Mock appointment types
         const mockAppointmentTypes: AppointmentType[] = [
           { id: "1", name: "Check-up", color: "#22c55e", defaultDuration: 30 },
           { id: "2", name: "Surgery", color: "#ef4444", defaultDuration: 90 },
-          { id: "3", name: "Vaccination", color: "#3b82f6", defaultDuration: 15 },
+          {
+            id: "3",
+            name: "Vaccination",
+            color: "#3b82f6",
+            defaultDuration: 15,
+          },
           { id: "4", name: "Dental", color: "#f97316", defaultDuration: 60 },
           { id: "5", name: "Emergency", color: "#dc2626", defaultDuration: 45 },
         ];
-        
+
         // Mock appointments
         const today = new Date();
         const mockAppointments: Appointment[] = [
@@ -150,10 +164,11 @@ const AppointmentScheduler: React.FC = () => {
             clientName: "John Smith",
             providerId: "1",
             resourceIds: ["1", "3"],
+            typeId: "1",
             type: mockAppointmentTypes[0],
-            startTime: new Date(today.setHours(9, 0, 0)).toISOString(),
-            endTime: new Date(today.setHours(9, 30, 0)).toISOString(),
-            status: "COMPLETED"
+            startTime: new Date(today.setHours(9, 0, 0)),
+            endTime: new Date(today.setHours(9, 30, 0)),
+            status: "COMPLETED",
           },
           {
             id: "2",
@@ -163,10 +178,11 @@ const AppointmentScheduler: React.FC = () => {
             clientName: "Emma Johnson",
             providerId: "1",
             resourceIds: ["1", "3"],
+            typeId: "3",
             type: mockAppointmentTypes[2],
-            startTime: new Date(today.setHours(10, 0, 0)).toISOString(),
-            endTime: new Date(today.setHours(10, 15, 0)).toISOString(),
-            status: "CHECKED_IN"
+            startTime: new Date(today.setHours(10, 0, 0)),
+            endTime: new Date(today.setHours(10, 15, 0)),
+            status: "CHECKED_IN",
           },
           {
             id: "3",
@@ -176,10 +192,11 @@ const AppointmentScheduler: React.FC = () => {
             clientName: "Michael Brown",
             providerId: "2",
             resourceIds: ["2", "4"],
+            typeId: "4",
             type: mockAppointmentTypes[3],
-            startTime: new Date(today.setHours(11, 0, 0)).toISOString(),
-            endTime: new Date(today.setHours(12, 0, 0)).toISOString(),
-            status: "SCHEDULED"
+            startTime: new Date(today.setHours(11, 0, 0)),
+            endTime: new Date(today.setHours(12, 0, 0)),
+            status: "SCHEDULED",
           },
           {
             id: "4",
@@ -189,13 +206,14 @@ const AppointmentScheduler: React.FC = () => {
             clientName: "Sophia Davis",
             providerId: "2",
             resourceIds: ["2", "5", "6"],
+            typeId: "2",
             type: mockAppointmentTypes[1],
-            startTime: new Date(today.setHours(13, 30, 0)).toISOString(),
-            endTime: new Date(today.setHours(15, 0, 0)).toISOString(),
-            status: "SCHEDULED"
+            startTime: new Date(today.setHours(13, 30, 0)),
+            endTime: new Date(today.setHours(15, 0, 0)),
+            status: "SCHEDULED",
           },
         ];
-        
+
         setResources(mockResources);
         setAppointmentTypes(mockAppointmentTypes);
         setAppointments(mockAppointments);
@@ -209,13 +227,13 @@ const AppointmentScheduler: React.FC = () => {
 
   // Handle date navigation
   const goToNextDay = () => {
-    setSelectedDate(currentDate => addDays(currentDate, 1));
+    setSelectedDate((currentDate) => addDays(currentDate, 1));
   };
-  
+
   const goToPreviousDay = () => {
-    setSelectedDate(currentDate => addDays(currentDate, -1));
+    setSelectedDate((currentDate) => addDays(currentDate, -1));
   };
-  
+
   const goToToday = () => {
     setSelectedDate(new Date());
   };
@@ -224,18 +242,24 @@ const AppointmentScheduler: React.FC = () => {
   const handleCreateNewAppointment = () => {
     // In a real app, this would save to an API
     console.log("Create appointment:", newAppointmentForm);
-    
+
     // Create new appointment object
-    const selectedType = appointmentTypes.find(type => type.id === newAppointmentForm.typeId);
+    const selectedType = appointmentTypes.find(
+      (type) => type.id === newAppointmentForm.typeId
+    );
     if (!selectedType) return;
-    
+
     const startDateTime = new Date(newAppointmentForm.date);
-    const [hours, minutes] = newAppointmentForm.startTime.split(':').map(Number);
+    const [hours, minutes] = newAppointmentForm.startTime
+      .split(":")
+      .map(Number);
     startDateTime.setHours(hours, minutes, 0);
-    
+
     const endDateTime = new Date(startDateTime);
-    endDateTime.setMinutes(endDateTime.getMinutes() + newAppointmentForm.duration);
-    
+    endDateTime.setMinutes(
+      endDateTime.getMinutes() + newAppointmentForm.duration
+    );
+
     const newAppointment: Appointment = {
       id: `new-${Date.now()}`,
       patientId: newAppointmentForm.patientId || "unknown",
@@ -243,17 +267,20 @@ const AppointmentScheduler: React.FC = () => {
       clientId: "unknown",
       clientName: newAppointmentForm.clientName,
       providerId: newAppointmentForm.providerId,
-      resourceIds: newAppointmentForm.providerId ? [newAppointmentForm.providerId] : [],
+      resourceIds: newAppointmentForm.providerId
+        ? [newAppointmentForm.providerId]
+        : [],
+      typeId: newAppointmentForm.typeId,
       type: selectedType,
-      startTime: startDateTime.toISOString(),
-      endTime: endDateTime.toISOString(),
+      startTime: startDateTime,
+      endTime: endDateTime,
       notes: newAppointmentForm.notes,
-      status: "SCHEDULED"
+      status: "SCHEDULED",
     };
-    
+
     // Add to appointments list
-    setAppointments(prev => [...prev, newAppointment]);
-    
+    setAppointments((prev) => [...prev, newAppointment]);
+
     // Close modal and reset form
     setIsNewAppointmentModalOpen(false);
     setNewAppointmentForm({
@@ -266,26 +293,45 @@ const AppointmentScheduler: React.FC = () => {
       date: new Date(),
       startTime: "09:00",
       duration: 30,
-      notes: ""
+      notes: "",
     });
   };
 
   // Handle patient search
   const handlePatientSearch = (query: string) => {
     setPatientSearchQuery(query);
-    
+
     // In a real app, this would be an API call
     // Mock implementation for demo
     if (query.length > 2) {
       const mockResults: Patient[] = [
-        { id: "p1", name: "Max", species: "Dog", breed: "Labrador", clientName: "John Smith" },
-        { id: "p2", name: "Bella", species: "Cat", breed: "Persian", clientName: "Emma Johnson" },
-        { id: "p5", name: "Milo", species: "Dog", breed: "Beagle", clientName: "David Wilson" },
-      ].filter(p => 
-        p.name.toLowerCase().includes(query.toLowerCase()) || 
-        p.clientName.toLowerCase().includes(query.toLowerCase())
+        {
+          id: "p1",
+          name: "Max",
+          species: "Dog",
+          breed: "Labrador",
+          clientName: "John Smith",
+        },
+        {
+          id: "p2",
+          name: "Bella",
+          species: "Cat",
+          breed: "Persian",
+          clientName: "Emma Johnson",
+        },
+        {
+          id: "p5",
+          name: "Milo",
+          species: "Dog",
+          breed: "Beagle",
+          clientName: "David Wilson",
+        },
+      ].filter(
+        (p) =>
+          p.name.toLowerCase().includes(query.toLowerCase()) ||
+          p.clientName.toLowerCase().includes(query.toLowerCase())
       );
-      
+
       setPatientSearchResults(mockResults);
     } else {
       setPatientSearchResults([]);
@@ -293,11 +339,11 @@ const AppointmentScheduler: React.FC = () => {
   };
 
   const handlePatientSelect = (patient: Patient) => {
-    setNewAppointmentForm(prev => ({
+    setNewAppointmentForm((prev) => ({
       ...prev,
       patientId: patient.id,
       patientName: patient.name,
-      clientName: patient.clientName
+      clientName: patient.clientName,
     }));
     setPatientSearchResults([]);
     setPatientSearchQuery("");
@@ -306,66 +352,68 @@ const AppointmentScheduler: React.FC = () => {
 
   // Calculate time slots for the scheduler
   const timeSlots = Array.from({ length: 12 }, (_, i) => i + 8); // 8 AM to 7 PM
-  
+
   // Get appointments for a specific resource at a specific time
   const getAppointmentsForCell = (resourceId: string, hour: number) => {
     const startHourTime = new Date(selectedDate);
     startHourTime.setHours(hour, 0, 0, 0);
-    
+
     const endHourTime = new Date(selectedDate);
     endHourTime.setHours(hour + 1, 0, 0, 0);
-    
-    return appointments.filter(appt => {
+
+    return appointments.filter((appt) => {
       const apptStart = new Date(appt.startTime);
       const apptEnd = new Date(appt.endTime);
-      
+
       // Check if appointment involves this resource
       const usesResource = appt.resourceIds.includes(resourceId);
-      
+
       // Check if appointment overlaps with this time slot
-      const overlapsTimeSlot = (
-        (apptStart < endHourTime && apptStart >= startHourTime) || 
+      const overlapsTimeSlot =
+        (apptStart < endHourTime && apptStart >= startHourTime) ||
         (apptEnd > startHourTime && apptEnd <= endHourTime) ||
-        (apptStart <= startHourTime && apptEnd >= endHourTime)
-      );
-      
+        (apptStart <= startHourTime && apptEnd >= endHourTime);
+
       return usesResource && overlapsTimeSlot;
     });
   };
-  
+
   // Calculate the position and size of an appointment in the grid
   const getAppointmentStyle = (appt: Appointment, hour: number) => {
     const startTime = new Date(appt.startTime);
     const endTime = new Date(appt.endTime);
-    
+
     // Calculate offset within the hour cell (in percentage)
     const hourStartTime = new Date(selectedDate);
     hourStartTime.setHours(hour, 0, 0, 0);
-    
+
     const hourEndTime = new Date(selectedDate);
     hourEndTime.setHours(hour + 1, 0, 0, 0);
-    
+
     // Calculate top position based on minutes past the hour
-    const startMinutesPastHour = startTime >= hourStartTime 
-      ? (startTime.getHours() - hourStartTime.getHours()) * 60 + startTime.getMinutes()
-      : 0;
-    
+    const startMinutesPastHour =
+      startTime >= hourStartTime
+        ? (startTime.getHours() - hourStartTime.getHours()) * 60 +
+          startTime.getMinutes()
+        : 0;
+
     const topPercentage = (startMinutesPastHour / 60) * 100;
-    
+
     // Calculate height based on appointment duration
     const appointmentDurationWithinCell = Math.min(
-      ((endTime <= hourEndTime ? endTime : hourEndTime).getTime() - 
-       (startTime >= hourStartTime ? startTime : hourStartTime).getTime()) / (1000 * 60),
+      ((endTime <= hourEndTime ? endTime : hourEndTime).getTime() -
+        (startTime >= hourStartTime ? startTime : hourStartTime).getTime()) /
+        (1000 * 60),
       60
     );
-    
+
     const heightPercentage = (appointmentDurationWithinCell / 60) * 100;
-    
+
     return {
       top: `${topPercentage}%`,
       height: `${heightPercentage}%`,
       backgroundColor: appt.type.color,
-      opacity: appt.status === "CANCELED" ? 0.5 : 1
+      opacity: appt.status === "CANCELED" ? 0.5 : 1,
     };
   };
 
@@ -376,40 +424,30 @@ const AppointmentScheduler: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 p-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Appointment Scheduler</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Appointment Scheduler
+          </h1>
           <p className="text-muted-foreground">
             Schedule and manage patient appointments
           </p>
         </div>
-        
+
         <div className="flex items-center space-x-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={goToPreviousDay}
-          >
+          <Button variant="outline" size="sm" onClick={goToPreviousDay}>
             <ChevronLeftIcon className="h-4 w-4" />
           </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={goToToday}
-          >
+          <Button variant="outline" size="sm" onClick={goToToday}>
             Today
           </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={goToNextDay}
-          >
+          <Button variant="outline" size="sm" onClick={goToNextDay}>
             <ChevronRightIcon className="h-4 w-4" />
           </Button>
-          
+
           <div className="h-8 border-l mx-2"></div>
-          
+
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -429,16 +467,16 @@ const AppointmentScheduler: React.FC = () => {
               />
             </PopoverContent>
           </Popover>
-          
+
           <div className="h-8 border-l mx-2"></div>
-          
+
           <Button onClick={() => setIsNewAppointmentModalOpen(true)}>
             <PlusIcon className="h-4 w-4 mr-2" />
             New Appointment
           </Button>
         </div>
       </div>
-      
+
       {/* Scheduler view */}
       <Card className="overflow-hidden">
         <CardContent className="p-0">
@@ -451,54 +489,61 @@ const AppointmentScheduler: React.FC = () => {
             <div className="relative">
               {/* Header row with resources */}
               <div className="flex border-b">
-                <div className="w-20 shrink-0 px-2 py-3 font-medium text-center border-r">
+                <div className="w-20 shrink-0 px-4 py-3 font-medium text-center border-r">
                   Time
                 </div>
                 {resources
-                  .filter(r => r.type === "PROVIDER") // Only show providers in the header
-                  .map(resource => (
+                  .filter((r) => r.type === "PROVIDER") // Only show providers in the header
+                  .map((resource) => (
                     <div
                       key={resource.id}
-                      className="flex-1 px-2 py-3 font-medium text-center border-r"
+                      className="flex-1 px-4 py-3 font-medium text-center border-r"
                       style={{ color: resource.color }}
                     >
                       {resource.name}
                     </div>
                   ))}
               </div>
-              
+
               {/* Time slots */}
               <div className="relative">
-                {timeSlots.map(hour => (
+                {timeSlots.map((hour) => (
                   <div key={hour} className="flex border-b last:border-b-0">
                     {/* Time cell */}
-                    <div className="w-20 shrink-0 px-2 py-3 text-sm text-center border-r">
-                      {hour % 12 === 0 ? 12 : hour % 12}:00 {hour < 12 ? "AM" : "PM"}
+                    <div className="w-20 shrink-0 px-4 py-3 text-sm text-center border-r">
+                      {hour % 12 === 0 ? 12 : hour % 12}:00{" "}
+                      {hour < 12 ? "AM" : "PM"}
                     </div>
-                    
+
                     {/* Resource cells */}
                     {resources
-                      .filter(r => r.type === "PROVIDER") // Only show providers in the grid
-                      .map(resource => (
+                      .filter((r) => r.type === "PROVIDER") // Only show providers in the grid
+                      .map((resource) => (
                         <div
                           key={`${resource.id}-${hour}`}
                           className="flex-1 border-r relative h-24"
                         >
                           {/* Half-hour line */}
                           <div className="absolute w-full border-t border-dashed border-border opacity-50 top-1/2 left-0"></div>
-                          
+
                           {/* Appointment slots */}
-                          {getAppointmentsForCell(resource.id, hour).map(appt => (
-                            <div
-                              key={appt.id}
-                              className="absolute left-1 right-1 rounded p-1 text-xs text-white overflow-hidden cursor-pointer"
-                              style={getAppointmentStyle(appt, hour)}
-                              onClick={() => handleAppointmentClick(appt)}
-                            >
-                              <div className="font-semibold">{appt.patientName}</div>
-                              <div className="text-xs opacity-90">{appt.type.name}</div>
-                            </div>
-                          ))}
+                          {getAppointmentsForCell(resource.id, hour).map(
+                            (appt) => (
+                              <div
+                                key={appt.id}
+                                className="absolute left-2 right-2 rounded p-2 text-xs text-white overflow-hidden cursor-pointer"
+                                style={getAppointmentStyle(appt, hour)}
+                                onClick={() => handleAppointmentClick(appt)}
+                              >
+                                <div className="font-semibold">
+                                  {appt.patientName}
+                                </div>
+                                <div className="text-xs opacity-90">
+                                  {appt.type.name}
+                                </div>
+                              </div>
+                            )
+                          )}
                         </div>
                       ))}
                   </div>
@@ -508,9 +553,12 @@ const AppointmentScheduler: React.FC = () => {
           )}
         </CardContent>
       </Card>
-      
+
       {/* New Appointment Modal */}
-      <Dialog open={isNewAppointmentModalOpen} onOpenChange={setIsNewAppointmentModalOpen}>
+      <Dialog
+        open={isNewAppointmentModalOpen}
+        onOpenChange={setIsNewAppointmentModalOpen}
+      >
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>New Appointment</DialogTitle>
@@ -518,7 +566,7 @@ const AppointmentScheduler: React.FC = () => {
               Schedule a new appointment for a patient.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="grid gap-4 py-4">
             {/* Patient Selection */}
             <div className="space-y-2">
@@ -532,24 +580,26 @@ const AppointmentScheduler: React.FC = () => {
                   onChange={(e) => handlePatientSearch(e.target.value)}
                   className="w-full"
                 />
-                
+
                 {isPatientSearchOpen && (
                   <div className="absolute top-full left-0 z-50 w-full mt-1 bg-card border rounded-md shadow-lg">
-                    <div className="p-2">
+                    <div className="p-3">
                       {patientSearchResults.length === 0 ? (
                         <p className="text-sm text-muted-foreground p-2">
                           No patients found. Type to search...
                         </p>
                       ) : (
                         <div className="max-h-48 overflow-auto">
-                          {patientSearchResults.map(patient => (
+                          {patientSearchResults.map((patient) => (
                             <div
                               key={patient.id}
-                              className="flex justify-between p-2 hover:bg-accent rounded cursor-pointer"
+                              className="flex justify-between p-3 hover:bg-accent rounded cursor-pointer"
                               onClick={() => handlePatientSelect(patient)}
                             >
                               <div>
-                                <div className="font-medium">{patient.name}</div>
+                                <div className="font-medium">
+                                  {patient.name}
+                                </div>
                                 <div className="text-xs text-muted-foreground">
                                   {patient.species} • {patient.breed}
                                 </div>
@@ -565,38 +615,45 @@ const AppointmentScheduler: React.FC = () => {
                   </div>
                 )}
               </div>
-              
+
               {newAppointmentForm.patientId && (
-                <div className="flex justify-between bg-muted p-2 rounded text-sm">
-                  <span>{newAppointmentForm.patientName} • {newAppointmentForm.clientName}</span>
+                <div className="flex justify-between bg-muted p-3 rounded text-sm">
+                  <span>
+                    {newAppointmentForm.patientName} •{" "}
+                    {newAppointmentForm.clientName}
+                  </span>
                   <Button
                     variant="ghost"
                     size="icon"
                     className="h-5 w-5"
-                    onClick={() => setNewAppointmentForm(prev => ({
-                      ...prev,
-                      patientId: "",
-                      patientName: "",
-                      clientName: ""
-                    }))}
+                    onClick={() =>
+                      setNewAppointmentForm((prev) => ({
+                        ...prev,
+                        patientId: "",
+                        patientName: "",
+                        clientName: "",
+                      }))
+                    }
                   >
                     <XIcon className="h-3 w-3" />
                   </Button>
                 </div>
               )}
             </div>
-            
+
             {/* Appointment Type */}
             <div className="space-y-2">
               <Label htmlFor="appointmentType">Appointment Type</Label>
               <Select
                 value={newAppointmentForm.typeId}
                 onValueChange={(value) => {
-                  const selectedType = appointmentTypes.find(type => type.id === value);
-                  setNewAppointmentForm(prev => ({
-                    ...prev, 
+                  const selectedType = appointmentTypes.find(
+                    (type) => type.id === value
+                  );
+                  setNewAppointmentForm((prev) => ({
+                    ...prev,
                     typeId: value,
-                    duration: selectedType?.defaultDuration || prev.duration
+                    duration: selectedType?.defaultDuration || prev.duration,
                   }));
                 }}
               >
@@ -604,11 +661,11 @@ const AppointmentScheduler: React.FC = () => {
                   <SelectValue placeholder="Select appointment type" />
                 </SelectTrigger>
                 <SelectContent>
-                  {appointmentTypes.map(type => (
+                  {appointmentTypes.map((type) => (
                     <SelectItem key={type.id} value={type.id}>
                       <div className="flex items-center">
-                        <div 
-                          className="w-3 h-3 rounded-full mr-2" 
+                        <div
+                          className="w-3 h-3 rounded-full mr-2"
                           style={{ backgroundColor: type.color }}
                         />
                         <span>{type.name}</span>
@@ -621,29 +678,34 @@ const AppointmentScheduler: React.FC = () => {
                 </SelectContent>
               </Select>
             </div>
-            
+
             {/* Provider Selection */}
             <div className="space-y-2">
               <Label htmlFor="provider">Provider</Label>
               <Select
                 value={newAppointmentForm.providerId}
-                onValueChange={(value) => setNewAppointmentForm(prev => ({ ...prev, providerId: value }))}
+                onValueChange={(value) =>
+                  setNewAppointmentForm((prev) => ({
+                    ...prev,
+                    providerId: value,
+                  }))
+                }
               >
                 <SelectTrigger id="provider" className="w-full">
                   <SelectValue placeholder="Select provider" />
                 </SelectTrigger>
                 <SelectContent>
                   {resources
-                    .filter(r => r.type === "PROVIDER")
-                    .map(provider => (
-                    <SelectItem key={provider.id} value={provider.id}>
-                      {provider.name}
-                    </SelectItem>
-                  ))}
+                    .filter((r) => r.type === "PROVIDER")
+                    .map((provider) => (
+                      <SelectItem key={provider.id} value={provider.id}>
+                        {provider.name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
-            
+
             {/* Date and Time */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -665,20 +727,28 @@ const AppointmentScheduler: React.FC = () => {
                     <Calendar
                       mode="single"
                       selected={newAppointmentForm.date}
-                      onSelect={(date) => date && setNewAppointmentForm(prev => ({ ...prev, date }))}
+                      onSelect={(date) =>
+                        date &&
+                        setNewAppointmentForm((prev) => ({ ...prev, date }))
+                      }
                       initialFocus
                       disabled={(date) => date < new Date()}
                     />
                   </PopoverContent>
                 </Popover>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="startTime">Start Time</Label>
                 <div className="flex items-center space-x-2">
                   <Select
                     value={newAppointmentForm.startTime}
-                    onValueChange={(value) => setNewAppointmentForm(prev => ({ ...prev, startTime: value }))}
+                    onValueChange={(value) =>
+                      setNewAppointmentForm((prev) => ({
+                        ...prev,
+                        startTime: value,
+                      }))
+                    }
                   >
                     <SelectTrigger id="startTime" className="w-full">
                       <SelectValue placeholder="Select time" />
@@ -686,12 +756,30 @@ const AppointmentScheduler: React.FC = () => {
                     <SelectContent>
                       {Array.from({ length: 24 }, (_, hour) => {
                         return [
-                          <SelectItem key={`${hour}:00`} value={`${hour.toString().padStart(2, '0')}:00`}>
-                            {hour === 0 ? '12:00 AM' : hour < 12 ? `${hour}:00 AM` : hour === 12 ? '12:00 PM' : `${hour - 12}:00 PM`}
+                          <SelectItem
+                            key={`${hour}:00`}
+                            value={`${hour.toString().padStart(2, "0")}:00`}
+                          >
+                            {hour === 0
+                              ? "12:00 AM"
+                              : hour < 12
+                              ? `${hour}:00 AM`
+                              : hour === 12
+                              ? "12:00 PM"
+                              : `${hour - 12}:00 PM`}
                           </SelectItem>,
-                          <SelectItem key={`${hour}:30`} value={`${hour.toString().padStart(2, '0')}:30`}>
-                            {hour === 0 ? '12:30 AM' : hour < 12 ? `${hour}:30 AM` : hour === 12 ? '12:30 PM' : `${hour - 12}:30 PM`}
-                          </SelectItem>
+                          <SelectItem
+                            key={`${hour}:30`}
+                            value={`${hour.toString().padStart(2, "0")}:30`}
+                          >
+                            {hour === 0
+                              ? "12:30 AM"
+                              : hour < 12
+                              ? `${hour}:30 AM`
+                              : hour === 12
+                              ? "12:30 PM"
+                              : `${hour - 12}:30 PM`}
+                          </SelectItem>,
                         ];
                       }).flat()}
                     </SelectContent>
@@ -699,16 +787,22 @@ const AppointmentScheduler: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Duration */}
             <div className="space-y-2">
               <div className="flex justify-between">
                 <Label htmlFor="duration">Duration (minutes)</Label>
                 <span className="text-sm text-muted-foreground">
-                  {new Date(0, 0, 0, 0, newAppointmentForm.duration).toLocaleTimeString([], { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    hour12: false 
+                  {new Date(
+                    0,
+                    0,
+                    0,
+                    0,
+                    newAppointmentForm.duration
+                  ).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
                   })}
                 </span>
               </div>
@@ -718,10 +812,12 @@ const AppointmentScheduler: React.FC = () => {
                   variant="outline"
                   size="icon"
                   className="h-8 w-8 shrink-0"
-                  onClick={() => setNewAppointmentForm(prev => ({ 
-                    ...prev, 
-                    duration: Math.max(5, prev.duration - 5) 
-                  }))}
+                  onClick={() =>
+                    setNewAppointmentForm((prev) => ({
+                      ...prev,
+                      duration: Math.max(5, prev.duration - 5),
+                    }))
+                  }
                   disabled={newAppointmentForm.duration <= 5}
                 >
                   -
@@ -733,10 +829,12 @@ const AppointmentScheduler: React.FC = () => {
                   max={120}
                   step={5}
                   value={newAppointmentForm.duration}
-                  onChange={(e) => setNewAppointmentForm(prev => ({ 
-                    ...prev, 
-                    duration: parseInt(e.target.value) 
-                  }))}
+                  onChange={(e) =>
+                    setNewAppointmentForm((prev) => ({
+                      ...prev,
+                      duration: parseInt(e.target.value),
+                    }))
+                  }
                   className="w-full"
                 />
                 <Button
@@ -744,17 +842,19 @@ const AppointmentScheduler: React.FC = () => {
                   variant="outline"
                   size="icon"
                   className="h-8 w-8 shrink-0"
-                  onClick={() => setNewAppointmentForm(prev => ({ 
-                    ...prev, 
-                    duration: Math.min(120, prev.duration + 5) 
-                  }))}
+                  onClick={() =>
+                    setNewAppointmentForm((prev) => ({
+                      ...prev,
+                      duration: Math.min(120, prev.duration + 5),
+                    }))
+                  }
                   disabled={newAppointmentForm.duration >= 120}
                 >
                   +
                 </Button>
               </div>
             </div>
-            
+
             {/* Notes */}
             <div className="space-y-2">
               <Label htmlFor="notes">Notes</Label>
@@ -762,18 +862,30 @@ const AppointmentScheduler: React.FC = () => {
                 id="notes"
                 placeholder="Add any additional information..."
                 value={newAppointmentForm.notes}
-                onChange={(e) => setNewAppointmentForm(prev => ({ ...prev, notes: e.target.value }))}
+                onChange={(e) =>
+                  setNewAppointmentForm((prev) => ({
+                    ...prev,
+                    notes: e.target.value,
+                  }))
+                }
               />
             </div>
           </div>
-          
+
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsNewAppointmentModalOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsNewAppointmentModalOpen(false)}
+            >
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleCreateNewAppointment}
-              disabled={!newAppointmentForm.patientName || !newAppointmentForm.typeId || !newAppointmentForm.providerId}
+              disabled={
+                !newAppointmentForm.patientName ||
+                !newAppointmentForm.typeId ||
+                !newAppointmentForm.providerId
+              }
             >
               Create Appointment
             </Button>

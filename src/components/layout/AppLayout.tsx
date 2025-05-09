@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Outlet, Link } from "react-router-dom";
 import { RoleProvider } from "../../lib/context/RoleContext";
 import { ContextAwareNavigation } from "./ContextAwareNavigation";
@@ -7,6 +7,7 @@ import { useAuth } from "../../lib/context/AuthContext";
 import { Bell } from "lucide-react";
 import { Button } from "../ui/button";
 import { ThemeToggle } from "../ThemeToggle";
+import { UserMenu } from "../dashboard/UserMenu";
 
 /**
  * Modern application layout with role-based UI adaptations
@@ -65,9 +66,7 @@ export function AppLayout() {
               <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
               <span className="sr-only">Notifications</span>
             </Button>
-            <Button variant="ghost" size="sm">
-              {user?.firstName || 'Guest'}
-            </Button>
+            <UserMenu />
           </div>
         </header>
 

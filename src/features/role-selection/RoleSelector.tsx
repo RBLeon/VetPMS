@@ -18,7 +18,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../components/ui/dialog";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
 
 // Map role to appropriate icon
 const getRoleIcon = (role: string) => {
@@ -47,42 +53,36 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
   open,
   onOpenChange,
 }) => {
-  // Safely access role context without crashing if it's not available yet
-  let roleContextAvailable = false;
-  let setRoleFunc = null;
-  
-  try {
-    // This will throw an error if the context is not available
-    const roleContext = useRole();
-    roleContextAvailable = true;
-    setRoleFunc = roleContext.setRole;
-  } catch (error) {
-    console.error('Role context not available yet:', error);
-    roleContextAvailable = false;
-  }
-  
+  const { setRole } = useRole();
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const roles = Object.keys(roleConfigs);
 
   // Handle role selection
   const handleRoleSelect = (roleKey: string) => {
     setSelectedRole(roleKey);
+    setError(null);
   };
 
   // Confirm role selection and navigate to dashboard
-  const confirmRoleSelection = () => {
-    if (selectedRole) {
-      if (roleContextAvailable && setRoleFunc) {
-        setRoleFunc(selectedRole as import("../../lib/context/RoleContext").Role);
-        onOpenChange(false);
-        navigate("/");
-      } else {
-        // If role context isn't available, just close the dialog and navigate
-        console.warn("Role context not available, proceeding without setting role");
-        onOpenChange(false);
-        navigate("/");
-      }
+  const confirmRoleSelection = async () => {
+    if (!selectedRole) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await setRole(
+        selectedRole as import("../../lib/context/RoleContext").Role
+      );
+      navigate("/");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to set role");
+      console.error("Role selection failed:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -155,7 +155,7 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
                       {Object.entries(roleConfig.contextualFeatures)
                         .filter(([, value]) => value === true)
                         .map(([key]) => key.replace(/([A-Z])/g, " $1"))
-                        .map((feature) => 
+                        .map((feature) =>
                           feature
                             .replace(/^show/g, "")
                             .replace(/^use/g, "")
@@ -172,14 +172,16 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
         </div>
 
         <div className="flex justify-end gap-2 mt-4">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Skip
-          </Button>
+          {error && <div className="text-sm text-red-500 mr-auto">{error}</div>}
           <Button
             onClick={confirmRoleSelection}
-            disabled={!selectedRole}
+            disabled={!selectedRole || isLoading}
           >
-            Continue as {selectedRole ? roleConfigs[selectedRole].displayName : ""}
+            {isLoading
+              ? "Setting role..."
+              : `Continue as ${
+                  selectedRole ? roleConfigs[selectedRole].displayName : ""
+                }`}
           </Button>
         </div>
       </DialogContent>

@@ -1,5 +1,5 @@
 // src/components/dashboard/DashboardView.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { SearchBar } from "./SearchBar";
 import { NavigationHub } from "./NavigationHub";
 import { cn } from "../../lib/utils";

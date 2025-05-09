@@ -1,9 +1,14 @@
 // src/lib/context/RoleContext.tsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useAuth } from './AuthContext';
-import { roleConfigs, RoleConfig } from '../config/roleConfigs';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext";
+import { roleConfigs, RoleConfig } from "../config/roleConfigs";
 
-export type Role = 'veterinarian' | 'receptionist' | 'nurse' | 'manager' | 'admin';
+export type Role =
+  | "veterinarian"
+  | "receptionist"
+  | "nurse"
+  | "manager"
+  | "ceo";
 
 interface RoleContextType {
   role: Role;
@@ -35,48 +40,69 @@ export interface QuickAction {
 
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
-export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const { user } = useAuth();
-  const [role, setRole] = useState<Role>('veterinarian');
-  const [roleConfig, setRoleConfig] = useState<RoleConfig>(roleConfigs.veterinarian);
-  
+  const [role, setRoleState] = useState<Role>(() => {
+    // Try to get role from localStorage first
+    const storedRole = localStorage.getItem("vc_role");
+    if (storedRole && Object.keys(roleConfigs).includes(storedRole)) {
+      return storedRole as Role;
+    }
+    // Fallback to user's role or default
+    return (user?.role as Role) || "veterinarian";
+  });
+  const [roleConfig, setRoleConfig] = useState<RoleConfig>(
+    roleConfigs[role] || roleConfigs.veterinarian
+  );
+
   // Update role configuration whenever role changes
   useEffect(() => {
     // If user has a role defined, use it
     if (user?.role && Object.keys(roleConfigs).includes(user.role)) {
-      setRole(user.role as Role);
+      setRoleState(user.role as Role);
     }
-    
+
     setRoleConfig(roleConfigs[role] || roleConfigs.veterinarian);
   }, [role, user?.role]);
+
+  // Wrapper for setRole that also persists to localStorage
+  const setRole = (newRole: Role) => {
+    setRoleState(newRole);
+    localStorage.setItem("vc_role", newRole);
+  };
 
   const hasPermission = (permission: string): boolean => {
     return roleConfig.permissions.includes(permission);
   };
 
-  const filterByPermission = <T extends { requiredPermission?: string }>(items: T[]): T[] => {
-    return items.filter(item => 
-      !item.requiredPermission || hasPermission(item.requiredPermission)
+  const filterByPermission = <T extends { requiredPermission?: string }>(
+    items: T[]
+  ): T[] => {
+    return items.filter(
+      (item) =>
+        !item.requiredPermission || hasPermission(item.requiredPermission)
     );
   };
-  
+
   // Get role-specific nav items with permission filtering
   const userNavItems = filterByPermission(roleConfig.navItems);
-  
+
   // Get role-specific quick actions with permission filtering
   const quickActions = filterByPermission(roleConfig.quickActions);
 
   return (
-    <RoleContext.Provider 
-      value={{ 
-        role, 
-        setRole, 
+    <RoleContext.Provider
+      value={{
+        role,
+        setRole,
         roleConfig,
-        permissions: roleConfig.permissions, 
+        permissions: roleConfig.permissions,
         hasPermission,
         userNavItems,
         quickActions,
-        contextualFeatures: roleConfig.contextualFeatures 
+        contextualFeatures: roleConfig.contextualFeatures,
       }}
     >
       {children}
@@ -87,7 +113,7 @@ export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useRole = () => {
   const context = useContext(RoleContext);
   if (context === undefined) {
-    throw new Error('useRole must be used within a RoleProvider');
+    throw new Error("useRole must be used within a RoleProvider");
   }
   return context;
 };

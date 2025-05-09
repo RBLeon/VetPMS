@@ -1,5 +1,4 @@
 // src/components/dashboard/UserMenu.tsx
-import React from "react";
 import { useAuth } from "../../lib/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
@@ -11,7 +10,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "../../components/ui/avatar";
 import { Button } from "../../components/ui/button";
 import { Settings, LogOut, User, HelpCircle } from "lucide-react";
 
@@ -39,7 +42,8 @@ export function UserMenu() {
           <Avatar className="h-8 w-8">
             <AvatarImage src="" alt={user?.firstName} />
             <AvatarFallback>
-              {user?.firstName?.[0]}{user?.lastName?.[0]}
+              {user?.firstName?.[0]}
+              {user?.lastName?.[0]}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -47,8 +51,12 @@ export function UserMenu() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user?.firstName} {user?.lastName}</p>
-            <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+            <p className="text-sm font-medium leading-none">
+              {user?.firstName} {user?.lastName}
+            </p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user?.email}
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

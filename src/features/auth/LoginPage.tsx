@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../lib/context/AuthContext";
-import { RoleSelector } from "../role-selection/RoleSelector";
 import {
   Card,
   CardContent,
@@ -20,17 +19,15 @@ const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showRoleSelector, setShowRoleSelector] = useState(false);
   const { login, error, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if already authenticated but don't automatically redirect
-  // if we want to show the role selector
+  // Redirect if already authenticated
   React.useEffect(() => {
-    if (isAuthenticated && !showRoleSelector) {
-      navigate("/");
+    if (isAuthenticated) {
+      navigate("/role-selection");
     }
-  }, [isAuthenticated, navigate, showRoleSelector]);
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,8 +36,7 @@ const LoginPage: React.FC = () => {
     setIsSubmitting(true);
     try {
       await login(username, password);
-      // Instead of navigating, show the role selector
-      setShowRoleSelector(true);
+      navigate("/role-selection");
     } catch (err) {
       console.error("Login failed", err);
     } finally {
@@ -57,12 +53,6 @@ const LoginPage: React.FC = () => {
             Modern Practice Management for Veterinarians
           </p>
         </div>
-
-        {/* Show Role Selector after successful login */}
-        <RoleSelector
-          open={showRoleSelector}
-          onOpenChange={setShowRoleSelector}
-        />
 
         <Card>
           <CardHeader>

@@ -1,5 +1,4 @@
 // src/components/dashboard/NavigationHub.tsx
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import {
@@ -19,7 +18,7 @@ interface NavigationHubProps {
 
 export function NavigationHub({ onSelect, activeSection }: NavigationHubProps) {
   const navigate = useNavigate();
-  
+
   const hubItems = [
     {
       id: "dashboard",
@@ -32,7 +31,8 @@ export function NavigationHub({ onSelect, activeSection }: NavigationHubProps) {
       id: "appointments",
       label: "Appointments",
       icon: Calendar,
-      color: "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
+      color:
+        "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
       onClick: () => navigate("/appointments"),
     },
     {
@@ -46,21 +46,24 @@ export function NavigationHub({ onSelect, activeSection }: NavigationHubProps) {
       id: "patients",
       label: "Patients",
       icon: User,
-      color: "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
+      color:
+        "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
       onClick: () => navigate("/patients"),
     },
     {
       id: "medical",
       label: "Medical Records",
       icon: ClipboardList,
-      color: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300",
+      color:
+        "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300",
       onClick: () => navigate("/medical"),
     },
     {
       id: "settings",
       label: "Settings",
       icon: Settings,
-      color: "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
+      color:
+        "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
       onClick: () => navigate("/settings"),
     },
   ];

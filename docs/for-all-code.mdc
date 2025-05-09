@@ -1,0 +1,18 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+## Code Cleanup
+1. When merging or enhancing components:
+   - Remove any obsolete code, files, or dependencies
+   - Delete unused imports and variables
+   - Clean up commented-out code that's no longer needed
+   - Remove duplicate functionality
+2. Regularly review and remove:
+   - Unused components
+   - Deprecated features
+   - Old test files for deleted components
+   - Unused dependencies in package.json
+3. Document significant removals in commit messages
+4. Update relevant documentation when removing features

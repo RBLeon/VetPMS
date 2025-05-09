@@ -57,11 +57,13 @@ export interface Client {
   id: string;
   firstName: string;
   lastName: string;
-  email?: string;
-  phone?: string;
+  email: string;
+  phone: string;
   address?: Address;
+  preferredCommunication: "email" | "phone" | "sms";
   patients?: Patient[];
   notes?: string;
+  lastVisit: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -70,16 +72,23 @@ export interface Client {
 export interface Patient {
   id: string;
   name: string;
-  species: string;
-  breed?: string;
+  species: "DOG" | "CAT" | "BIRD" | "REPTILE" | "SMALL_MAMMAL" | "OTHER";
+  breed: string;
+  age: number;
+  weight: number;
+  dateOfBirth: string;
+  lastVisit: string;
+  clientId: string;
+  gender: "male" | "female" | "unknown";
+  microchipNumber?: string;
   color?: string;
-  birthDate?: string;
-  sex?: 'male' | 'female' | 'unknown';
-  microchipId?: string;
-  status: string;
-  ownerId: string;
-  owner?: Client;
-  weight?: PatientWeight[];
+  allergies?: string[];
+  medicalConditions?: string[];
+  vaccinations?: {
+    name: string;
+    date: string;
+    nextDueDate: string;
+  }[];
   medicalRecords?: MedicalRecord[];
   notes?: string;
   alerts?: PatientAlert[];
@@ -102,33 +111,88 @@ export interface PatientAlert {
 }
 
 // Appointment Types
+export type AppointmentStatus =
+  | "SCHEDULED"
+  | "CHECKED_IN"
+  | "IN_PROGRESS"
+  | "COMPLETED"
+  | "CANCELED"
+  | "NO_SHOW";
+
+export type AppointmentType =
+  | "CHECK_UP"
+  | "VACCINATION"
+  | "SURGERY"
+  | "CONSULTATION"
+  | "DENTAL"
+  | "EMERGENCY";
+
+export type ReminderType = "EMAIL" | "SMS" | "PUSH";
+export type ReminderTime = "15m" | "30m" | "1h" | "24h" | "48h";
+export type RecurringFrequency = "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+
 export interface Appointment {
   id: string;
   patientId: string;
   patient?: Patient;
-  vetId?: string;
-  title: string;
-  reason: string;
-  status: string;
-  startTime: string;
-  endTime: string;
-  notes?: string;
+  clientId: string;
+  client?: Client;
+  providerId: string;
+  resourceIds?: string[];
+  startTime: Date;
+  endTime: Date;
+  date: string;
+  time: string;
+  type: AppointmentType;
+  status: AppointmentStatus;
+  notes: string;
+  isRecurring: boolean;
+  recurringPattern?: {
+    frequency: RecurringFrequency;
+    interval: number;
+    endDate?: string;
+  };
+  reminder?: {
+    type: ReminderType;
+    time: ReminderTime;
+  };
   createdAt: string;
   updatedAt: string;
 }
 
 // Medical Record Types
+export type MedicalRecordStatus =
+  | "ACTIVE"
+  | "RESOLVED"
+  | "PENDING"
+  | "CANCELLED";
+
 export interface MedicalRecord {
   id: string;
   patientId: string;
-  vetId: string;
+  patient?: Patient;
+  veterinarianId: string;
   type: string;
   date: string;
+  status: MedicalRecordStatus;
   notes: string;
-  diagnosis?: string;
+  chiefComplaint: string;
+  diagnosis: string;
+  treatmentPlan?: string;
+  vitalSigns?: {
+    temperature?: number;
+    heartRate?: number;
+    respiratoryRate?: number;
+    bloodPressure?: string;
+    weight?: number;
+  };
   treatments?: Treatment[];
   prescriptions?: Prescription[];
   attachments?: Attachment[];
+  followUpDate?: string;
+  followUpNotes?: string;
+  hasAttachments: boolean;
+  followUpScheduled: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -137,26 +201,36 @@ export interface Treatment {
   id: string;
   name: string;
   description: string;
-  cost?: number;
+  cost: number;
+  duration: number;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Prescription {
   id: string;
-  medication: string;
+  medicationName: string;
   dosage: string;
   frequency: string;
-  startDate: string;
-  endDate?: string;
+  duration: string;
   notes?: string;
+  startDate: string;
+  endDate: string;
+  prescribedBy: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Attachment {
   id: string;
-  fileName: string;
-  fileType: string;
-  fileSize: number;
+  name: string;
+  type: string;
   url: string;
-  thumbnailUrl?: string;
+  size: number;
+  uploadedBy: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Billing Types
@@ -198,26 +272,26 @@ export interface Payment {
 export interface InventoryItem {
   id: string;
   name: string;
-  sku: string;
+  description: string;
   category: string;
   quantity: number;
   unit: string;
   cost: number;
-  price: number;
-  reorderLevel?: number;
-  supplier?: string;
-  location?: string;
-  expiryDate?: string;
-  notes?: string;
+  reorderLevel: number;
+  expiryDate: string;
+  supplier: string;
+  location: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Common Types
 export interface Address {
   street: string;
   city: string;
-  state?: string;
+  state: string;
+  country: string;
   postalCode: string;
-  country?: string;
 }
 
 export interface Pagination {
@@ -314,4 +388,39 @@ export interface AnimanaInvoiceLine {
   price: number;
   total: number;
   treatmentId?: string;
+}
+
+export interface ClientFeedback {
+  id: string;
+  clientId: string;
+  appointmentId?: string;
+  rating: number;
+  comment: string;
+  category: "SERVICE" | "STAFF" | "FACILITY" | "GENERAL";
+  status: "PENDING" | "REVIEWED" | "ADDRESSED";
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Update StaffMember interface
+export interface StaffMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: "VETERINARIAN" | "NURSE" | "RECEPTIONIST" | "MANAGER" | "CEO";
+  specialization?: string;
+  hoursWorked: number;
+  schedule?: {
+    monday: string[];
+    tuesday: string[];
+    wednesday: string[];
+    thursday: string[];
+    friday: string[];
+    saturday: string[];
+    sunday: string[];
+  };
+  createdAt: string;
+  updatedAt: string;
 }

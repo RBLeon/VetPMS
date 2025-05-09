@@ -1,0 +1,58 @@
+import type { Patient } from "../types";
+
+export const mockPatients: Patient[] = [
+  {
+    id: "1",
+    clientId: "1",
+    name: "Buddy",
+    species: "DOG",
+    breed: "Golden Retriever",
+    age: 3,
+    weight: 30,
+    dateOfBirth: "2021-01-01",
+    lastVisit: "2024-01-15",
+    gender: "male",
+    createdAt: "2024-01-01",
+    updatedAt: "2024-01-01",
+    microchipNumber: "123456789",
+    color: "Golden",
+    allergies: ["Penicillin"],
+    medicalConditions: ["None"],
+    vaccinations: [
+      {
+        name: "Rabies",
+        date: "2023-01-01",
+        nextDueDate: "2024-01-01",
+      },
+    ],
+    notes: "Friendly and well-behaved",
+    alerts: [],
+  },
+  {
+    id: "2",
+    clientId: "2",
+    name: "Whiskers",
+    species: "CAT",
+    breed: "Siamese",
+    age: 2,
+    weight: 5,
+    dateOfBirth: "2022-01-01",
+    lastVisit: "2024-01-10",
+    gender: "female",
+    createdAt: "2024-01-02",
+    updatedAt: "2024-01-02",
+    microchipNumber: "987654321",
+    color: "Seal Point",
+    allergies: ["None"],
+    medicalConditions: ["None"],
+    vaccinations: [
+      {
+        name: "FVRCP",
+        date: "2023-01-01",
+        nextDueDate: "2024-01-01",
+      },
+    ],
+    notes: "Shy but affectionate",
+    alerts: [],
+  },
+];

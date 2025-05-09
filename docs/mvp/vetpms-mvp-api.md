@@ -1,456 +1,628 @@
 # VetPMS MVP API Documentation
 
-## Overview
-
-This document defines the MVP API endpoints for VetPMS. The MVP focuses on essential functionality with a simplified architecture.
-
-## Base URL
-
-```
-https://api.vetpms.example.com/api/v1
-```
+**Version**: 1.0  
+**Last Updated**: May 2025  
+**Base URL**: `https://api.vetpms.com/v1`
 
 ## Authentication
 
-The MVP API uses JWT (JSON Web Tokens) for authentication. Include the token in the Authorization header:
+All API endpoints require JWT authentication. Include the token in the Authorization header:
 
 ```
-Authorization: Bearer <your_token>
+Authorization: Bearer <token>
 ```
 
-### Login
+## Role-Based Access
 
-```
+Each endpoint specifies which roles can access it. The roles are:
+
+- `PetOwner`: Pet owners accessing the client portal
+- `Veterinarian`: Veterinary doctors
+- `Nurse`: Veterinary nurses/paravets
+- `Receptionist`: Front desk staff
+- `Manager`: Practice managers
+- `CEO`: Clinic owners/CEOs
+
+## API Endpoints
+
+### Authentication
+
+#### Login
+
+```http
 POST /auth/login
 Content-Type: application/json
 
 {
-  "email": "user@example.com",
-  "password": "your_password"
+  "email": "string",
+  "password": "string"
 }
 ```
 
-Response:
+**Response**
+
 ```json
 {
-  "token": "eyJhbGciOiJIUzI1NiIs...",
+  "token": "string",
   "user": {
-    "id": "123",
-    "email": "user@example.com",
-    "firstName": "John",
-    "lastName": "Doe",
-    "role": "Veterinarian"
+    "id": "uuid",
+    "email": "string",
+    "role": "string",
+    "firstName": "string",
+    "lastName": "string"
   }
 }
 ```
 
-## MVP Endpoints
+**Access**: Public
 
 ### Clients
 
 #### List Clients
-```
+
+```http
 GET /clients
 ```
 
-Query Parameters:
-- `search` (optional): Search by name or phone
-- `page` (optional): Page number (default: 1)
-- `pageSize` (optional): Items per page (default: 20)
+**Query Parameters**
 
-Response:
+- `search`: Search by name or email
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 20)
+
+**Response**
+
 ```json
 {
-  "data": [
+  "items": [
     {
-      "id": "client_123",
-      "firstName": "Jane",
-      "lastName": "Smith",
-      "email": "jane.smith@example.com",
-      "phone": "+1-555-123-4567",
-      "address": "123 Main St, City, State"
+      "id": "uuid",
+      "firstName": "string",
+      "lastName": "string",
+      "email": "string",
+      "phone": "string",
+      "address": "string",
+      "patientCount": "number"
     }
   ],
-  "totalCount": 45,
-  "page": 1,
-  "pageSize": 20
+  "total": "number",
+  "page": "number",
+  "limit": "number"
 }
 ```
 
+**Access**: Veterinarian, Nurse, Receptionist, Manager, CEO
+
 #### Get Client
-```
+
+```http
 GET /clients/{id}
 ```
 
-#### Create Client
+**Response**
+
+```json
+{
+  "id": "uuid",
+  "firstName": "string",
+  "lastName": "string",
+  "email": "string",
+  "phone": "string",
+  "address": "string",
+  "patients": [
+    {
+      "id": "uuid",
+      "name": "string",
+      "species": "string",
+      "breed": "string",
+      "dateOfBirth": "date",
+      "weight": "number"
+    }
+  ]
+}
 ```
+
+**Access**:
+
+- PetOwner (own pets only)
+- Veterinarian, Nurse, Receptionist, Manager, CEO (all clients)
+
+#### Create Client
+
+```http
 POST /clients
 Content-Type: application/json
 
 {
-  "firstName": "Jane",
-  "lastName": "Smith",
-  "email": "jane.smith@example.com",
-  "phone": "+1-555-123-4567",
-  "address": "123 Main St, City, State"
+  "firstName": "string",
+  "lastName": "string",
+  "email": "string",
+  "phone": "string",
+  "address": "string"
 }
 ```
 
+**Access**: Receptionist, Manager, CEO
+
 #### Update Client
-```
+
+```http
 PUT /clients/{id}
 Content-Type: application/json
 
 {
-  "firstName": "Jane",
-  "lastName": "Smith",
-  "email": "jane.smith@example.com",
-  "phone": "+1-555-123-4567",
-  "address": "123 Main St, City, State"
+  "firstName": "string",
+  "lastName": "string",
+  "email": "string",
+  "phone": "string",
+  "address": "string"
 }
 ```
+
+**Access**: Receptionist, Manager, CEO
 
 ### Patients
 
 #### List Patients
-```
+
+```http
 GET /patients
 ```
 
-Query Parameters:
-- `clientId` (optional): Filter by client
-- `search` (optional): Search by name
-- `page` (optional): Page number
-- `pageSize` (optional): Items per page
+**Query Parameters**
 
-Response:
+- `clientId`: Filter by client
+- `search`: Search by name
+- `page`: Page number
+- `limit`: Items per page
+
+**Response**
+
 ```json
 {
-  "data": [
+  "items": [
     {
-      "id": "patient_123",
-      "clientId": "client_456",
-      "name": "Max",
-      "species": "Canine",
-      "breed": "Golden Retriever",
-      "dateOfBirth": "2020-06-15",
-      "weight": 30.5
+      "id": "uuid",
+      "name": "string",
+      "species": "string",
+      "breed": "string",
+      "clientName": "string",
+      "dateOfBirth": "date",
+      "weight": "number"
     }
   ],
-  "totalCount": 120,
-  "page": 1,
-  "pageSize": 20
+  "total": "number",
+  "page": "number",
+  "limit": "number"
 }
 ```
 
+**Access**:
+
+- PetOwner (own pets only)
+- Veterinarian, Nurse, Receptionist, Manager, CEO (all patients)
+
 #### Get Patient
-```
+
+```http
 GET /patients/{id}
 ```
 
-#### Create Patient
+**Response**
+
+```json
+{
+  "id": "uuid",
+  "name": "string",
+  "species": "string",
+  "breed": "string",
+  "dateOfBirth": "date",
+  "weight": "number",
+  "client": {
+    "id": "uuid",
+    "firstName": "string",
+    "lastName": "string"
+  },
+  "medicalRecords": [
+    {
+      "id": "uuid",
+      "visitDate": "date",
+      "chiefComplaint": "string",
+      "veterinarianName": "string"
+    }
+  ]
+}
 ```
+
+**Access**:
+
+- PetOwner (own pets only)
+- Veterinarian, Nurse, Receptionist, Manager, CEO (all patients)
+
+#### Create Patient
+
+```http
 POST /patients
 Content-Type: application/json
 
 {
-  "clientId": "client_456",
-  "name": "Max",
-  "species": "Canine",
-  "breed": "Golden Retriever",
-  "dateOfBirth": "2020-06-15",
-  "weight": 30.5
+  "name": "string",
+  "species": "string",
+  "breed": "string",
+  "dateOfBirth": "date",
+  "weight": "number",
+  "clientId": "uuid"
 }
 ```
 
+**Access**: Receptionist, Manager, CEO
+
 #### Update Patient
-```
+
+```http
 PUT /patients/{id}
 Content-Type: application/json
 
 {
-  "name": "Max",
-  "species": "Canine",
-  "breed": "Golden Retriever",
-  "dateOfBirth": "2020-06-15",
-  "weight": 31.0
+  "name": "string",
+  "species": "string",
+  "breed": "string",
+  "dateOfBirth": "date",
+  "weight": "number"
 }
 ```
+
+**Access**: Receptionist, Manager, CEO
 
 ### Appointments
 
 #### List Appointments
-```
+
+```http
 GET /appointments
 ```
 
-Query Parameters:
-- `date` (optional): Filter by date (YYYY-MM-DD)
-- `veterinarianId` (optional): Filter by veterinarian
-- `status` (optional): Filter by status
+**Query Parameters**
 
-Response:
+- `startDate`: Filter by start date
+- `endDate`: Filter by end date
+- `veterinarianId`: Filter by veterinarian
+- `status`: Filter by status
+- `page`: Page number
+- `limit`: Items per page
+
+**Response**
+
 ```json
 {
-  "data": [
+  "items": [
     {
-      "id": "appt_123",
-      "patientId": "patient_123",
-      "patientName": "Max",
-      "clientId": "client_456",
-      "clientName": "Jane Smith",
-      "veterinarianId": "user_789",
-      "veterinarianName": "Dr. Johnson",
-      "startTime": "2025-05-02T09:00:00Z",
-      "endTime": "2025-05-02T09:30:00Z",
-      "type": "Consultation",
-      "status": "Scheduled",
-      "notes": "Annual check-up"
+      "id": "uuid",
+      "startTime": "datetime",
+      "endTime": "datetime",
+      "type": "string",
+      "status": "string",
+      "patient": {
+        "id": "uuid",
+        "name": "string",
+        "species": "string"
+      },
+      "client": {
+        "id": "uuid",
+        "firstName": "string",
+        "lastName": "string"
+      },
+      "veterinarian": {
+        "id": "uuid",
+        "firstName": "string",
+        "lastName": "string"
+      }
     }
-  ]
+  ],
+  "total": "number",
+  "page": "number",
+  "limit": "number"
 }
 ```
 
-#### Get Appointment
-```
-GET /appointments/{id}
-```
+**Access**:
+
+- PetOwner (own pets only)
+- Veterinarian, Nurse, Receptionist, Manager, CEO (all appointments)
 
 #### Create Appointment
-```
+
+```http
 POST /appointments
 Content-Type: application/json
 
 {
-  "patientId": "patient_123",
-  "veterinarianId": "user_789",
-  "startTime": "2025-05-02T09:00:00Z",
-  "endTime": "2025-05-02T09:30:00Z",
-  "type": "Consultation",
-  "notes": "Annual check-up"
+  "patientId": "uuid",
+  "veterinarianId": "uuid",
+  "startTime": "datetime",
+  "endTime": "datetime",
+  "type": "string",
+  "notes": "string"
 }
 ```
 
+**Access**: PetOwner, Receptionist, Manager, CEO
+
 #### Update Appointment
-```
+
+```http
 PUT /appointments/{id}
 Content-Type: application/json
 
 {
-  "startTime": "2025-05-02T10:00:00Z",
-  "endTime": "2025-05-02T10:30:00Z",
-  "status": "Rescheduled",
-  "notes": "Client requested time change"
+  "startTime": "datetime",
+  "endTime": "datetime",
+  "type": "string",
+  "status": "string",
+  "notes": "string"
 }
 ```
 
-#### Cancel Appointment
-```
-POST /appointments/{id}/cancel
-Content-Type: application/json
-
-{
-  "reason": "Client cancelled"
-}
-```
+**Access**: Receptionist, Manager, CEO
 
 ### Medical Records
 
 #### List Medical Records
-```
-GET /patients/{patientId}/medical-records
+
+```http
+GET /medical-records
 ```
 
-Response:
+**Query Parameters**
+
+- `patientId`: Filter by patient
+- `startDate`: Filter by start date
+- `endDate`: Filter by end date
+- `page`: Page number
+- `limit`: Items per page
+
+**Response**
+
 ```json
 {
-  "data": [
+  "items": [
     {
-      "id": "record_123",
-      "patientId": "patient_123",
-      "veterinarianId": "user_789",
-      "visitDate": "2025-05-02T09:00:00Z",
-      "chiefComplaint": "Annual check-up",
-      "subjective": "Owner reports normal appetite and behavior",
-      "objective": "T: 101.5°F, HR: 80 bpm, RR: 20 bpm",
-      "assessment": "Healthy adult dog",
-      "plan": "Continue current diet, schedule next annual",
-      "prescriptions": "Heartworm preventative - 12 months"
+      "id": "uuid",
+      "visitDate": "datetime",
+      "chiefComplaint": "string",
+      "patient": {
+        "id": "uuid",
+        "name": "string"
+      },
+      "veterinarian": {
+        "id": "uuid",
+        "firstName": "string",
+        "lastName": "string"
+      }
     }
-  ]
+  ],
+  "total": "number",
+  "page": "number",
+  "limit": "number"
 }
 ```
 
+**Access**:
+
+- PetOwner (own pets only)
+- Veterinarian, Nurse, Receptionist, Manager, CEO (all records)
+
 #### Get Medical Record
-```
+
+```http
 GET /medical-records/{id}
 ```
 
-#### Create Medical Record
+**Response**
+
+```json
+{
+  "id": "uuid",
+  "patientId": "uuid",
+  "veterinarianId": "uuid",
+  "visitDate": "datetime",
+  "chiefComplaint": "string",
+  "subjective": "string",
+  "objective": "string",
+  "assessment": "string",
+  "plan": "string",
+  "prescriptions": "string"
+}
 ```
+
+**Access**:
+
+- PetOwner (own pets only)
+- Veterinarian, Nurse, Receptionist, Manager, CEO (all records)
+
+#### Create Medical Record
+
+```http
 POST /medical-records
 Content-Type: application/json
 
 {
-  "patientId": "patient_123",
-  "appointmentId": "appt_123",
-  "chiefComplaint": "Annual check-up",
-  "subjective": "Owner reports normal appetite and behavior",
-  "objective": "T: 101.5°F, HR: 80 bpm, RR: 20 bpm",
-  "assessment": "Healthy adult dog",
-  "plan": "Continue current diet, schedule next annual",
-  "prescriptions": "Heartworm preventative - 12 months"
+  "patientId": "uuid",
+  "visitDate": "datetime",
+  "chiefComplaint": "string",
+  "subjective": "string",
+  "objective": "string",
+  "assessment": "string",
+  "plan": "string",
+  "prescriptions": "string"
 }
 ```
+
+**Access**: Veterinarian, Nurse
+
+#### Update Medical Record
+
+```http
+PUT /medical-records/{id}
+Content-Type: application/json
+
+{
+  "chiefComplaint": "string",
+  "subjective": "string",
+  "objective": "string",
+  "assessment": "string",
+  "plan": "string",
+  "prescriptions": "string"
+}
+```
+
+**Access**: Veterinarian, Nurse
 
 ### Invoices
 
 #### List Invoices
-```
+
+```http
 GET /invoices
 ```
 
-Query Parameters:
-- `clientId` (optional): Filter by client
-- `status` (optional): Filter by status (Draft, Sent, Paid)
-- `dateFrom` (optional): Start date
-- `dateTo` (optional): End date
+**Query Parameters**
 
-Response:
+- `startDate`: Filter by start date
+- `endDate`: Filter by end date
+- `status`: Filter by status
+- `page`: Page number
+- `limit`: Items per page
+
+**Response**
+
 ```json
 {
-  "data": [
+  "items": [
     {
-      "id": "invoice_123",
-      "appointmentId": "appt_123",
-      "clientId": "client_456",
-      "clientName": "Jane Smith",
-      "totalAmount": 125.00,
-      "paidAmount": 0.00,
-      "status": "Draft",
-      "createdDate": "2025-05-02T10:00:00Z",
-      "items": [
-        {
-          "description": "Consultation",
-          "quantity": 1,
-          "unitPrice": 75.00,
-          "totalPrice": 75.00
-        },
-        {
-          "description": "Vaccination",
-          "quantity": 1,
-          "unitPrice": 50.00,
-          "totalPrice": 50.00
-        }
-      ]
+      "id": "uuid",
+      "appointmentId": "uuid",
+      "totalAmount": "number",
+      "paidAmount": "number",
+      "status": "string",
+      "createdDate": "datetime",
+      "client": {
+        "id": "uuid",
+        "firstName": "string",
+        "lastName": "string"
+      }
+    }
+  ],
+  "total": "number",
+  "page": "number",
+  "limit": "number"
+}
+```
+
+**Access**:
+
+- PetOwner (own invoices only)
+- Veterinarian, Nurse, Receptionist, Manager, CEO (all invoices)
+
+#### Get Invoice
+
+```http
+GET /invoices/{id}
+```
+
+**Response**
+
+```json
+{
+  "id": "uuid",
+  "appointmentId": "uuid",
+  "totalAmount": "number",
+  "paidAmount": "number",
+  "status": "string",
+  "createdDate": "datetime",
+  "items": [
+    {
+      "id": "uuid",
+      "description": "string",
+      "quantity": "number",
+      "unitPrice": "number",
+      "totalPrice": "number"
     }
   ]
 }
 ```
 
-#### Get Invoice
-```
-GET /invoices/{id}
-```
+**Access**:
+
+- PetOwner (own invoices only)
+- Veterinarian, Nurse, Receptionist, Manager, CEO (all invoices)
 
 #### Create Invoice
-```
+
+```http
 POST /invoices
 Content-Type: application/json
 
 {
-  "appointmentId": "appt_123",
+  "appointmentId": "uuid",
   "items": [
     {
-      "description": "Consultation",
-      "quantity": 1,
-      "unitPrice": 75.00
-    },
-    {
-      "description": "Vaccination",
-      "quantity": 1,
-      "unitPrice": 50.00
+      "description": "string",
+      "quantity": "number",
+      "unitPrice": "number"
     }
   ]
 }
 ```
 
+**Access**: Veterinarian, Receptionist, Manager, CEO
+
 #### Update Invoice Status
-```
-POST /invoices/{id}/status
+
+```http
+PUT /invoices/{id}/status
 Content-Type: application/json
 
 {
-  "status": "Paid",
-  "paidAmount": 125.00
+  "status": "string",
+  "paidAmount": "number"
 }
 ```
 
-### Available Time Slots
-
-#### Get Available Slots
-```
-GET /appointments/available-slots
-```
-
-Query Parameters:
-- `date` (required): Date (YYYY-MM-DD)
-- `veterinarianId` (required): Veterinarian ID
-
-Response:
-```json
-{
-  "data": [
-    {
-      "start": "2025-05-02T09:00:00Z",
-      "end": "2025-05-02T09:30:00Z"
-    },
-    {
-      "start": "2025-05-02T10:00:00Z",
-      "end": "2025-05-02T10:30:00Z"
-    }
-  ]
-}
-```
+**Access**: Receptionist, Manager, CEO
 
 ## Error Responses
 
-The API uses standard HTTP status codes and returns errors in this format:
+All endpoints use standard HTTP status codes and return errors in this format:
 
 ```json
 {
   "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid input data",
-    "details": {
-      "email": "Invalid email format"
-    }
+    "code": "string",
+    "message": "string",
+    "details": "object"
   }
 }
 ```
 
-Common status codes:
-- `200` - Success
-- `201` - Created
-- `400` - Bad Request
-- `401` - Unauthorized
-- `403` - Forbidden
-- `404` - Not Found
-- `500` - Internal Server Error
+Common error codes:
+
+- `400`: Bad Request
+- `401`: Unauthorized
+- `403`: Forbidden (role-based access denied)
+- `404`: Not Found
+- `500`: Internal Server Error
 
 ## Rate Limiting
 
-The MVP API has a rate limit of 100 requests per minute per API token. Rate limit headers are included in responses:
-
-- `X-RateLimit-Limit`: 100
-- `X-RateLimit-Remaining`: 95
-- `X-RateLimit-Reset`: 1620000000
+- 100 requests per minute per IP
+- 1000 requests per hour per user
 
 ## Notes
 
-This is the MVP API specification. Additional endpoints and features will be added in future versions, including:
-- Advanced search capabilities
-- Inventory management
-- Multi-practice support
-- AI-assisted features
-- Third-party integrations
+- All timestamps are in ISO 8601 format
+- All monetary values are in decimal format
+- UUIDs are used for all IDs
+- Pagination is required for list endpoints
+- Search is case-insensitive
+- Multi-tenant isolation is handled automatically

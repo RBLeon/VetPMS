@@ -1,5 +1,5 @@
 // src/components/layout/ModernNavigation.tsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -59,21 +59,19 @@ export function ModernNavigation({ className }: ModernNavigationProps) {
         "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
     },
     {
-      title: "Calendar View",
-      href: "/calendar",
-      icon: CalendarRange,
-      active: location.pathname.includes("/calendar"),
-      color:
-        "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
-    },
-    {
-      title: "Clients & Patients",
+      title: "Clients",
       href: "/clients",
       icon: Users,
-      active:
-        location.pathname.includes("/clients") ||
-        location.pathname.includes("/patients"),
+      active: location.pathname.includes("/clients"),
       color: "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
+    },
+    {
+      title: "Patients",
+      href: "/patients",
+      icon: User,
+      active: location.pathname.includes("/patients"),
+      color:
+        "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
     },
     {
       title: "Medical Records",

@@ -1,0 +1,36 @@
+import type { Appointment, AppointmentStatus, AppointmentType } from "../types";
+
+export const mockAppointments: Appointment[] = [
+  {
+    id: "1",
+    patientId: "1",
+    clientId: "1",
+    providerId: "1",
+    date: "2024-03-20",
+    time: "09:00",
+    startTime: new Date("2024-03-20T09:00:00"),
+    endTime: new Date("2024-03-20T09:30:00"),
+    type: "CHECK_UP" as AppointmentType,
+    status: "SCHEDULED" as AppointmentStatus,
+    notes: "Regular check-up",
+    isRecurring: false,
+    createdAt: "2024-03-19T10:00:00Z",
+    updatedAt: "2024-03-19T10:00:00Z",
+  },
+  {
+    id: "2",
+    patientId: "2",
+    clientId: "2",
+    providerId: "1",
+    date: "2024-03-20",
+    time: "10:00",
+    startTime: new Date("2024-03-20T10:00:00"),
+    endTime: new Date("2024-03-20T10:30:00"),
+    type: "VACCINATION" as AppointmentType,
+    status: "CHECKED_IN" as AppointmentStatus,
+    notes: "Annual vaccination",
+    isRecurring: false,
+    createdAt: "2024-03-19T10:00:00Z",
+    updatedAt: "2024-03-19T10:00:00Z",
+  },
+];

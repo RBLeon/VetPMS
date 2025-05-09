@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, Menu, X, PlusCircle } from "lucide-react";
 import { Button } from "../../components/ui/button";
@@ -22,6 +22,7 @@ export function ContextAwareNavigation({
   className,
 }: ContextAwareNavigationProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { roleConfig, userNavItems, quickActions } = useRole();
   const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +31,17 @@ export function ContextAwareNavigation({
   // Close navigation when route changes
   useEffect(() => {
     setIsOpen(false);
+    setShowQuickActions(false);
   }, [location.pathname]);
+
+  const handleQuickActionClick = (action: QuickAction) => {
+    if (action.onClick) {
+      action.onClick();
+    } else if (action.href) {
+      navigate(action.href);
+    }
+    setShowQuickActions(false);
+  };
 
   return (
     <>
@@ -77,7 +88,7 @@ export function ContextAwareNavigation({
           )}
         </AnimatePresence>
 
-        {/* Quick Actions Menu - Uses role-based quick actions */}
+        {/* Quick Actions Menu */}
         <AnimatePresence>
           {showQuickActions && (
             <motion.div
@@ -92,6 +103,7 @@ export function ContextAwareNavigation({
                 variant="ghost"
                 className="ml-auto h-10 w-10 rounded-full"
                 onClick={() => setShowQuickActions(false)}
+                aria-label="Close quick actions"
               >
                 <X className="h-5 w-5" />
               </Button>

@@ -1,0 +1,46 @@
+import type { StaffMember } from "../types";
+
+export const mockStaffMembers: StaffMember[] = [
+  {
+    id: "1",
+    firstName: "Sarah",
+    lastName: "Johnson",
+    email: "sarah@vetclinic.com",
+    phone: "555-0101",
+    role: "VETERINARIAN",
+    specialization: "General Practice",
+    hoursWorked: 40,
+    schedule: {
+      monday: ["09:00", "17:00"],
+      tuesday: ["09:00", "17:00"],
+      wednesday: ["09:00", "17:00"],
+      thursday: ["09:00", "17:00"],
+      friday: ["09:00", "17:00"],
+      saturday: [],
+      sunday: [],
+    },
+    createdAt: "2024-03-19T10:00:00Z",
+    updatedAt: "2024-03-19T10:00:00Z",
+  },
+  {
+    id: "2",
+    firstName: "Emily",
+    lastName: "Davis",
+    email: "emily@vetclinic.com",
+    phone: "555-0102",
+    role: "NURSE",
+    specialization: "Patient Care",
+    hoursWorked: 40,
+    schedule: {
+      monday: ["08:00", "16:00"],
+      tuesday: ["08:00", "16:00"],
+      wednesday: ["08:00", "16:00"],
+      thursday: ["08:00", "16:00"],
+      friday: ["08:00", "16:00"],
+      saturday: [],
+      sunday: [],
+    },
+    createdAt: "2024-03-19T10:00:00Z",
+    updatedAt: "2024-03-19T10:00:00Z",
+  },
+];
