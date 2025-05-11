@@ -73,12 +73,12 @@ interface Appointment {
   endTime: Date;
   notes?: string;
   status:
-    | "SCHEDULED"
-    | "CHECKED_IN"
-    | "IN_PROGRESS"
-    | "COMPLETED"
-    | "CANCELED"
-    | "NO_SHOW";
+    | "INGEPLAND"
+    | "AANGEMELD"
+    | "IN_BEHANDELING"
+    | "VOLTOOID"
+    | "GEANNULEERD"
+    | "NIET_VERSCHENEN";
 }
 
 const AppointmentScheduler: React.FC = () => {
@@ -131,26 +131,41 @@ const AppointmentScheduler: React.FC = () => {
       setTimeout(() => {
         // Mock resources
         const mockResources: Resource[] = [
-          { id: "1", name: "Dr. Smith", type: "PROVIDER", color: "#4338ca" },
-          { id: "2", name: "Dr. Johnson", type: "PROVIDER", color: "#0891b2" },
-          { id: "3", name: "Exam Room 1", type: "ROOM" },
-          { id: "4", name: "Exam Room 2", type: "ROOM" },
-          { id: "5", name: "Exam Room 3", type: "ROOM" },
-          { id: "6", name: "Ultrasound", type: "EQUIPMENT" },
+          { id: "1", name: "Dhr. Jansen", type: "PROVIDER", color: "#4338ca" },
+          {
+            id: "2",
+            name: "Dhr. de Vries",
+            type: "PROVIDER",
+            color: "#0891b2",
+          },
+          { id: "3", name: "Onderzoekskamer 1", type: "ROOM" },
+          { id: "4", name: "Onderzoekskamer 2", type: "ROOM" },
+          { id: "5", name: "Onderzoekskamer 3", type: "ROOM" },
+          { id: "6", name: "Echografie", type: "EQUIPMENT" },
         ];
 
         // Mock appointment types
         const mockAppointmentTypes: AppointmentType[] = [
-          { id: "1", name: "Check-up", color: "#22c55e", defaultDuration: 30 },
-          { id: "2", name: "Surgery", color: "#ef4444", defaultDuration: 90 },
+          { id: "1", name: "Controle", color: "#22c55e", defaultDuration: 30 },
+          { id: "2", name: "Operatie", color: "#ef4444", defaultDuration: 90 },
           {
             id: "3",
-            name: "Vaccination",
+            name: "Vaccinatie",
             color: "#3b82f6",
             defaultDuration: 15,
           },
-          { id: "4", name: "Dental", color: "#f97316", defaultDuration: 60 },
-          { id: "5", name: "Emergency", color: "#dc2626", defaultDuration: 45 },
+          {
+            id: "4",
+            name: "Tandheelkunde",
+            color: "#f97316",
+            defaultDuration: 60,
+          },
+          {
+            id: "5",
+            name: "Spoedgeval",
+            color: "#dc2626",
+            defaultDuration: 45,
+          },
         ];
 
         // Mock appointments
@@ -161,56 +176,56 @@ const AppointmentScheduler: React.FC = () => {
             patientId: "p1",
             patientName: "Max",
             clientId: "c1",
-            clientName: "John Smith",
+            clientName: "Jan de Vries",
             providerId: "1",
             resourceIds: ["1", "3"],
             typeId: "1",
             type: mockAppointmentTypes[0],
             startTime: new Date(today.setHours(9, 0, 0)),
             endTime: new Date(today.setHours(9, 30, 0)),
-            status: "COMPLETED",
+            status: "VOLTOOID",
           },
           {
             id: "2",
             patientId: "p2",
             patientName: "Bella",
             clientId: "c2",
-            clientName: "Emma Johnson",
+            clientName: "Emma Jansen",
             providerId: "1",
             resourceIds: ["1", "3"],
             typeId: "3",
             type: mockAppointmentTypes[2],
             startTime: new Date(today.setHours(10, 0, 0)),
             endTime: new Date(today.setHours(10, 15, 0)),
-            status: "CHECKED_IN",
+            status: "AANGEMELD",
           },
           {
             id: "3",
             patientId: "p3",
             patientName: "Charlie",
             clientId: "c3",
-            clientName: "Michael Brown",
+            clientName: "Michael Bakker",
             providerId: "2",
             resourceIds: ["2", "4"],
             typeId: "4",
             type: mockAppointmentTypes[3],
             startTime: new Date(today.setHours(11, 0, 0)),
             endTime: new Date(today.setHours(12, 0, 0)),
-            status: "SCHEDULED",
+            status: "INGEPLAND",
           },
           {
             id: "4",
             patientId: "p4",
             patientName: "Luna",
             clientId: "c4",
-            clientName: "Sophia Davis",
+            clientName: "Sophia Visser",
             providerId: "2",
             resourceIds: ["2", "5", "6"],
             typeId: "2",
             type: mockAppointmentTypes[1],
             startTime: new Date(today.setHours(13, 30, 0)),
             endTime: new Date(today.setHours(15, 0, 0)),
-            status: "SCHEDULED",
+            status: "INGEPLAND",
           },
         ];
 
@@ -262,9 +277,9 @@ const AppointmentScheduler: React.FC = () => {
 
     const newAppointment: Appointment = {
       id: `new-${Date.now()}`,
-      patientId: newAppointmentForm.patientId || "unknown",
+      patientId: newAppointmentForm.patientId || "onbekend",
       patientName: newAppointmentForm.patientName,
-      clientId: "unknown",
+      clientId: "onbekend",
       clientName: newAppointmentForm.clientName,
       providerId: newAppointmentForm.providerId,
       resourceIds: newAppointmentForm.providerId
@@ -275,7 +290,7 @@ const AppointmentScheduler: React.FC = () => {
       startTime: startDateTime,
       endTime: endDateTime,
       notes: newAppointmentForm.notes,
-      status: "SCHEDULED",
+      status: "INGEPLAND",
     };
 
     // Add to appointments list
@@ -308,23 +323,23 @@ const AppointmentScheduler: React.FC = () => {
         {
           id: "p1",
           name: "Max",
-          species: "Dog",
+          species: "Hond",
           breed: "Labrador",
-          clientName: "John Smith",
+          clientName: "Jan de Vries",
         },
         {
           id: "p2",
           name: "Bella",
-          species: "Cat",
-          breed: "Persian",
-          clientName: "Emma Johnson",
+          species: "Kat",
+          breed: "Pers",
+          clientName: "Emma Jansen",
         },
         {
           id: "p5",
           name: "Milo",
-          species: "Dog",
+          species: "Hond",
           breed: "Beagle",
-          clientName: "David Wilson",
+          clientName: "David Bakker",
         },
       ].filter(
         (p) =>
@@ -413,7 +428,7 @@ const AppointmentScheduler: React.FC = () => {
       top: `${topPercentage}%`,
       height: `${heightPercentage}%`,
       backgroundColor: appt.type.color,
-      opacity: appt.status === "CANCELED" ? 0.5 : 1,
+      opacity: appt.status === "GEANNULEERD" ? 0.5 : 1,
     };
   };
 
@@ -428,11 +443,9 @@ const AppointmentScheduler: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            Appointment Scheduler
+            Afspraak Planner
           </h1>
-          <p className="text-muted-foreground">
-            Schedule and manage patient appointments
-          </p>
+          <p className="text-muted-foreground">Afspraak plannen en beheren</p>
         </div>
 
         <div className="flex items-center space-x-2">
@@ -440,7 +453,7 @@ const AppointmentScheduler: React.FC = () => {
             <ChevronLeftIcon className="h-4 w-4" />
           </Button>
           <Button variant="outline" size="sm" onClick={goToToday}>
-            Today
+            Vandaag
           </Button>
           <Button variant="outline" size="sm" onClick={goToNextDay}>
             <ChevronRightIcon className="h-4 w-4" />
@@ -472,7 +485,7 @@ const AppointmentScheduler: React.FC = () => {
 
           <Button onClick={() => setIsNewAppointmentModalOpen(true)}>
             <PlusIcon className="h-4 w-4 mr-2" />
-            New Appointment
+            Nieuwe Afspraak
           </Button>
         </div>
       </div>
@@ -490,7 +503,7 @@ const AppointmentScheduler: React.FC = () => {
               {/* Header row with resources */}
               <div className="flex border-b">
                 <div className="w-20 shrink-0 px-4 py-3 font-medium text-center border-r">
-                  Time
+                  Tijd
                 </div>
                 {resources
                   .filter((r) => r.type === "PROVIDER") // Only show providers in the header
@@ -561,20 +574,20 @@ const AppointmentScheduler: React.FC = () => {
       >
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>New Appointment</DialogTitle>
+            <DialogTitle>Nieuwe Afspraak</DialogTitle>
             <DialogDescription>
-              Schedule a new appointment for a patient.
+              Afspraak plannen voor een patiënt.
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
             {/* Patient Selection */}
             <div className="space-y-2">
-              <Label htmlFor="patient">Patient</Label>
+              <Label htmlFor="patient">Patiënt</Label>
               <div className="relative">
                 <Input
                   id="patient"
-                  placeholder="Search patient..."
+                  placeholder="Patiënt zoeken..."
                   value={patientSearchQuery}
                   onClick={() => setIsPatientSearchOpen(true)}
                   onChange={(e) => handlePatientSearch(e.target.value)}
@@ -586,7 +599,7 @@ const AppointmentScheduler: React.FC = () => {
                     <div className="p-3">
                       {patientSearchResults.length === 0 ? (
                         <p className="text-sm text-muted-foreground p-2">
-                          No patients found. Type to search...
+                          Geen patiënten gevonden. Typ om te zoeken...
                         </p>
                       ) : (
                         <div className="max-h-48 overflow-auto">
@@ -643,7 +656,7 @@ const AppointmentScheduler: React.FC = () => {
 
             {/* Appointment Type */}
             <div className="space-y-2">
-              <Label htmlFor="appointmentType">Appointment Type</Label>
+              <Label htmlFor="appointmentType">Afspraak Type</Label>
               <Select
                 value={newAppointmentForm.typeId}
                 onValueChange={(value) => {
@@ -658,7 +671,7 @@ const AppointmentScheduler: React.FC = () => {
                 }}
               >
                 <SelectTrigger id="appointmentType" className="w-full">
-                  <SelectValue placeholder="Select appointment type" />
+                  <SelectValue placeholder="Afspraak type selecteren" />
                 </SelectTrigger>
                 <SelectContent>
                   {appointmentTypes.map((type) => (
@@ -692,7 +705,7 @@ const AppointmentScheduler: React.FC = () => {
                 }
               >
                 <SelectTrigger id="provider" className="w-full">
-                  <SelectValue placeholder="Select provider" />
+                  <SelectValue placeholder="Provider selecteren" />
                 </SelectTrigger>
                 <SelectContent>
                   {resources
@@ -709,7 +722,7 @@ const AppointmentScheduler: React.FC = () => {
             {/* Date and Time */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Date</Label>
+                <Label>Datum</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -720,7 +733,7 @@ const AppointmentScheduler: React.FC = () => {
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {newAppointmentForm.date
                         ? format(newAppointmentForm.date, "PPP")
-                        : "Select date"}
+                        : "Datum selecteren"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -739,7 +752,7 @@ const AppointmentScheduler: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="startTime">Start Time</Label>
+                <Label htmlFor="startTime">Start Tijd</Label>
                 <div className="flex items-center space-x-2">
                   <Select
                     value={newAppointmentForm.startTime}
@@ -751,7 +764,7 @@ const AppointmentScheduler: React.FC = () => {
                     }
                   >
                     <SelectTrigger id="startTime" className="w-full">
-                      <SelectValue placeholder="Select time" />
+                      <SelectValue placeholder="Tijd selecteren" />
                     </SelectTrigger>
                     <SelectContent>
                       {Array.from({ length: 24 }, (_, hour) => {
@@ -791,7 +804,7 @@ const AppointmentScheduler: React.FC = () => {
             {/* Duration */}
             <div className="space-y-2">
               <div className="flex justify-between">
-                <Label htmlFor="duration">Duration (minutes)</Label>
+                <Label htmlFor="duration">Duur (minuten)</Label>
                 <span className="text-sm text-muted-foreground">
                   {new Date(
                     0,
@@ -857,10 +870,10 @@ const AppointmentScheduler: React.FC = () => {
 
             {/* Notes */}
             <div className="space-y-2">
-              <Label htmlFor="notes">Notes</Label>
+              <Label htmlFor="notes">Notities</Label>
               <Textarea
                 id="notes"
-                placeholder="Add any additional information..."
+                placeholder="Extra informatie toevoegen..."
                 value={newAppointmentForm.notes}
                 onChange={(e) =>
                   setNewAppointmentForm((prev) => ({
@@ -877,7 +890,7 @@ const AppointmentScheduler: React.FC = () => {
               variant="outline"
               onClick={() => setIsNewAppointmentModalOpen(false)}
             >
-              Cancel
+              Annuleren
             </Button>
             <Button
               onClick={handleCreateNewAppointment}
@@ -887,7 +900,7 @@ const AppointmentScheduler: React.FC = () => {
                 !newAppointmentForm.providerId
               }
             >
-              Create Appointment
+              Afspraak Plannen
             </Button>
           </DialogFooter>
         </DialogContent>

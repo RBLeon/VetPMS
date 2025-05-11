@@ -12,24 +12,28 @@ const ContextPanel: React.FC<ContextPanelProps> = ({ actions }) => {
   const [isExpanded, setIsExpanded] = React.useState(true);
 
   return (
-    <div 
+    <div
       className={`border-l border-border transition-all duration-300 ${
         isExpanded ? "w-64" : "w-12"
       }`}
     >
       <div className="h-full flex flex-col">
         <div className="p-2 flex justify-between items-center border-b border-border">
-          {isExpanded && <h3 className="text-sm font-medium">Actions</h3>}
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          {isExpanded && <h3 className="text-sm font-medium">Acties</h3>}
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setIsExpanded(!isExpanded)}
             className={isExpanded ? "" : "mx-auto"}
           >
-            <PanelRightOpenIcon className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+            <PanelRightOpenIcon
+              className={`h-4 w-4 transition-transform ${
+                isExpanded ? "rotate-180" : ""
+              }`}
+            />
           </Button>
         </div>
-        
+
         {isExpanded && (
           <ScrollArea className="flex-1">
             <div className="p-4 space-y-4">
@@ -47,13 +51,13 @@ const ContextPanel: React.FC<ContextPanelProps> = ({ actions }) => {
                 ))
               ) : (
                 <div className="text-sm text-muted-foreground text-center p-4">
-                  No actions available for current context
+                  Geen acties beschikbaar voor huidige context
                 </div>
               )}
             </div>
           </ScrollArea>
         )}
-        
+
         {!isExpanded && actions.length > 0 && (
           <div className="flex flex-col items-center p-2 space-y-4">
             {actions.slice(0, 4).map((action) => (
@@ -69,7 +73,9 @@ const ContextPanel: React.FC<ContextPanelProps> = ({ actions }) => {
               </Button>
             ))}
             {actions.length > 4 && (
-              <div className="text-xs text-muted-foreground">+{actions.length - 4}</div>
+              <div className="text-xs text-muted-foreground">
+                +{actions.length - 4}
+              </div>
             )}
           </div>
         )}

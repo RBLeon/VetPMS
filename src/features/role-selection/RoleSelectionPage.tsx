@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../lib/context/AuthContext";
-import { RoleSelector } from "./RoleSelector";
 import { useRole } from "../../lib/context/RoleContext";
 import { Button } from "../../components/ui/button";
 import {
@@ -12,39 +11,41 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { ScrollArea } from "../../components/ui/scroll-area";
+import type { Role } from "@/lib/api/types";
 
-const roles = [
-  {
-    id: "receptionist",
-    title: "Receptionist",
-    description: "Manage appointments, clients, and front desk operations",
-    icon: "👋",
-  },
-  {
-    id: "veterinarian",
-    title: "Veterinarian",
-    description: "Handle patient care, medical records, and treatments",
-    icon: "👨‍⚕️",
-  },
-  {
-    id: "nurse",
-    title: "Nurse",
-    description: "Assist with patient care and medical procedures",
-    icon: "👩‍⚕️",
-  },
-  {
-    id: "manager",
-    title: "Manager",
-    description: "Oversee operations, staff, and business metrics",
-    icon: "👔",
-  },
-  {
-    id: "ceo",
-    title: "CEO",
-    description: "Access all features and business analytics",
-    icon: "👑",
-  },
-];
+const roles: { id: Role; title: string; description: string; icon: string }[] =
+  [
+    {
+      id: "RECEPTIONIST",
+      title: "Receptioniste",
+      description: "Beheer afspraken, klanten en balie",
+      icon: "👋",
+    },
+    {
+      id: "VETERINARIAN",
+      title: "Dierenarts",
+      description: "Beheer patiëntenzorg, medische dossiers en behandelingen",
+      icon: "👨‍⚕️",
+    },
+    {
+      id: "NURSE",
+      title: "Verpleegkundige",
+      description: "Assisteer bij patiëntenzorg en medische procedures",
+      icon: "👩‍⚕️",
+    },
+    {
+      id: "MANAGER",
+      title: "Manager",
+      description: "Beheer operaties, personeel en bedrijfsresultaten",
+      icon: "👔",
+    },
+    {
+      id: "CEO",
+      title: "CEO",
+      description: "Toegang tot alle functies en bedrijfsanalyses",
+      icon: "👑",
+    },
+  ];
 
 const RoleSelectionPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -58,7 +59,7 @@ const RoleSelectionPage: React.FC = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleRoleSelect = (roleId: string) => {
+  const handleRoleSelect = (roleId: Role) => {
     setRole(roleId);
     navigate("/");
   };
@@ -66,7 +67,7 @@ const RoleSelectionPage: React.FC = () => {
   return (
     <div className="container mx-auto py-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Select Your Role</h1>
+        <h1 className="text-3xl font-bold mb-8">Selecteer Uw Rol</h1>
         <ScrollArea className="h-[calc(100vh-12rem)]">
           <div className="grid gap-6">
             {roles.map((role) => (
@@ -85,7 +86,7 @@ const RoleSelectionPage: React.FC = () => {
                     onClick={() => handleRoleSelect(role.id)}
                     className="w-full"
                   >
-                    Select {role.title}
+                    Selecteer {role.title}
                   </Button>
                 </CardContent>
               </Card>

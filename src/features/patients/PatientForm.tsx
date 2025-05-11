@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { usePatient, useCreatePatient } from "@/lib/hooks/useApi";
-import { PageHeader } from "@/components/ui/page-header";
+import { useNavigate } from "react-router-dom";
+import { useCreatePatient, useUpdatePatient } from "@/lib/hooks/useApi";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,293 +10,280 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import type { Patient } from "@/lib/api/types";
 
-interface PatientFormData {
-  clientId: string;
-  name: string;
-  species: "DOG" | "CAT" | "BIRD" | "REPTILE" | "SMALL_MAMMAL" | "OTHER";
-  breed: string;
-  age: number;
-  weight: number;
-  dateOfBirth: string;
-  gender: "male" | "female" | "unknown";
-  microchipNumber?: string;
-  color?: string;
-  allergies?: string[];
-  medicalConditions?: string[];
-  notes?: string;
+const patientSchema = z.object({
+  name: z.string().min(1, "Naam is verplicht"),
+  species: z.enum([
+    "HOND",
+    "KAT",
+    "VOGEL",
+    "REPTIEL",
+    "KLEIN_ZOOGDIER",
+    "ANDERS",
+  ]),
+  breed: z.string().min(1, "Ras is verplicht"),
+  gender: z.enum(["mannelijk", "vrouwelijk", "onbekend"]),
+  age: z.number().min(0, "Leeftijd moet positief zijn"),
+  weight: z.number().min(0, "Gewicht moet positief zijn"),
+  microchipNumber: z.string().optional(),
+  color: z.string().optional(),
+  clientId: z.string().min(1, "Eigenaar is verplicht"),
+  dateOfBirth: z.string().min(1, "Geboortedatum is verplicht"),
+  status: z.enum(["ACTIVE", "INACTIVE", "UNDER_CARE", "DECEASED"]),
+  needsVitalsCheck: z.boolean(),
+});
+
+type PatientFormData = z.infer<typeof patientSchema>;
+
+interface PatientFormProps {
+  patient?: Patient;
+  onSubmit?: (data: PatientFormData) => Promise<void>;
+  isLoading?: boolean;
+  error?: Error;
 }
 
-interface FormErrors {
-  clientId?: string;
-  name?: string;
-  species?: string;
-  breed?: string;
-  age?: string;
-  weight?: string;
-  gender?: string;
-  dateOfBirth?: string;
-  microchipNumber?: string;
-  color?: string;
-  allergies?: string;
-  medicalConditions?: string;
-  notes?: string;
-}
-
-const initialFormData: PatientFormData = {
-  clientId: "",
-  name: "",
-  species: "DOG",
-  breed: "",
-  age: 0,
-  weight: 0,
-  dateOfBirth: "",
-  gender: "unknown",
-  microchipNumber: "",
-  color: "",
-  allergies: [],
-  medicalConditions: [],
-  notes: "",
-};
-
-const speciesOptions = [
-  { value: "DOG", label: "Dog" },
-  { value: "CAT", label: "Cat" },
-  { value: "BIRD", label: "Bird" },
-  { value: "REPTILE", label: "Reptile" },
-  { value: "SMALL_MAMMAL", label: "Small Mammal" },
-  { value: "OTHER", label: "Other" },
-];
-
-const PatientForm: React.FC = () => {
+export const PatientForm: React.FC<PatientFormProps> = ({
+  patient,
+  onSubmit: propOnSubmit,
+  isLoading: propIsLoading,
+  error: propError,
+}) => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
-  const [searchParams] = useSearchParams();
-  const isEditing = !!id;
-  const defaultClientId = searchParams.get("clientId") || "";
-  const { toast } = useToast();
+  const { mutateAsync: createPatient } = useCreatePatient();
+  const { mutateAsync: updatePatient } = useUpdatePatient();
 
   const {
-    data: patient,
-    isLoading: isLoadingPatient,
-    error: patientError,
-  } = usePatient(id || "");
-  const createPatient = useCreatePatient();
-
-  const [formData, setFormData] = useState<PatientFormData>({
-    ...initialFormData,
-    clientId: defaultClientId,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<PatientFormData>({
+    resolver: zodResolver(patientSchema),
+    defaultValues: patient
+      ? {
+          ...patient,
+          dateOfBirth: patient.dateOfBirth,
+          status: patient.status,
+          needsVitalsCheck: patient.needsVitalsCheck,
+          clientId: patient.clientId,
+        }
+      : {
+          status: "ACTIVE",
+          needsVitalsCheck: false,
+          clientId: "1", // TODO: Get from auth context
+        },
   });
-  const [errors, setErrors] = useState<FormErrors>({});
 
-  React.useEffect(() => {
-    if (patient) {
-      setFormData({
-        name: patient.name,
-        species: patient.species,
-        breed: patient.breed,
-        age: patient.age,
-        weight: patient.weight,
-        clientId: patient.clientId,
-        dateOfBirth: patient.dateOfBirth
-          ? new Date(patient.dateOfBirth).toISOString().split("T")[0]
-          : "",
-        gender: patient.gender,
-        microchipNumber: patient.microchipNumber || "",
-        color: patient.color || "",
-        allergies: patient.allergies || [],
-        medicalConditions: patient.medicalConditions || [],
-        notes: patient.notes || "",
-      });
-    }
-  }, [patient]);
+  const isLoading = propIsLoading;
+  const error = propError;
 
-  const handleBack = () => {
-    navigate(-1);
-  };
-
-  const onFinish = async (values: any) => {
+  const onSubmit = async (data: PatientFormData) => {
     try {
-      await createPatient.mutateAsync(values);
-      toast({
-        title: "Success",
-        description: "Patient created successfully",
-      });
+      if (propOnSubmit) {
+        await propOnSubmit(data);
+      } else if (patient) {
+        await updatePatient({ id: patient.id, data });
+      } else {
+        const now = new Date().toISOString();
+        await createPatient({
+          ...data,
+          createdAt: now,
+          updatedAt: now,
+          registrationDate: now,
+          lastVisit: now,
+        });
+      }
       navigate("/patients");
     } catch (error) {
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to create patient",
-        variant: "destructive",
-      });
+      console.error("Error saving patient:", error);
+      throw new Error("Opslaan mislukt");
     }
   };
-
-  const handleChange = (
-    e:
-      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      | {
-          name: keyof PatientFormData;
-          value: PatientFormData[keyof PatientFormData];
-        }
-  ) => {
-    const { name, value } = "target" in e ? e.target : e;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "age" || name === "weight" ? Number(value) : value,
-    }));
-    // Clear error when user starts typing
-    if (errors[name as keyof FormErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  };
-
-  if (isLoadingPatient) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
-        <span className="ml-2">Loading patient data...</span>
-      </div>
-    );
-  }
-
-  if (patientError) {
-    return (
-      <Alert variant="destructive">
-        <AlertDescription>
-          Error loading patient: {patientError.message}
-        </AlertDescription>
-      </Alert>
-    );
-  }
 
   return (
-    <div className="container mx-auto py-6 space-y-4">
-      <PageHeader
-        title={isEditing ? "Edit Patient" : "Add New Patient"}
-        description="Add or update patient information"
-      >
-        <Button
-          variant="outline"
-          onClick={() => navigate("/patients")}
-          className="gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Patients
+    <div className="container mx-auto py-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">
+          {patient ? "Patiënt Bewerken" : "Nieuwe Patiënt"}
+        </h1>
+        <Button variant="outline" onClick={() => navigate("/patients")}>
+          Terug
         </Button>
-      </PageHeader>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Patient Information</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={onFinish} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-              {errors.name && (
-                <p className="text-sm text-red-500">{errors.name}</p>
-              )}
-            </div>
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error.message}</AlertDescription>
+        </Alert>
+      )}
 
-            <div className="space-y-2">
-              <Label htmlFor="species">Species</Label>
-              <Select
-                name="species"
-                value={formData.species}
-                onValueChange={(value) =>
-                  handleChange({ name: "species", value })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select species" />
-                </SelectTrigger>
-                <SelectContent>
-                  {speciesOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.species && (
-                <p className="text-sm text-red-500">{errors.species}</p>
-              )}
-            </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label htmlFor="name">Naam</Label>
+            <Input
+              id="name"
+              {...register("name")}
+              placeholder="Naam van de patiënt"
+            />
+            {errors.name && (
+              <p className="text-sm text-red-500">{errors.name.message}</p>
+            )}
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="breed">Breed</Label>
-              <Input
-                id="breed"
-                name="breed"
-                value={formData.breed}
-                onChange={handleChange}
-                required
-              />
-              {errors.breed && (
-                <p className="text-sm text-red-500">{errors.breed}</p>
-              )}
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="species">Soort</Label>
+            <Select
+              defaultValue={patient?.species}
+              onValueChange={(value) =>
+                register("species").onChange({ target: { value } })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecteer soort" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="HOND">Hond</SelectItem>
+                <SelectItem value="KAT">Kat</SelectItem>
+                <SelectItem value="VOGEL">Vogel</SelectItem>
+                <SelectItem value="REPTIEL">Reptiel</SelectItem>
+                <SelectItem value="KLEIN_ZOOGDIER">Klein zoogdier</SelectItem>
+                <SelectItem value="ANDERS">Anders</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.species && (
+              <p className="text-sm text-red-500">{errors.species.message}</p>
+            )}
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="weight">Weight (kg)</Label>
-              <Input
-                id="weight"
-                name="weight"
-                type="number"
-                min={0}
-                step={0.1}
-                value={formData.weight}
-                onChange={handleChange}
-                required
-              />
-              {errors.weight && (
-                <p className="text-sm text-red-500">{errors.weight}</p>
-              )}
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="breed">Ras</Label>
+            <Input
+              id="breed"
+              {...register("breed")}
+              placeholder="Bijv. Labrador, Siamees, etc."
+            />
+            {errors.breed && (
+              <p className="text-sm text-red-500">{errors.breed.message}</p>
+            )}
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="notes">Notes</Label>
-              <Input
-                id="notes"
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="gender">Geslacht</Label>
+            <Select
+              defaultValue={patient?.gender}
+              onValueChange={(value) =>
+                register("gender").onChange({ target: { value } })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecteer geslacht" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="mannelijk">Mannetje</SelectItem>
+                <SelectItem value="vrouwelijk">Vrouwtje</SelectItem>
+                <SelectItem value="onbekend">Onbekend</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.gender && (
+              <p className="text-sm text-red-500">{errors.gender.message}</p>
+            )}
+          </div>
 
-            <div className="flex justify-end gap-4">
-              <Button type="button" variant="outline" onClick={handleBack}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={createPatient.isPending}>
-                {createPatient.isPending ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  "Create Patient"
-                )}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+          <div className="space-y-2">
+            <Label htmlFor="age">Leeftijd (jaren)</Label>
+            <Input
+              id="age"
+              type="number"
+              {...register("age", { valueAsNumber: true })}
+              placeholder="0"
+            />
+            {errors.age && (
+              <p className="text-sm text-red-500">{errors.age.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="weight">Gewicht (kg)</Label>
+            <Input
+              id="weight"
+              type="number"
+              step="0.1"
+              {...register("weight", { valueAsNumber: true })}
+              placeholder="0.0"
+            />
+            {errors.weight && (
+              <p className="text-sm text-red-500">{errors.weight.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="dateOfBirth">Geboortedatum</Label>
+            <Input id="dateOfBirth" type="date" {...register("dateOfBirth")} />
+            {errors.dateOfBirth && (
+              <p className="text-sm text-red-500">
+                {errors.dateOfBirth.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="microchipNumber">Chipnummer (optioneel)</Label>
+            <Input
+              id="microchipNumber"
+              {...register("microchipNumber")}
+              placeholder="Chipnummer"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="color">Kleur (optioneel)</Label>
+            <Input id="color" {...register("color")} placeholder="Kleur" />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="status">Status</Label>
+            <Select
+              defaultValue={patient?.status || "ACTIVE"}
+              onValueChange={(value) =>
+                register("status").onChange({ target: { value } })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecteer status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ACTIVE">Actief</SelectItem>
+                <SelectItem value="INACTIVE">Inactief</SelectItem>
+                <SelectItem value="UNDER_CARE">Onder behandeling</SelectItem>
+                <SelectItem value="DECEASED">Overleden</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.status && (
+              <p className="text-sm text-red-500">{errors.status.message}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-end space-x-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate("/patients")}
+          >
+            Annuleren
+          </Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {patient ? "Opslaan" : "Toevoegen"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 };
-
-export { PatientForm };

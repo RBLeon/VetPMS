@@ -1,19 +1,7 @@
-import { createContext, useContext } from "react";
+import React, { createContext, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
-
-interface Appointment {
-  id: string;
-  date: string;
-  time: string;
-  type: string;
-  status: "SCHEDULED" | "CHECKED_IN" | "COMPLETED" | "CANCELLED";
-  patientId: string;
-  patientName: string;
-  patientType: string;
-  clientId: string;
-  staffId: string;
-  isNewClient: boolean;
-}
+import { Appointment } from "@/lib/api/types";
+import { useAuth } from "./AuthContext";
 
 interface AppointmentContextType {
   data: Appointment[] | undefined;
@@ -21,36 +9,31 @@ interface AppointmentContextType {
   error: Error | null;
 }
 
-const AppointmentContext = createContext<AppointmentContextType | undefined>(
-  undefined
-);
+const AppointmentContext = createContext<AppointmentContextType>({
+  data: undefined,
+  isLoading: false,
+  error: null,
+});
 
-export function AppointmentProvider({
+export const useAppointments = () => useContext(AppointmentContext);
+
+export const AppointmentProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}) => {
+  const { isAuthenticated } = useAuth();
+
   const { data, isLoading, error } = useQuery<Appointment[]>({
     queryKey: ["appointments"],
     queryFn: async () => {
-      // TODO: Replace with actual API call
-      return [
-        {
-          id: "1",
-          date: new Date().toISOString().split("T")[0],
-          time: "10:00 AM",
-          type: "Check-up",
-          status: "SCHEDULED",
-          patientId: "1",
-          patientName: "Max",
-          patientType: "German Shepherd",
-          clientId: "1",
-          staffId: "1",
-          isNewClient: false,
-        },
-        // Add more mock data as needed
-      ];
+      const response = await fetch("/api/appointments");
+      if (!response.ok) throw new Error("Failed to fetch appointments");
+      const appointments = await response.json();
+      return appointments.map((appointment: any) => ({
+        ...appointment,
+        patientName: appointment.patient?.name || "Unknown Patient",
+      }));
     },
+    enabled: isAuthenticated,
   });
 
   return (
@@ -60,14 +43,4 @@ export function AppointmentProvider({
       {children}
     </AppointmentContext.Provider>
   );
-}
-
-export function useAppointments() {
-  const context = useContext(AppointmentContext);
-  if (context === undefined) {
-    throw new Error(
-      "useAppointments must be used within an AppointmentProvider"
-    );
-  }
-  return context;
-}
+};

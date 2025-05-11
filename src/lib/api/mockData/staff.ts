@@ -3,12 +3,12 @@ import type { StaffMember } from "../types";
 export const mockStaffMembers: StaffMember[] = [
   {
     id: "1",
-    firstName: "Sarah",
-    lastName: "Johnson",
-    email: "sarah@vetclinic.com",
-    phone: "555-0101",
+    firstName: "Sanne",
+    lastName: "Jansen",
+    email: "sanne@dierenkliniek.nl",
+    phone: "06-12345678",
     role: "VETERINARIAN",
-    specialization: "General Practice",
+    specialization: "Algemene Praktijk",
     hoursWorked: 40,
     schedule: {
       monday: ["09:00", "17:00"],
@@ -24,12 +24,12 @@ export const mockStaffMembers: StaffMember[] = [
   },
   {
     id: "2",
-    firstName: "Emily",
-    lastName: "Davis",
-    email: "emily@vetclinic.com",
-    phone: "555-0102",
+    firstName: "Emma",
+    lastName: "de Vries",
+    email: "emma@dierenkliniek.nl",
+    phone: "06-87654321",
     role: "NURSE",
-    specialization: "Patient Care",
+    specialization: "Patiëntenzorg",
     hoursWorked: 40,
     schedule: {
       monday: ["08:00", "16:00"],

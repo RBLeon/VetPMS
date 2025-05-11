@@ -50,15 +50,15 @@ const LoginPage: React.FC = () => {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary">VetPMS PMS</h1>
           <p className="text-muted-foreground mt-2">
-            Modern Practice Management for Veterinarians
+            Modern Praktijkbeheer voor Dierenartsen
           </p>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Sign In</CardTitle>
+            <CardTitle>Inloggen</CardTitle>
             <CardDescription>
-              Enter your credentials to access the system
+              Voer uw inloggegevens in om toegang te krijgen tot het systeem
             </CardDescription>
           </CardHeader>
 
@@ -72,7 +72,7 @@ const LoginPage: React.FC = () => {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username">Gebruikersnaam</Label>
                 <Input
                   id="username"
                   value={username}
@@ -82,7 +82,7 @@ const LoginPage: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Wachtwoord</Label>
                 <Input
                   id="password"
                   type="password"
@@ -93,9 +93,9 @@ const LoginPage: React.FC = () => {
               </div>
             </CardContent>
 
-            <CardFooter>
+            <CardFooter className="pt-4">
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Signing in..." : "Sign In"}
+                {isSubmitting ? "Bezig met inloggen..." : "Inloggen"}
               </Button>
             </CardFooter>
           </form>

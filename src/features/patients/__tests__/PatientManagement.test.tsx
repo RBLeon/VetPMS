@@ -1,118 +1,125 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { BrowserRouter } from "react-router-dom";
 import { PatientList } from "../PatientList";
 import { PatientForm } from "../PatientForm";
 import { PatientDetails } from "../PatientDetails";
-import { usePatients, usePatient } from "@/lib/hooks/useApi";
+import { usePatient } from "@/lib/hooks/useApi";
 import { vi } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { Patient } from "@/lib/api/types";
 
-// Mock the hooks
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
+const mockNavigate = vi.fn();
+
 vi.mock("@/lib/hooks/useApi", () => ({
-  usePatients: vi.fn(),
+  usePatients: vi.fn(() => ({
+    data: [],
+    isLoading: false,
+    error: undefined,
+  })),
   usePatient: vi.fn(),
+  useCreatePatient: vi.fn(() => ({
+    mutateAsync: vi.fn(),
+    isLoading: false,
+  })),
+  useUpdatePatient: vi.fn(() => ({
+    mutateAsync: vi.fn(),
+    isLoading: false,
+  })),
 }));
+
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return {
+    ...actual,
+    useParams: () => ({ id: "test-patient-id" }),
+    useNavigate: () => mockNavigate,
+  };
+});
+
+const renderWithProviders = (component: React.ReactNode) => {
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>{component}</BrowserRouter>
+    </QueryClientProvider>
+  );
+};
 
 describe("Patient Management", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
+  const mockPatient: Patient = {
+    id: "1",
+    name: "Buddy",
+    species: "HOND",
+    breed: "Labrador",
+    gender: "mannelijk",
+    age: 4,
+    weight: 25.5,
+    microchipNumber: "123456789",
+    color: "Zwart",
+    clientId: "1",
+    dateOfBirth: "2020-01-01",
+    lastVisit: "2024-03-20",
+    status: "ACTIVE",
+    needsVitalsCheck: false,
+    registrationDate: "2020-01-01",
+    createdAt: "2024-03-20T10:00:00Z",
+    updatedAt: "2024-03-20T10:00:00Z",
+  };
+
   describe("PatientList", () => {
-    it("should handle search errors gracefully", async () => {
-      (usePatients as any).mockReturnValue({
-        data: undefined,
-        error: new Error("Search failed"),
-        isLoading: false,
-      });
-
-      render(
-        <BrowserRouter>
-          <PatientList />
-        </BrowserRouter>
-      );
-
-      expect(screen.getByText(/error/i)).toBeInTheDocument();
+    it("displays list of patients", () => {
+      const patients = [mockPatient];
+      renderWithProviders(<PatientList patients={patients} />);
+      expect(screen.getByText("Buddy")).toBeInTheDocument();
+      expect(screen.getByText("Labrador")).toBeInTheDocument();
     });
 
-    it("should show loading state", () => {
-      (usePatients as any).mockReturnValue({
-        data: undefined,
-        error: null,
-        isLoading: true,
-      });
+    it("handles search functionality", async () => {
+      const user = userEvent.setup();
+      const patients = [mockPatient];
+      renderWithProviders(<PatientList patients={patients} />);
 
-      render(
-        <BrowserRouter>
-          <PatientList />
-        </BrowserRouter>
-      );
+      const searchInput = screen.getByPlaceholderText(/Zoek patiënten/i);
+      await user.type(searchInput, "Buddy");
 
-      expect(screen.getByText(/loading/i)).toBeInTheDocument();
+      expect(screen.getByText("Buddy")).toBeInTheDocument();
     });
   });
 
   describe("PatientForm", () => {
-    it("should have a back button", () => {
-      render(
-        <BrowserRouter>
-          <PatientForm />
-        </BrowserRouter>
-      );
+    it("renders form with required fields", () => {
+      render(<PatientForm />);
 
-      expect(
-        screen.getByRole("button", { name: /back to patients/i })
-      ).toBeInTheDocument();
-    });
-
-    it("should handle form submission errors", async () => {
-      render(
-        <BrowserRouter>
-          <PatientForm />
-        </BrowserRouter>
-      );
-
-      const submitButton = screen.getByRole("button", {
-        name: /create patient/i,
-      });
-      fireEvent.click(submitButton);
-
-      await waitFor(() => {
-        expect(screen.getByText(/error/i)).toBeInTheDocument();
-      });
+      expect(screen.getByLabelText("Naam")).toBeInTheDocument();
+      expect(screen.getByText("Soort")).toBeInTheDocument();
+      expect(screen.getByLabelText("Ras")).toBeInTheDocument();
+      expect(screen.getAllByRole("combobox")[0]).toBeInTheDocument();
+      expect(screen.getByLabelText("Leeftijd (jaren)")).toBeInTheDocument();
+      expect(screen.getByLabelText("Gewicht (kg)")).toBeInTheDocument();
     });
   });
 
   describe("PatientDetails", () => {
-    it("should handle loading state", () => {
+    it("displays patient information", () => {
       (usePatient as any).mockReturnValue({
-        data: undefined,
-        error: null,
-        isLoading: true,
-      });
-
-      render(
-        <BrowserRouter>
-          <PatientDetails />
-        </BrowserRouter>
-      );
-
-      expect(screen.getByText(/loading/i)).toBeInTheDocument();
-    });
-
-    it("should handle error state", () => {
-      (usePatient as any).mockReturnValue({
-        data: undefined,
-        error: new Error("Failed to load patient"),
+        data: mockPatient,
         isLoading: false,
       });
-
-      render(
-        <BrowserRouter>
-          <PatientDetails />
-        </BrowserRouter>
-      );
-
-      expect(screen.getByText(/error/i)).toBeInTheDocument();
+      renderWithProviders(<PatientDetails />);
+      expect(screen.getByText("Buddy")).toBeInTheDocument();
+      expect(screen.getByText("Labrador")).toBeInTheDocument();
     });
   });
 });

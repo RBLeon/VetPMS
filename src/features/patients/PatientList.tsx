@@ -10,16 +10,34 @@ import type { Patient } from "@/lib/api/types";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 
-export const PatientList = () => {
+interface PatientListProps {
+  patients?: Patient[];
+  isLoading?: boolean;
+  error?: Error;
+}
+
+export const PatientList: React.FC<PatientListProps> = ({
+  patients: propPatients,
+  isLoading: propIsLoading,
+  error: propError,
+}) => {
   const navigate = useNavigate();
-  const { data: patients = [], isLoading, error } = usePatients();
+  const {
+    data: hookPatients = [],
+    isLoading: hookIsLoading = false,
+    error: hookError = undefined,
+  } = usePatients() || {};
   const [searchQuery, setSearchQuery] = useState("");
+
+  const patients = propPatients || hookPatients;
+  const isLoading = propIsLoading || hookIsLoading;
+  const error = propError || hookError;
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="h-8 w-8 animate-spin" />
-        <span className="ml-2">Loading patients...</span>
+        <span className="ml-2">Laden...</span>
       </div>
     );
   }
@@ -28,7 +46,7 @@ export const PatientList = () => {
     return (
       <Alert variant="destructive">
         <AlertDescription>
-          Error loading patients: {error.message}
+          Fout bij het laden van patiënten: {error.message}
         </AlertDescription>
       </Alert>
     );
@@ -43,48 +61,48 @@ export const PatientList = () => {
 
   const columns = [
     {
-      header: "Name",
+      header: "Naam",
       accessorKey: "name",
     },
     {
-      header: "Species",
+      header: "Soort",
       accessorKey: "species",
     },
     {
-      header: "Breed",
+      header: "Ras",
       accessorKey: "breed",
     },
     {
-      header: "Gender",
+      header: "Geslacht",
       accessorKey: "gender",
       cell: ({ row }: { row: { original: Patient } }) =>
         row.original.gender
           ? row.original.gender.charAt(0).toUpperCase() +
             row.original.gender.slice(1)
-          : "Unknown",
+          : "Onbekend",
     },
     {
-      header: "Age",
+      header: "Leeftijd",
       accessorKey: "age",
       cell: ({ row }: { row: { original: Patient } }) =>
-        `${row.original.age} years`,
+        `${row.original.age} jaar`,
     },
     {
-      header: "Weight",
+      header: "Gewicht",
       accessorKey: "weight",
       cell: ({ row }: { row: { original: Patient } }) =>
         `${row.original.weight} kg`,
     },
     {
-      header: "Last Visit",
+      header: "Laatste Bezoek",
       accessorKey: "lastVisit",
       cell: ({ row }: { row: { original: Patient } }) => {
         const lastVisit = row.original.lastVisit;
-        if (!lastVisit) return "No visits";
+        if (!lastVisit) return "Geen bezoeken";
         try {
-          return format(new Date(lastVisit), "MMM d, yyyy");
+          return format(new Date(lastVisit), "d MMM yyyy");
         } catch (error) {
-          return "Invalid date";
+          return "Ongeldige datum";
         }
       },
     },
@@ -93,16 +111,16 @@ export const PatientList = () => {
   return (
     <div className="container mx-auto py-6 space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Patients</h1>
+        <h1 className="text-2xl font-bold">Patiënten</h1>
         <Button onClick={() => navigate("/patients/new")}>
           <Plus className="h-4 w-4 mr-2" />
-          Add Patient
+          Patiënt Toevoegen
         </Button>
       </div>
 
       <div className="flex items-center gap-4">
         <SearchInput
-          placeholder="Search patients..."
+          placeholder="Zoek patiënten..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onSearch={setSearchQuery}
@@ -112,7 +130,7 @@ export const PatientList = () => {
 
       {filteredPatients.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
-          No patients found matching your search criteria.
+          Geen patiënten gevonden die aan uw zoekcriteria voldoen.
         </div>
       ) : (
         <DataTable

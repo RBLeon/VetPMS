@@ -1,158 +1,141 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
-
-export interface User {
-  id: string;
-  username: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  roles: UserRole[];
-  role?: string; // Added for role-based UI adaptation
-}
-
-export interface UserRole {
-  id: string;
-  name: string;
-  tenantId: string;
-  permissions: string[];
-}
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { User, RegisterData } from "@/lib/api/types";
 
 interface AuthContextType {
   user: User | null;
-  isAuthenticated: boolean;
   isLoading: boolean;
+  isAuthenticated: boolean;
   error: string | null;
-  backendType: "animana" | "VetPMS";
-  login: (username: string, password: string) => Promise<void>;
-  logout: () => void;
-  toggleBackendType: () => void;
-  hasPermission: (permission: string, tenantId?: string) => boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (token: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem("vc_user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [backendType, setBackendType] = useState<"animana" | "VetPMS">(
-    "animana"
-  );
 
+  // Update localStorage when user changes
   useEffect(() => {
-    // Check for existing session
-    const checkAuth = async () => {
-      try {
-        // In real app, validate token with API
-        const storedUser = localStorage.getItem("vc_user");
-        const storedBackend = localStorage.getItem("vc_backend");
+    if (user) {
+      localStorage.setItem("vc_user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("vc_user");
+    }
+  }, [user]);
 
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
-          if (storedBackend === "VetPMS") {
-            setBackendType("VetPMS");
-          }
-        }
-      } catch {
-        setError("Authentication session expired");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  const login = async (username: string, password: string): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-
+  const login = async (email: string, _password: string) => {
     try {
-      // Mock authentication - would be replaced with real API call
-      if (username === "demo" && password === "demo") {
-        const mockUser: User = {
-          id: "1",
-          username: "demo",
-          email: "demo@VetPMS.example",
-          firstName: "Demo",
-          lastName: "User",
-          roles: [
-            {
-              id: "1",
-              name: "Veterinarian",
-              tenantId: "2", // Amsterdam clinic
-              permissions: [
-                "appointments.read",
-                "appointments.write",
-                "patients.read",
-                "patients.write",
-                "medical_records.read",
-                "medical_records.write",
-              ],
-            },
-          ],
-        };
-
-        setUser(mockUser);
-        localStorage.setItem("vc_user", JSON.stringify(mockUser));
-        localStorage.setItem("vc_backend", backendType);
-      } else {
-        throw new Error("Invalid credentials");
-      }
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "Login failed");
+      setIsLoading(true);
+      setError(null);
+      // TODO: Implement actual login logic
+      const mockUser: User = {
+        id: "1",
+        email,
+        role: "VETERINARIAN",
+        permissions: [],
+        tenantId: "1",
+        username: "testuser",
+      };
+      setUser(mockUser);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("vc_user");
+  const register = async (data: RegisterData) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      // TODO: Implement actual registration logic
+      const mockUser: User = {
+        id: "1",
+        email: data.email,
+        role: "VETERINARIAN",
+        permissions: [],
+        tenantId: "1",
+        username: data.email,
+      };
+      setUser(mockUser);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const toggleBackendType = () => {
-    const newType = backendType === "animana" ? "VetPMS" : "animana";
-    setBackendType(newType);
-    localStorage.setItem("vc_backend", newType);
+  const forgotPassword = async (_email: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      // TODO: Implement actual forgot password logic
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const hasPermission = (permission: string, tenantId?: string): boolean => {
-    if (!user) return false;
-
-    return user.roles.some((role) => {
-      // Check if role is for the specified tenant or any tenant if not specified
-      const tenantMatch = tenantId ? role.tenantId === tenantId : true;
-      return tenantMatch && role.permissions.includes(permission);
-    });
+  const resetPassword = async (_token: string, _password: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      // TODO: Implement actual reset password logic
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const value = {
-    user,
-    isAuthenticated: !!user,
-    isLoading,
-    error,
-    backendType,
-    login,
-    logout,
-    toggleBackendType,
-    hasPermission,
+  const logout = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      setUser(null);
+      // Clear all auth-related state from localStorage
+      localStorage.removeItem("vc_user");
+      localStorage.removeItem("vc_role");
+      localStorage.removeItem("vc_theme");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading,
+        isAuthenticated: !!user,
+        error,
+        login,
+        register,
+        forgotPassword,
+        resetPassword,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
-export const useAuth = (): AuthContextType => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");

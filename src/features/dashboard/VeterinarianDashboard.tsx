@@ -28,22 +28,30 @@ export const VeterinarianDashboard: React.FC = () => {
   const { isLoading: clientsLoading } = useClients();
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
   const [showRecordDetails, setShowRecordDetails] = useState(false);
+  const [appointmentsState, setAppointmentsState] = useState<any[]>([]);
 
   const isLoading =
     appointmentsLoading || recordsLoading || patientsLoading || clientsLoading;
 
   const today = format(new Date(), "yyyy-MM-dd");
 
+  const appointmentsToUse =
+    appointmentsState.length > 0 ? appointmentsState : appointments;
+
   const getTodayAppointments = () => {
-    return appointments?.filter((apt) => apt.date.startsWith(today)) || [];
+    return appointmentsToUse?.filter((apt) => apt.date.startsWith(today)) || [];
   };
 
   const getWaitingRoom = () => {
-    return appointments?.filter((apt) => apt.status === "CHECKED_IN") || [];
+    return (
+      appointmentsToUse?.filter(
+        (apt) => apt.status === "AANGEMELD" || apt.status === "IN_BEHANDELING"
+      ) || []
+    );
   };
 
   const getCompletedAppointments = () => {
-    return appointments?.filter((apt) => apt.status === "COMPLETED") || [];
+    return appointments?.filter((apt) => apt.status === "VOLTOOID") || [];
   };
 
   const getRecentRecords = () => {
@@ -61,6 +69,14 @@ export const VeterinarianDashboard: React.FC = () => {
   const waitingRoom = getWaitingRoom();
   const completedAppointments = getCompletedAppointments();
   const recentRecords = getRecentRecords();
+
+  const handleStartAppointment = (id: string) => {
+    setAppointmentsState((prev) =>
+      (prev.length > 0 ? prev : appointments).map((apt) =>
+        apt.id === id ? { ...apt, status: "IN_BEHANDELING" } : apt
+      )
+    );
+  };
 
   if (isLoading) {
     return (
@@ -89,7 +105,7 @@ export const VeterinarianDashboard: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Today's Appointments
+              Afspraken Vandaag
             </CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -100,7 +116,7 @@ export const VeterinarianDashboard: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Patients in Queue
+              Patiëntenwachtrij
             </CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -111,7 +127,7 @@ export const VeterinarianDashboard: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Completed Today
+              Vandaag Voltooid
             </CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -124,7 +140,7 @@ export const VeterinarianDashboard: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Patients
+              Totaal Aantal Patiënten
             </CardTitle>
             <User className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -137,7 +153,7 @@ export const VeterinarianDashboard: React.FC = () => {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Today's Appointments</CardTitle>
+            <CardTitle>Afspraken Vandaag</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -160,18 +176,25 @@ export const VeterinarianDashboard: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <Badge
                         variant={
-                          appointment.status === "COMPLETED"
+                          appointment.status === "VOLTOOID"
                             ? "default"
-                            : appointment.status === "CHECKED_IN"
+                            : appointment.status === "AANGEMELD" ||
+                              appointment.status === "IN_BEHANDELING"
                             ? "secondary"
                             : "outline"
                         }
                       >
-                        {appointment.status}
+                        {appointment.status === "IN_BEHANDELING"
+                          ? "In Behandeling"
+                          : appointment.status}
                       </Badge>
-                      {appointment.status === "scheduled" && (
-                        <Button variant="outline" size="sm">
-                          Start Appointment
+                      {appointment.status === "INGEPLAND" && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleStartAppointment(appointment.id)}
+                        >
+                          Afspraak Starten
                         </Button>
                       )}
                     </div>
@@ -184,7 +207,7 @@ export const VeterinarianDashboard: React.FC = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Patient Queue</CardTitle>
+            <CardTitle>Patiëntenwachtrij</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -205,8 +228,8 @@ export const VeterinarianDashboard: React.FC = () => {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary">Waiting</Badge>
-                      <Badge variant="destructive">High Priority</Badge>
+                      <Badge variant="secondary">Wachten</Badge>
+                      <Badge variant="destructive">Hoge Prioriteit</Badge>
                     </div>
                   </div>
                 );
@@ -219,27 +242,29 @@ export const VeterinarianDashboard: React.FC = () => {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Clinical Tasks</CardTitle>
+            <CardTitle>Klinische Taken</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between rounded-lg border p-4">
                 <div className="space-y-1">
-                  <p className="text-sm font-medium">Lab Results Pending</p>
+                  <p className="text-sm font-medium">
+                    Lab Resultaten in Afwachting
+                  </p>
                   <p className="text-xs text-muted-foreground">
-                    Blood work for Max
+                    Bloedonderzoek voor Max
                   </p>
                 </div>
                 <Badge variant="destructive">Urgent</Badge>
               </div>
               <div className="flex items-center justify-between rounded-lg border p-4">
                 <div className="space-y-1">
-                  <p className="text-sm font-medium">Prescriptions to Review</p>
+                  <p className="text-sm font-medium">Recepten te Controleren</p>
                   <p className="text-xs text-muted-foreground">
-                    Antibiotics for Luna
+                    Antibiotica voor Luna
                   </p>
                 </div>
-                <Badge variant="secondary">Pending</Badge>
+                <Badge variant="secondary">In Afwachting</Badge>
               </div>
             </div>
           </CardContent>
@@ -247,66 +272,23 @@ export const VeterinarianDashboard: React.FC = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Quick Stats</CardTitle>
+            <CardTitle>Recente Medische Dossiers</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between rounded-lg border p-4">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Patients Seen Today</p>
-                  <p className="text-2xl font-bold">2</p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between rounded-lg border p-4">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">
-                    Average Consultation Time
-                  </p>
-                  <p className="text-2xl font-bold">30 min</p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between rounded-lg border p-4">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Follow-up Rate</p>
-                  <p className="text-2xl font-bold">85%</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Medical Records</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {recentRecords.map((record) => {
-              const patient = patients.find((p) => p.id === record.patientId);
-              return (
-                <div
-                  key={record.id}
-                  className="flex items-center justify-between rounded-lg border p-4"
-                >
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium">{patient?.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {record.diagnosis}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      variant={
-                        record.status === "ACTIVE"
-                          ? "default"
-                          : record.status === "RESOLVED"
-                          ? "secondary"
-                          : "outline"
-                      }
-                    >
-                      {record.status}
-                    </Badge>
+              {recentRecords.map((record) => {
+                const patient = patients.find((p) => p.id === record.patientId);
+                return (
+                  <div
+                    key={record.id}
+                    className="flex items-center justify-between rounded-lg border p-4"
+                  >
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">{patient?.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {format(new Date(record.date), "dd-MM-yyyy")}
+                      </p>
+                    </div>
                     <Button
                       variant="outline"
                       size="sm"
@@ -315,33 +297,33 @@ export const VeterinarianDashboard: React.FC = () => {
                         setShowRecordDetails(true);
                       }}
                     >
-                      View Details
+                      Details Bekijken
                     </Button>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       <Dialog open={showRecordDetails} onOpenChange={setShowRecordDetails}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Medical Record Details</DialogTitle>
+            <DialogTitle>Medisch Dossier Details</DialogTitle>
           </DialogHeader>
           {selectedRecord && (
             <div className="space-y-4">
               <div>
-                <h3 className="font-medium">Diagnosis</h3>
-                <p>{selectedRecord.diagnosis}</p>
+                <h3 className="font-medium">Diagnose</h3>
+                <p>Diagnose: {selectedRecord.diagnosis}</p>
               </div>
               <div>
-                <h3 className="font-medium">Treatment</h3>
+                <h3 className="font-medium">Behandeling</h3>
                 <p>{selectedRecord.treatment}</p>
               </div>
               <div>
-                <h3 className="font-medium">Notes</h3>
+                <h3 className="font-medium">Notities</h3>
                 <p>{selectedRecord.notes}</p>
               </div>
             </div>

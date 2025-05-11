@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, Menu, X, PlusCircle } from "lucide-react";
 import { Button } from "../../components/ui/button";
@@ -22,11 +22,11 @@ export function ContextAwareNavigation({
   className,
 }: ContextAwareNavigationProps) {
   const location = useLocation();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { roleConfig, userNavItems, quickActions } = useRole();
   const [isOpen, setIsOpen] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
+  const quickActionsRef = useRef<HTMLDivElement>(null);
 
   // Close navigation when route changes
   useEffect(() => {
@@ -34,14 +34,25 @@ export function ContextAwareNavigation({
     setShowQuickActions(false);
   }, [location.pathname]);
 
-  const handleQuickActionClick = (action: QuickAction) => {
-    if (action.onClick) {
-      action.onClick();
-    } else if (action.href) {
-      navigate(action.href);
+  // Handle click outside for quick actions
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        quickActionsRef.current &&
+        !quickActionsRef.current.contains(event.target as Node)
+      ) {
+        setShowQuickActions(false);
+      }
+    };
+
+    if (showQuickActions) {
+      document.addEventListener("mousedown", handleClickOutside);
     }
-    setShowQuickActions(false);
-  };
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showQuickActions]);
 
   return (
     <>
@@ -92,6 +103,7 @@ export function ContextAwareNavigation({
         <AnimatePresence>
           {showQuickActions && (
             <motion.div
+              ref={quickActionsRef}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
@@ -103,7 +115,7 @@ export function ContextAwareNavigation({
                 variant="ghost"
                 className="ml-auto h-10 w-10 rounded-full"
                 onClick={() => setShowQuickActions(false)}
-                aria-label="Close quick actions"
+                aria-label="Snel acties sluiten"
               >
                 <X className="h-5 w-5" />
               </Button>
@@ -235,7 +247,7 @@ export function ContextAwareNavigation({
 
             <div className="space-y-6">
               <div className="space-y-2">
-                <h2 className="text-lg font-medium">Navigation</h2>
+                <h2 className="text-lg font-medium">Navigatie</h2>
                 <nav className="grid gap-2">
                   {userNavItems.map((item) => {
                     // Check if the current path matches this item
@@ -272,7 +284,7 @@ export function ContextAwareNavigation({
               </div>
 
               <div className="space-y-2">
-                <h2 className="text-lg font-medium">Quick Actions</h2>
+                <h2 className="text-lg font-medium">Snel Acties</h2>
                 <div className="grid gap-2">
                   {quickActions.map((action) =>
                     action.onClick ? (
@@ -316,11 +328,11 @@ export function ContextAwareNavigation({
               <FeatureGated feature="showAdvancedClinical">
                 <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
                   <h3 className="mb-2 font-medium text-amber-800 dark:text-amber-300">
-                    Clinical Mode Active
+                    Klinische Modus Actief
                   </h3>
                   <p className="text-sm text-amber-700 dark:text-amber-400">
-                    You have access to advanced clinical features based on your
-                    role as {roleConfig.displayName}.
+                    U heeft toegang tot geavanceerde klinische functies op basis
+                    van uw rol als {roleConfig.displayName}.
                   </p>
                 </div>
               </FeatureGated>

@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 interface InventoryItem {
   id: string;
   name: string;
-  category: "MEDICATION" | "SUPPLY" | "EQUIPMENT" | "FOOD";
+  category: "MEDICATIE" | "MATERIAAL" | "APPARATUUR" | "VOER";
   quantity: number;
   unit: string;
   reorderLevel: number;
@@ -12,7 +12,7 @@ interface InventoryItem {
   supplier: string;
   location: string;
   expiryDate?: string;
-  status: "IN_STOCK" | "LOW_STOCK" | "OUT_OF_STOCK" | "EXPIRED";
+  status: "OP_VOORRAAD" | "LAAG_VOORRAAD" | "UIT_VOORRAAD" | "VERLOPEN";
 }
 
 interface InventoryMetrics {
@@ -48,7 +48,7 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
           {
             id: "1",
             name: "Amoxicillin 500mg",
-            category: "MEDICATION",
+            category: "MEDICATIE",
             quantity: 100,
             unit: "tablets",
             reorderLevel: 50,
@@ -56,36 +56,36 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
             supplier: "MedSupply Co.",
             location: "Pharmacy Shelf A",
             expiryDate: "2024-12-31",
-            status: "IN_STOCK",
+            status: "OP_VOORRAAD",
           },
           {
             id: "2",
             name: "Surgical Gloves",
-            category: "SUPPLY",
+            category: "MATERIAAL",
             quantity: 25,
             unit: "boxes",
             reorderLevel: 30,
             lastOrderedDate: new Date().toISOString(),
             supplier: "MedEquip Inc.",
             location: "Storage Room B",
-            status: "LOW_STOCK",
+            status: "LAAG_VOORRAAD",
           },
           {
             id: "3",
             name: "X-Ray Film",
-            category: "SUPPLY",
+            category: "MATERIAAL",
             quantity: 0,
             unit: "boxes",
             reorderLevel: 10,
             lastOrderedDate: new Date().toISOString(),
             supplier: "MedEquip Inc.",
             location: "Storage Room A",
-            status: "OUT_OF_STOCK",
+            status: "UIT_VOORRAAD",
           },
           {
             id: "4",
             name: "Prescription Diet",
-            category: "FOOD",
+            category: "VOER",
             quantity: 15,
             unit: "bags",
             reorderLevel: 20,
@@ -93,7 +93,7 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
             supplier: "PetFood Co.",
             location: "Storage Room C",
             expiryDate: "2024-06-30",
-            status: "LOW_STOCK",
+            status: "LAAG_VOORRAAD",
           },
         ],
         metrics: {

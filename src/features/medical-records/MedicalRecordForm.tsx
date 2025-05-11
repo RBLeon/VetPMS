@@ -1,254 +1,270 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import {
-  useCreateMedicalRecord,
-  useUpdateMedicalRecord,
-} from "@/lib/hooks/useApi";
-import { MedicalRecord, Prescription, Attachment } from "@/lib/api/types";
-import { format } from "date-fns";
-import { useToast } from "@/components/ui/use-toast";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useCreateMedicalRecord } from "@/lib/hooks/useApi";
+import { MedicalRecord } from "@/lib/api/types";
 import { Loader2 } from "lucide-react";
+
+const medicalRecordSchema = z.object({
+  type: z.string().min(1, "Type is verplicht"),
+  date: z.string().min(1, "Datum is verplicht"),
+  chiefComplaint: z.string().min(1, "Hoofdklacht is verplicht"),
+  diagnosis: z.string().min(1, "Diagnose is verplicht"),
+  treatment: z.string().min(1, "Behandeling is verplicht"),
+  notes: z.string().optional(),
+  status: z.enum(["ACTIEF", "OPGELOST", "IN_AFWACHTING", "GEANNULEERD"]),
+  veterinarianId: z.string().min(1),
+});
+
+type MedicalRecordFormData = z.infer<typeof medicalRecordSchema>;
 
 interface MedicalRecordFormProps {
   patientId: string;
-  record?: MedicalRecord;
-  onSuccess?: () => void;
-}
-
-interface MedicalRecordFormData {
-  type: string;
-  notes: string;
-  chiefComplaint: string;
-  diagnosis: string;
-  treatmentPlan?: string;
-  vitalSigns?: {
-    temperature?: number;
-    heartRate?: number;
-    respiratoryRate?: number;
-    bloodPressure?: string;
-    weight?: number;
-  };
-  prescriptions?: Prescription[];
-  attachments?: Attachment[];
-  followUpDate?: string;
-  followUpNotes?: string;
+  defaultValues?: Partial<MedicalRecord>;
 }
 
 export const MedicalRecordForm: React.FC<MedicalRecordFormProps> = ({
   patientId,
-  record,
-  onSuccess,
+  defaultValues,
 }) => {
-  const { toast } = useToast();
-  const createRecord = useCreateMedicalRecord();
-  const updateRecord = useUpdateMedicalRecord();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const { mutate: createMedicalRecord, isPending } = useCreateMedicalRecord();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
+    control,
   } = useForm<MedicalRecordFormData>({
-    defaultValues: record
-      ? {
-          type: record.type,
-          notes: record.notes,
-          chiefComplaint: record.chiefComplaint,
-          diagnosis: record.diagnosis,
-          treatmentPlan: record.treatmentPlan,
-          vitalSigns: record.vitalSigns,
-          prescriptions: record.prescriptions,
-          attachments: record.attachments,
-          followUpDate: record.followUpDate,
-          followUpNotes: record.followUpNotes,
-        }
-      : {
-          type: "",
-          notes: "",
-          chiefComplaint: "",
-          diagnosis: "",
-          treatmentPlan: "",
-          vitalSigns: undefined,
-          prescriptions: [],
-          attachments: [],
-          followUpDate: "",
-          followUpNotes: "",
-        },
+    resolver: zodResolver(medicalRecordSchema),
+    defaultValues: {
+      veterinarianId: "1", // TODO: Get from auth context
+      type: defaultValues?.type || "",
+      status: defaultValues?.status || "ACTIEF",
+      ...defaultValues,
+    },
   });
 
-  const onSubmit = async (formData: MedicalRecordFormData) => {
-    try {
-      setIsSubmitting(true);
-      const now = new Date().toISOString();
-      const recordData: Omit<MedicalRecord, "id"> = {
-        ...formData,
+  const onSubmit = (data: MedicalRecordFormData) => {
+    const now = new Date().toISOString();
+    createMedicalRecord(
+      {
+        ...data,
         patientId,
-        date: format(new Date(), "yyyy-MM-dd"),
-        veterinarianId: "1", // TODO: Get from auth context
-        status: "ACTIVE",
-        hasAttachments: (formData.attachments?.length ?? 0) > 0,
-        followUpScheduled: !!formData.followUpDate,
+        patientName: "", // This should be fetched from the patient data
+        veterinarianName: "", // This should be fetched from the veterinarian data
         createdAt: now,
         updatedAt: now,
-      };
-
-      if (record) {
-        await updateRecord.mutateAsync({
-          id: record.id,
-          data: recordData,
-        });
-      } else {
-        await createRecord.mutateAsync(recordData);
+        followUpDate: "",
+        vitalSigns: "",
+        followUpNotes: "",
+        treatments: [],
+        prescriptions: [],
+        attachments: [],
+      },
+      {
+        onSuccess: () => {
+          navigate(`/patients/${patientId}/records`);
+        },
       }
-      toast({
-        title: "Success",
-        description: `Medical record ${
-          record ? "updated" : "created"
-        } successfully.`,
-      });
-      reset();
-      onSuccess?.();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: `Failed to ${
-          record ? "update" : "create"
-        } medical record.`,
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    );
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {record ? "Edit Medical Record" : "New Medical Record"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="type">Type</Label>
-            <Input
-              id="type"
-              {...register("type", { required: "Type is required" })}
-              placeholder="e.g., Check-up, Surgery, Vaccination"
-            />
-            {errors.type && (
-              <p className="text-sm text-red-500">{errors.type.message}</p>
-            )}
+    <Card>
+      <CardHeader>
+        <h2 className="text-2xl font-bold">Nieuw Medisch Dossier</h2>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <input type="hidden" {...register("veterinarianId")} />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="type">Type</Label>
+              <Controller
+                name="type"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value || ""}
+                    onValueChange={field.onChange}
+                    data-testid="type-select"
+                  >
+                    <SelectTrigger
+                      id="type"
+                      aria-label="Type"
+                      data-testid="type-trigger"
+                    >
+                      <SelectValue placeholder="Selecteer type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="CONSULTATIE">Consultatie</SelectItem>
+                      <SelectItem value="BEHANDELING">Behandeling</SelectItem>
+                      <SelectItem value="OPERATIE">Operatie</SelectItem>
+                      <SelectItem value="CONTROLE">Controle</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.type && (
+                <p
+                  className="text-sm text-red-500 mt-1"
+                  data-testid="error-type"
+                >
+                  {errors.type.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="date">Datum</Label>
+              <Input
+                id="date"
+                type="date"
+                {...register("date")}
+                aria-invalid={errors.date ? "true" : "false"}
+              />
+              {errors.date && (
+                <p
+                  className="text-sm text-red-500 mt-1"
+                  data-testid="error-date"
+                >
+                  {errors.date.message}
+                </p>
+              )}
+            </div>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="chiefComplaint">Chief Complaint</Label>
-            <Textarea
+          <div>
+            <Label htmlFor="chiefComplaint">Hoofdklacht</Label>
+            <Input
               id="chiefComplaint"
-              {...register("chiefComplaint", {
-                required: "Chief complaint is required",
-              })}
-              placeholder="Enter the main reason for visit"
+              {...register("chiefComplaint")}
+              aria-invalid={errors.chiefComplaint ? "true" : "false"}
             />
             {errors.chiefComplaint && (
-              <p className="text-sm text-red-500">
+              <p
+                className="text-sm text-red-500 mt-1"
+                data-testid="error-chiefComplaint"
+              >
                 {errors.chiefComplaint.message}
               </p>
             )}
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="diagnosis">Diagnosis</Label>
+          <div>
+            <Label htmlFor="diagnosis">Diagnose</Label>
             <Textarea
               id="diagnosis"
-              {...register("diagnosis", { required: "Diagnosis is required" })}
-              placeholder="Enter the diagnosis"
+              {...register("diagnosis")}
+              aria-invalid={errors.diagnosis ? "true" : "false"}
+              data-testid="diagnosis-textarea"
             />
             {errors.diagnosis && (
-              <p className="text-sm text-red-500">{errors.diagnosis.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="treatmentPlan">Treatment Plan</Label>
-            <Textarea
-              id="treatmentPlan"
-              {...register("treatmentPlan", {
-                required: "Treatment plan is required",
-              })}
-              placeholder="Enter the treatment plan"
-            />
-            {errors.treatmentPlan && (
-              <p className="text-sm text-red-500">
-                {errors.treatmentPlan.message}
+              <p
+                className="text-sm text-red-500 mt-1"
+                data-testid="error-diagnosis"
+              >
+                {errors.diagnosis.message}
               </p>
             )}
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="vitalSigns">Vital Signs</Label>
+          <div>
+            <Label htmlFor="treatment">Behandeling</Label>
             <Textarea
-              id="vitalSigns"
-              {...register("vitalSigns")}
-              placeholder="Enter vital signs (temperature, heart rate, etc.)"
+              id="treatment"
+              {...register("treatment")}
+              aria-invalid={errors.treatment ? "true" : "false"}
+              data-testid="treatment-textarea"
             />
+            {errors.treatment && (
+              <p
+                className="text-sm text-red-500 mt-1"
+                data-testid="error-treatment"
+              >
+                {errors.treatment.message}
+              </p>
+            )}
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="prescriptions">Prescriptions</Label>
-            <Textarea
-              id="prescriptions"
-              {...register("prescriptions")}
-              placeholder="Enter prescriptions"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="notes">Additional Notes</Label>
+          <div>
+            <Label htmlFor="notes">Notities</Label>
             <Textarea
               id="notes"
               {...register("notes")}
-              placeholder="Enter any additional notes"
+              aria-invalid={errors.notes ? "true" : "false"}
+              data-testid="notes-textarea"
             />
+            {errors.notes && (
+              <p
+                className="text-sm text-red-500 mt-1"
+                data-testid="error-notes"
+              >
+                {errors.notes.message}
+              </p>
+            )}
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="followUpDate">Follow-up Date</Label>
-            <Input
-              type="date"
-              id="followUpDate"
-              {...register("followUpDate")}
+          <div>
+            <Label htmlFor="status">Status</Label>
+            <Controller
+              name="status"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value || ""}
+                  onValueChange={field.onChange}
+                  data-testid="status-select"
+                >
+                  <SelectTrigger
+                    id="status"
+                    aria-label="Status"
+                    data-testid="status-trigger"
+                  >
+                    <SelectValue placeholder="Selecteer status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ACTIEF">Actief</SelectItem>
+                    <SelectItem value="OPGELOST">Opgelost</SelectItem>
+                    <SelectItem value="IN_AFWACHTING">In afwachting</SelectItem>
+                    <SelectItem value="GEANNULEERD">Geannuleerd</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
             />
+            {errors.status && (
+              <p
+                className="text-sm text-red-500 mt-1"
+                data-testid="error-status"
+              >
+                {errors.status.message}
+              </p>
+            )}
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="followUpNotes">Follow-up Notes</Label>
-            <Textarea
-              id="followUpNotes"
-              {...register("followUpNotes")}
-              placeholder="Enter follow-up instructions"
-            />
-          </div>
-
           <div className="flex justify-end space-x-2">
             <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex items-center space-x-2"
+              type="button"
+              variant="outline"
+              onClick={() => navigate(`/patients/${patientId}/records`)}
             >
-              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              <span>{record ? "Update" : "Create"} Record</span>
+              Annuleren
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Opslaan
             </Button>
           </div>
-        </CardContent>
-      </Card>
-    </form>
+        </form>
+      </CardContent>
+    </Card>
   );
 };

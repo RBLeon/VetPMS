@@ -1,313 +1,252 @@
-import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAppointments } from "@/lib/hooks/useApi";
-import { useClients } from "@/lib/hooks/useClients";
-import { usePatients } from "@/lib/hooks/useApi";
+import { useAppointments, usePatients } from "@/lib/hooks/useApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { AlertCircle, Calendar, Users } from "lucide-react";
 import { format } from "date-fns";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Appointment, Client, Patient } from "@/lib/api/types";
 
-interface DashboardCardProps {
-  title: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
-  className?: string;
+interface ReceptionistDashboardProps {
+  appointments?: Appointment[];
+  clients?: Client[];
+  patients?: Patient[];
+  isLoading?: boolean;
+  error?: Error;
+  onCheckIn?: (appointmentId: string) => Promise<void>;
+  onConfirm?: (appointmentId: string) => Promise<void>;
+  stats?: {
+    dailyCheckIns: number;
+    noShowRate: string;
+    averageWaitTime: string;
+  };
 }
 
-const DashboardCard: React.FC<DashboardCardProps> = ({
-  title,
-  icon,
-  children,
-  className,
-}) => (
-  <Card className={className}>
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium">{title}</CardTitle>
-      {icon}
-    </CardHeader>
-    <CardContent>{children}</CardContent>
-  </Card>
-);
+export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
+  appointments: propAppointments,
+  clients: propClients,
+  patients: propPatients,
+  isLoading: propIsLoading,
+  error: propError,
+  onCheckIn: propOnCheckIn,
+  onConfirm: propOnConfirm,
+  stats,
+}) => {
+  const { data: hookAppointments = [], isLoading: isLoadingAppointments } =
+    useAppointments();
+  const { data: hookPatients = [], isLoading: isLoadingPatients } =
+    usePatients();
 
-export const ReceptionistDashboard: React.FC = () => {
-  const navigate = useNavigate();
-  const {
-    data: appointments = [],
-    isLoading: appointmentsLoading,
-    error: appointmentsError,
-  } = useAppointments();
-  const {
-    data: clients = [],
-    isLoading: clientsLoading,
-    error: clientsError,
-  } = useClients();
-  const {
-    data: patients = [],
-    isLoading: patientsLoading,
-    error: patientsError,
-  } = usePatients();
+  const appointments = propAppointments ?? hookAppointments;
+  const patients = propPatients ?? hookPatients;
+  const isLoading =
+    propIsLoading !== undefined
+      ? propIsLoading
+      : (!propAppointments && isLoadingAppointments) ||
+        (!propPatients && isLoadingPatients);
+  const error = propError;
 
-  const isLoading = appointmentsLoading || clientsLoading || patientsLoading;
+  console.log("ReceptionistDashboard props:", {
+    appointments: propAppointments,
+    clients: propClients,
+    patients: propPatients,
+  });
 
-  const today = format(new Date(), "yyyy-MM-dd");
+  const today = new Date();
 
-  const getTodayAppointments = () => {
-    return appointments.filter((apt) => apt.date.startsWith(today));
+  const waitingRoom = appointments.filter(
+    (appointment) => appointment.status === "AANGEMELD"
+  );
+
+  const upcomingAppointments = appointments
+    .filter((appointment) => {
+      const appointmentDate = new Date(appointment.date);
+      return appointmentDate > today;
+    })
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, 5);
+
+  const metrics = {
+    dailyCheckIns:
+      typeof stats?.dailyCheckIns === "number"
+        ? stats.dailyCheckIns
+        : waitingRoom.length,
+    noShowRate: stats?.noShowRate ? `${stats.noShowRate}%` : "5%",
+    averageWaitTime: stats?.averageWaitTime
+      ? `${stats.averageWaitTime} min`
+      : "15 min",
   };
-
-  const getWaitingRoomStatus = () => {
-    if (!appointments) return [];
-    return appointments.filter((apt) => apt.status === "CHECKED_IN");
-  };
-
-  const getUpcomingAppointments = () => {
-    if (!appointments) return [];
-    return appointments.filter((apt) => {
-      const appointmentDate = new Date(apt.date);
-      const today = new Date();
-      return appointmentDate > today && apt.status === "SCHEDULED";
-    });
-  };
-
-  const todayAppointments = getTodayAppointments();
-  const waitingRoom = getWaitingRoomStatus();
-  const upcomingAppointments = getUpcomingAppointments();
-
-  // Calculate metrics
-  const metrics = useMemo(() => {
-    if (!appointments) return null;
-
-    const totalAppointments = appointments.length;
-    const completedAppointments = appointments.filter(
-      (apt) => apt.status === "COMPLETED"
-    ).length;
-    const waitingAppointments = appointments.filter(
-      (apt) => apt.status === "CHECKED_IN"
-    ).length;
-
-    return {
-      totalAppointments,
-      completedAppointments,
-      waitingAppointments,
-      completionRate: (completedAppointments / totalAppointments) * 100,
-    };
-  }, [appointments]);
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {[...Array(5)].map((_, i) => (
-          <Card key={i}>
-            <CardHeader>
-              <Skeleton className="h-4 w-[200px]" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-[100px] w-full" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  }
-
-  if (appointmentsError || clientsError || patientsError) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
-          <p className="text-red-500">Failed to load dashboard data</p>
+      <div className="container mx-auto py-6">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[...Array(5)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <div className="bg-primary/10 animate-pulse rounded-md h-4 w-[200px]" />
+              </CardHeader>
+              <CardContent>
+                <div className="bg-primary/10 animate-pulse rounded-md h-[100px] w-full" />
+              </CardContent>
+            </Card>
+          ))}
+          <div className="text-center w-full">Laden...</div>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {/* Today's Schedule */}
-        <DashboardCard
-          title="Today's Schedule"
-          icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-          className="lg:col-span-2"
-        >
-          <ScrollArea className="h-[300px]">
-            {todayAppointments.map((appointment) => {
-              const patient = patients?.find(
-                (p) => p.id === appointment.patientId
-              );
-              const client = clients?.find(
-                (c) => c.id === appointment.clientId
-              );
+  if (error) {
+    return (
+      <div className="container mx-auto py-6">
+        <Alert variant="destructive">
+          <AlertDescription>Fout bij het laden van dashboard</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
-              return (
-                <div
-                  key={appointment.id}
-                  className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-lg"
-                >
-                  <div>
-                    <p className="font-medium">{patient?.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {appointment.time} - {appointment.type}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {client?.firstName} {client?.lastName}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      variant={
-                        appointment.status === "CHECKED_IN"
-                          ? "default"
-                          : "secondary"
-                      }
+  return (
+    <div className="container mx-auto py-6">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle>Vandaag</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {appointments
+                .filter((a) => {
+                  const d = new Date(a.date);
+                  return (
+                    d.getDate() === today.getDate() &&
+                    d.getMonth() === today.getMonth() &&
+                    d.getFullYear() === today.getFullYear()
+                  );
+                })
+                .map((appointment) => {
+                  const patient = patients.find(
+                    (p) => p.id === appointment.patientId
+                  );
+                  return (
+                    <div
+                      key={appointment.id}
+                      className="flex items-center justify-between p-2 border rounded-lg"
                     >
-                      {appointment.status}
-                    </Badge>
-                    {appointment.status === "SCHEDULED" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          navigate(`/appointments/${appointment.id}/check-in`)
-                        }
-                      >
-                        Check In
-                      </Button>
+                      <div>
+                        <p className="font-medium">
+                          {patient?.name || appointment.patientName}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {appointment.time ||
+                            (appointment.date &&
+                              format(new Date(appointment.date), "HH:mm"))}
+                        </p>
+                      </div>
+                      {appointment.status === "INGEPLAND" && (
+                        <Button
+                          onClick={() => propOnConfirm?.(appointment.id)}
+                          variant="outline"
+                        >
+                          Bevestigen
+                        </Button>
+                      )}
+                      {appointment.status === "IN_BEHANDELING" && (
+                        <Button
+                          onClick={() => propOnCheckIn?.(appointment.id)}
+                          variant="outline"
+                        >
+                          Inschrijven
+                        </Button>
+                      )}
+                    </div>
+                  );
+                })}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Wachtkamer</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {waitingRoom.map((appointment) => {
+                const patient = patients.find(
+                  (p) => p.id === appointment.patientId
+                );
+                return (
+                  <div
+                    key={appointment.id}
+                    className="flex items-center justify-between p-2 border rounded-lg"
+                  >
+                    <div>
+                      <p className="font-medium">{patient?.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {format(new Date(appointment.date), "HH:mm")}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Aankomende Afspraken</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {upcomingAppointments.map((appointment) => {
+                const patient = patients.find(
+                  (p) => p.id === appointment.patientId
+                );
+                return (
+                  <div
+                    key={appointment.id}
+                    className="flex items-center justify-between p-2 border rounded-lg"
+                  >
+                    <div>
+                      <p className="font-medium">{patient?.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {format(new Date(appointment.date), "d MMM HH:mm")}
+                      </p>
+                    </div>
+                    {appointment.status === "INGEPLAND" && (
+                      <span className="text-sm text-yellow-600">
+                        Bevestiging Nodig
+                      </span>
                     )}
                   </div>
-                </div>
-              );
-            })}
-          </ScrollArea>
-        </DashboardCard>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Waiting Room */}
-        <DashboardCard
-          title="Waiting Room"
-          icon={<Users className="h-4 w-4 text-muted-foreground" />}
-        >
-          <ScrollArea className="h-[300px]">
-            {waitingRoom.map((appointment) => {
-              const patient = patients?.find(
-                (p) => p.id === appointment.patientId
-              );
-              const client = clients?.find(
-                (c) => c.id === appointment.clientId
-              );
-
-              return (
-                <div
-                  key={appointment.id}
-                  className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-lg"
-                  data-testid="waiting-item"
-                >
-                  <div>
-                    <p className="font-medium">{patient?.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {appointment.type}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {client?.firstName} {client?.lastName}
-                    </p>
-                  </div>
-                  <Badge variant="default">Checked In</Badge>
-                </div>
-              );
-            })}
-          </ScrollArea>
-        </DashboardCard>
-
-        {/* Upcoming Appointments */}
-        <DashboardCard
-          title="Upcoming Appointments"
-          icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-          className="lg:col-span-2"
-        >
-          <ScrollArea className="h-[300px]">
-            {upcomingAppointments.map((appointment) => {
-              const patient = patients?.find(
-                (p) => p.id === appointment.patientId
-              );
-              const client = clients?.find(
-                (c) => c.id === appointment.clientId
-              );
-
-              return (
-                <div
-                  key={appointment.id}
-                  className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-lg"
-                >
-                  <div>
-                    <p className="font-medium">{patient?.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(appointment.date).toLocaleDateString()}{" "}
-                      {appointment.time}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {client?.firstName} {client?.lastName}
-                    </p>
-                  </div>
-                  <Badge variant="secondary">Scheduled</Badge>
-                </div>
-              );
-            })}
-          </ScrollArea>
-        </DashboardCard>
-
-        {/* Client Communications */}
-        <DashboardCard
-          title="Client Communications"
-          icon={<Users className="h-4 w-4 text-muted-foreground" />}
-        >
-          <ScrollArea className="h-[300px]">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-lg">
-                <p>Pending Callbacks</p>
-                <Badge variant="default">3</Badge>
+        <Card>
+          <CardHeader>
+            <CardTitle>Snelle Statistieken</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between">
+                <span>Dagelijkse Inschrijvingen</span>
+                <span className="font-medium">{metrics.dailyCheckIns}</span>
               </div>
-              <div className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-lg">
-                <p>Appointment Confirmations</p>
-                <Badge variant="default">5</Badge>
+              <div className="flex justify-between">
+                <span>No-Show Percentage</span>
+                <span className="font-medium">{metrics.noShowRate}</span>
               </div>
-              <div className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-lg">
-                <p>Follow-up Calls</p>
-                <Badge variant="default">2</Badge>
+              <div className="flex justify-between">
+                <span>Gemiddelde Wachttijd</span>
+                <span className="font-medium">{metrics.averageWaitTime}</span>
               </div>
             </div>
-          </ScrollArea>
-        </DashboardCard>
-
-        {/* Quick Stats */}
-        <DashboardCard
-          title="Quick Stats"
-          icon={<Users className="h-4 w-4 text-muted-foreground" />}
-          className="lg:col-span-3"
-        >
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center">
-              <p className="text-2xl font-bold">{metrics?.totalAppointments}</p>
-              <p className="text-sm text-muted-foreground">
-                Total Appointments
-              </p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold">
-                {metrics?.waitingAppointments}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Waiting Appointments
-              </p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold">{metrics?.completionRate}%</p>
-              <p className="text-sm text-muted-foreground">Completion Rate</p>
-            </div>
-          </div>
-        </DashboardCard>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

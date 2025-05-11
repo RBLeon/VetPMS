@@ -7,8 +7,8 @@ interface Task {
   patientName: string;
   description: string;
   room: string;
-  priority: "high" | "medium" | "low";
-  status: "pending" | "completed";
+  priority: "hoog" | "middel" | "laag";
+  status: "in_afwachting" | "voltooid";
 }
 
 interface TaskContextType {
@@ -31,8 +31,8 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
           patientName: "Max",
           description: "IV Medication",
           room: "Room 3",
-          priority: "high",
-          status: "pending",
+          priority: "hoog",
+          status: "in_afwachting",
         },
         {
           id: "2",
@@ -40,8 +40,8 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
           patientName: "Bella",
           description: "Post-op check",
           room: "Room 1",
-          priority: "medium",
-          status: "pending",
+          priority: "middel",
+          status: "in_afwachting",
         },
         {
           id: "3",
@@ -49,8 +49,8 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
           patientName: "Charlie",
           description: "Bandage change",
           room: "Room 4",
-          priority: "medium",
-          status: "pending",
+          priority: "middel",
+          status: "in_afwachting",
         },
       ];
     },

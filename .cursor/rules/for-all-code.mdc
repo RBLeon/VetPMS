@@ -35,6 +35,7 @@ When working on MVP features, refer to:
 3. Follow the development roadmap for feature prioritization
 4. Maintain consistency with the established architecture patterns
 5. Document any deviations from the design specifications
+6. All displayed text and dummy data should be in dutch.
 
 ## Component Development
 1. Before creating a new component:
@@ -49,7 +50,7 @@ When working on MVP features, refer to:
    - Consider impact on related components
 
 ## Quality Assurance
-1. Write tests before implementing features
+1. Write tests before implementing features, when running tests keep in mind that you need to press q manually after the tests are done (unless you know a way around this).
 2. Ensure all code changes are covered by appropriate tests
 3. Follow the testing guidelines specified in the documentation
 4. Maintain code quality standards as defined in the project documentation

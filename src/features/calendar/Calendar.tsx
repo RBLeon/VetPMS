@@ -23,23 +23,57 @@ import { usePatients } from "@/lib/hooks/useApi";
 import { useClients } from "../../lib/hooks/useClients";
 import type { AppointmentStatus, AppointmentType } from "../../lib/api/types";
 import { Badge } from "@/components/ui/badge";
+import {
+  Calendar as CalendarIcon,
+  CheckCircle,
+  XCircle,
+  UserX,
+  UserCheck,
+  Activity,
+} from "lucide-react";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { nl } from "date-fns/locale";
 
-const getStatusColor = (status: AppointmentStatus): string => {
+const getAppointmentStatusColor = (status: AppointmentStatus) => {
   switch (status) {
-    case "SCHEDULED":
-      return "bg-blue-100 text-blue-700";
-    case "COMPLETED":
-      return "bg-green-100 text-green-700";
-    case "CANCELED":
-      return "bg-red-100 text-red-700";
-    case "NO_SHOW":
-      return "bg-yellow-100 text-yellow-700";
-    case "CHECKED_IN":
-      return "bg-purple-100 text-purple-700";
-    case "IN_PROGRESS":
-      return "bg-orange-100 text-orange-700";
+    case "INGEPLAND":
+      return "default";
+    case "AANGEMELD":
+      return "info";
+    case "IN_BEHANDELING":
+      return "warning";
+    case "VOLTOOID":
+      return "success";
+    case "GEANNULEERD":
+      return "destructive";
+    case "NIET_VERSCHENEN":
+      return "destructive";
     default:
-      return "bg-gray-100 text-gray-700";
+      return "default";
+  }
+};
+
+const getStatusIcon = (status: AppointmentStatus) => {
+  switch (status) {
+    case "INGEPLAND":
+      return <CalendarIcon className="h-4 w-4" />;
+    case "AANGEMELD":
+      return <UserCheck className="h-4 w-4" />;
+    case "IN_BEHANDELING":
+      return <Activity className="h-4 w-4" />;
+    case "VOLTOOID":
+      return <CheckCircle className="h-4 w-4" />;
+    case "GEANNULEERD":
+      return <XCircle className="h-4 w-4" />;
+    case "NIET_VERSCHENEN":
+      return <UserX className="h-4 w-4" />;
+    default:
+      return <CalendarIcon className="h-4 w-4" />;
   }
 };
 
@@ -47,13 +81,16 @@ const getStatusBadgeVariant = (
   status: AppointmentStatus
 ): "default" | "secondary" | "destructive" => {
   switch (status) {
-    case "SCHEDULED":
+    case "INGEPLAND":
       return "default";
-    case "COMPLETED":
+    case "AANGEMELD":
+    case "IN_BEHANDELING":
       return "secondary";
-    case "CANCELED":
-    case "NO_SHOW":
+    case "GEANNULEERD":
+    case "NIET_VERSCHENEN":
       return "destructive";
+    case "VOLTOOID":
+      return "secondary";
     default:
       return "default";
   }
@@ -66,6 +103,7 @@ export function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedType] = useState<AppointmentType | null>(null);
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
   const filteredAppointments = useMemo(() => {
     if (!appointments) return [];
@@ -101,6 +139,19 @@ export function Calendar() {
 
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);
+  };
+
+  const getAppointmentsForDate = (date: Date) => {
+    return (
+      appointments?.filter((appointment) => {
+        const appointmentDate = new Date(appointment.date);
+        return (
+          appointmentDate.getDate() === date.getDate() &&
+          appointmentDate.getMonth() === date.getMonth() &&
+          appointmentDate.getFullYear() === date.getFullYear()
+        );
+      }) || []
+    );
   };
 
   if (!appointments?.length) {
@@ -175,7 +226,7 @@ export function Calendar() {
                       <div
                         className={cn(
                           "truncate rounded-md px-2 py-1 text-xs",
-                          getStatusColor(appointment.status)
+                          getAppointmentStatusColor(appointment.status)
                         )}
                       >
                         {format(
@@ -193,7 +244,7 @@ export function Calendar() {
                       <div className="space-y-2">
                         <div className="font-medium">{appointment.type}</div>
                         <div className="text-sm text-muted-foreground">
-                          Time:{" "}
+                          Tijd:{" "}
                           {format(
                             parse(
                               `${appointment.date}T${appointment.time}`,
@@ -204,13 +255,13 @@ export function Calendar() {
                           )}
                         </div>
                         <div>
-                          <div className="font-medium">Patient</div>
+                          <div className="font-medium">Patiënt</div>
                           <div className="text-sm text-muted-foreground">
                             {patient?.name}
                           </div>
                         </div>
                         <div>
-                          <div className="font-medium">Client</div>
+                          <div className="font-medium">Klant</div>
                           <div className="text-sm text-muted-foreground">
                             {client && `${client.firstName} ${client.lastName}`}
                           </div>
@@ -218,13 +269,13 @@ export function Calendar() {
                         {appointment.isRecurring &&
                           appointment.recurringPattern && (
                             <div className="text-sm text-muted-foreground">
-                              Recurring:{" "}
+                              Herhaling:{" "}
                               {appointment.recurringPattern.frequency}
                             </div>
                           )}
                         {appointment.notes && (
                           <div>
-                            <div className="font-medium">Notes</div>
+                            <div className="font-medium">Notities</div>
                             <div className="text-sm text-muted-foreground">
                               {appointment.notes}
                             </div>
@@ -278,24 +329,24 @@ export function Calendar() {
                       </p>
                     </div>
                     <Badge variant={getStatusBadgeVariant(appointment.status)}>
-                      {appointment.status}
+                      {getStatusIcon(appointment.status)}
                     </Badge>
                   </div>
                   <div>
-                    <p className="text-sm font-medium">Patient</p>
+                    <p className="text-sm font-medium">Patiënt</p>
                     <p className="text-sm text-muted-foreground">
                       {patient?.name}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium">Client</p>
+                    <p className="text-sm font-medium">Klant</p>
                     <p className="text-sm text-muted-foreground">
                       {client && `${client.firstName} ${client.lastName}`}
                     </p>
                   </div>
                   {appointment.notes && (
                     <div>
-                      <p className="text-sm font-medium">Notes</p>
+                      <p className="text-sm font-medium">Notities</p>
                       <p className="text-sm text-muted-foreground">
                         {appointment.notes}
                       </p>
@@ -306,6 +357,74 @@ export function Calendar() {
             })
           )}
         </div>
+      </div>
+
+      <div className="space-y-4">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal",
+                !date && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {date
+                ? format(date, "PPP", { locale: nl })
+                : "Selecteer een datum"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <CalendarComponent
+              mode="single"
+              selected={date}
+              onSelect={(newDate) => {
+                setDate(newDate);
+                if (newDate) {
+                  setSelectedDate(newDate);
+                }
+              }}
+              locale={nl}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div className="space-y-4">
+        {date && (
+          <>
+            <h3 className="font-medium">
+              Afspraken voor {format(date, "PPP", { locale: nl })}
+            </h3>
+            <div className="space-y-2">
+              {getAppointmentsForDate(date).map((appointment) => {
+                const patient = patients?.find(
+                  (p) => p.id === appointment.patientId
+                );
+                return (
+                  <div
+                    key={appointment.id}
+                    className={cn(
+                      "flex items-center justify-between rounded-lg p-3",
+                      getAppointmentStatusColor(appointment.status)
+                    )}
+                    onClick={() => handleDateClick(date)}
+                  >
+                    <div className="flex items-center space-x-2">
+                      {getStatusIcon(appointment.status)}
+                      <div>
+                        <p className="font-medium">{patient?.name}</p>
+                        <p className="text-sm">{appointment.type}</p>
+                      </div>
+                    </div>
+                    <p className="text-sm">{appointment.time}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

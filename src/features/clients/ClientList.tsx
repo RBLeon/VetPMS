@@ -19,7 +19,7 @@ export const ClientList = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="h-8 w-8 animate-spin" />
-        <span className="ml-2">Loading clients...</span>
+        <span className="ml-2">Klanten laden...</span>
       </div>
     );
   }
@@ -28,7 +28,7 @@ export const ClientList = () => {
     return (
       <Alert variant="destructive">
         <AlertDescription>
-          Error loading clients: {error.message}
+          Fout bij het laden van klanten: {error.message}
         </AlertDescription>
       </Alert>
     );
@@ -88,16 +88,16 @@ export const ClientList = () => {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Clients</h1>
+        <h1 className="text-2xl font-bold">Klanten</h1>
         <Button onClick={() => navigate("/clients/new")}>
           <Plus className="h-4 w-4 mr-2" />
-          Add Client
+          Klant Toevoegen
         </Button>
       </div>
 
       <div className="flex items-center gap-4">
         <SearchInput
-          placeholder="Search clients..."
+          placeholder="Zoek klanten..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onSearch={setSearchQuery}
@@ -107,7 +107,7 @@ export const ClientList = () => {
 
       {filteredClients.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
-          No clients found matching your search criteria.
+          Geen klanten gevonden die aan uw zoekcriteria voldoen.
         </div>
       ) : (
         <div className="bg-card rounded-lg border shadow-sm">

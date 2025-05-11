@@ -21,49 +21,45 @@ export function NavigationHub({ onSelect, activeSection }: NavigationHubProps) {
 
   const hubItems = [
     {
-      id: "dashboard",
-      label: "Dashboard",
+      id: "home",
+      label: "Home",
       icon: Home,
-      color: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
+      color: "bg-blue-100 text-blue-600",
       onClick: () => navigate("/"),
     },
     {
-      id: "appointments",
-      label: "Appointments",
+      id: "calendar",
+      label: "Agenda",
       icon: Calendar,
-      color:
-        "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
-      onClick: () => navigate("/appointments"),
+      color: "bg-green-100 text-green-600",
+      onClick: () => navigate("/calendar"),
     },
     {
       id: "clients",
-      label: "Clients",
+      label: "Klanten",
       icon: Users,
-      color: "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
+      color: "bg-purple-100 text-purple-600",
       onClick: () => navigate("/clients"),
     },
     {
       id: "patients",
-      label: "Patients",
+      label: "Patiënten",
       icon: User,
-      color:
-        "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
+      color: "bg-orange-100 text-orange-600",
       onClick: () => navigate("/patients"),
     },
     {
-      id: "medical",
-      label: "Medical Records",
+      id: "tasks",
+      label: "Taken",
       icon: ClipboardList,
-      color:
-        "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300",
-      onClick: () => navigate("/medical"),
+      color: "bg-red-100 text-red-600",
+      onClick: () => navigate("/tasks"),
     },
     {
       id: "settings",
-      label: "Settings",
+      label: "Instellingen",
       icon: Settings,
-      color:
-        "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
+      color: "bg-gray-100 text-gray-600",
       onClick: () => navigate("/settings"),
     },
   ];

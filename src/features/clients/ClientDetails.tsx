@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   useClient,
   useClientPatients,
@@ -26,52 +26,55 @@ import type { Patient } from "@/lib/api/types";
 
 const patientColumns = [
   {
-    header: "Name",
+    header: "Naam",
     accessorKey: "name",
   },
   {
-    header: "Species",
+    header: "Soort",
     accessorKey: "species",
   },
   {
-    header: "Breed",
+    header: "Ras",
     accessorKey: "breed",
   },
   {
-    header: "Age",
+    header: "Leeftijd",
     accessorKey: "age",
     cell: ({ row }: { row: { original: Patient } }) =>
-      `${row.original.age} years`,
+      `${row.original.age} jaar`,
   },
   {
-    header: "Weight",
+    header: "Gewicht",
     accessorKey: "weight",
     cell: ({ row }: { row: { original: Patient } }) =>
       `${row.original.weight} kg`,
   },
   {
-    header: "Last Visit",
+    header: "Laatste Bezoek",
     accessorKey: "lastVisit",
     cell: ({ row }: { row: { original: Patient } }) =>
-      format(new Date(row.original.lastVisit), "MMM d, yyyy"),
+      format(new Date(row.original.lastVisit), "d MMM yyyy"),
   },
 ];
 
-export function ClientDetails() {
+interface ClientDetailsProps {
+  clientId: string;
+}
+
+export const ClientDetails: React.FC<ClientDetailsProps> = ({ clientId }) => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
-  const { data: client, isLoading: isLoadingClient } = useClient(id || "");
+  const { data: client, isLoading: isLoadingClient } = useClient(clientId);
   const { data: patients, isLoading: isLoadingPatients } = useClientPatients(
-    id || ""
+    clientId || ""
   );
   const deleteClient = useDeleteClient();
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
   const handleDelete = async () => {
-    if (!id) return;
+    if (!clientId) return;
     try {
-      await deleteClient.mutateAsync(id);
+      await deleteClient.mutateAsync(clientId);
       navigate("/clients");
     } catch (error) {
       console.error("Error deleting client:", error);
@@ -79,13 +82,13 @@ export function ClientDetails() {
   };
 
   if (isLoadingClient || isLoadingPatients) {
-    return <div>Loading...</div>;
+    return <div>Laden...</div>;
   }
 
   if (!client) {
     return (
       <div className="p-4">
-        <p className="text-red-500">Client not found</p>
+        <p className="text-red-500">Klant niet gevonden</p>
       </div>
     );
   }
@@ -94,7 +97,7 @@ export function ClientDetails() {
     <div className="space-y-6 p-6">
       <PageHeader
         title={`${client.firstName} ${client.lastName}`}
-        description="Client details and associated pets"
+        description="Klantgegevens en bijbehorende huisdieren"
       >
         <div className="flex items-center gap-2">
           <Button
@@ -103,15 +106,15 @@ export function ClientDetails() {
             className="gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Clients
+            Terug naar Klanten
           </Button>
           <Button
             variant="outline"
-            onClick={() => navigate(`/clients/${id}/edit`)}
+            onClick={() => navigate(`/clients/${clientId}/edit`)}
             className="gap-2"
           >
             <Edit className="h-4 w-4" />
-            Edit Client
+            Klant Bewerken
           </Button>
           <AlertDialog
             open={isDeleteDialogOpen}
@@ -120,25 +123,25 @@ export function ClientDetails() {
             <AlertDialogTrigger asChild>
               <Button variant="destructive" className="gap-2">
                 <Trash2 className="h-4 w-4" />
-                Delete Client
+                Klant Verwijderen
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete Client</AlertDialogTitle>
+                <AlertDialogTitle>Klant Verwijderen</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to delete this client? This action
-                  cannot be undone. All associated patient records will also be
-                  deleted.
+                  Weet u zeker dat u deze klant wilt verwijderen? Deze actie kan
+                  niet ongedaan worden gemaakt. Alle bijbehorende
+                  patiëntendossiers worden ook verwijderd.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>Annuleren</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleDelete}
                   className="bg-red-500 hover:bg-red-600"
                 >
-                  Delete
+                  Verwijderen
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -149,66 +152,68 @@ export function ClientDetails() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Contact Information</CardTitle>
+            <CardTitle>Contactgegevens</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Email</p>
+              <p className="text-sm font-medium text-muted-foreground">
+                E-mail
+              </p>
               <p>{client.email}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Phone</p>
+              <p className="text-sm font-medium text-muted-foreground">
+                Telefoon
+              </p>
               <p>{client.phone}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Address
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">Adres</p>
               <p>
                 {client.address
                   ? `${client.address.street}, ${client.address.city}, ${client.address.state} ${client.address.postalCode}`
-                  : "No address provided"}
+                  : "Geen adres opgegeven"}
               </p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Preferred Communication
+                Voorkeurscommunicatie
               </p>
               <p className="capitalize">{client.preferredCommunication}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Client Since
+                Klant Sinds
               </p>
-              <p>{format(new Date(client.createdAt), "MMM d, yyyy")}</p>
+              <p>{format(new Date(client.createdAt), "d MMM yyyy")}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Last Visit
+                Laatste Bezoek
               </p>
-              <p>{format(new Date(client.lastVisit), "MMM d, yyyy")}</p>
+              <p>{format(new Date(client.lastVisit), "d MMM yyyy")}</p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle>Snelle Acties</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <Button
               className="w-full justify-start gap-2"
-              onClick={() => navigate(`/patients/new?clientId=${id}`)}
+              onClick={() => navigate(`/patients/new?clientId=${clientId}`)}
             >
               <Plus className="h-4 w-4" />
-              Add New Pet
+              Huisdier Toevoegen
             </Button>
             <Button
               className="w-full justify-start gap-2"
-              onClick={() => navigate(`/appointments/new?clientId=${id}`)}
+              onClick={() => navigate(`/appointments/new?clientId=${clientId}`)}
             >
               <Plus className="h-4 w-4" />
-              Schedule Appointment
+              Afspraak Inplannen
             </Button>
           </CardContent>
         </Card>
@@ -216,13 +221,13 @@ export function ClientDetails() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Pets</CardTitle>
+          <CardTitle>Huisdieren</CardTitle>
           <Button
-            onClick={() => navigate(`/patients/new?clientId=${id}`)}
+            onClick={() => navigate(`/patients/new?clientId=${clientId}`)}
             className="gap-2"
           >
             <Plus className="h-4 w-4" />
-            Add Pet
+            Huisdier Toevoegen
           </Button>
         </CardHeader>
         <CardContent>
@@ -237,16 +242,18 @@ export function ClientDetails() {
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <AlertTriangle className="h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-lg font-medium">No pets registered</p>
+              <p className="text-lg font-medium">
+                Geen huisdieren geregistreerd
+              </p>
               <p className="text-sm text-muted-foreground">
-                Add a new pet to this client's record
+                Voeg een nieuw huisdier toe aan deze klant
               </p>
               <Button
-                onClick={() => navigate(`/patients/new?clientId=${id}`)}
+                onClick={() => navigate(`/patients/new?clientId=${clientId}`)}
                 className="mt-4 gap-2"
               >
                 <Plus className="h-4 w-4" />
-                Add Pet
+                Huisdier Toevoegen
               </Button>
             </div>
           )}
@@ -254,4 +261,4 @@ export function ClientDetails() {
       </Card>
     </div>
   );
-}
+};

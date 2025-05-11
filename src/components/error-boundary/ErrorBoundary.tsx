@@ -21,24 +21,24 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Uncaught error:", error, errorInfo);
+    console.error("Onverwachte fout:", error, errorInfo);
   }
 
   public render() {
     if (this.state.hasError) {
       return (
         <Alert
-          message="Error"
+          message="Fout"
           description={
             <div>
-              <p>Something went wrong. Please try again.</p>
+              <p>Er is iets misgegaan. Probeer het opnieuw.</p>
               <p>{this.state.error?.message}</p>
               <Button
                 type="primary"
                 onClick={() => window.location.reload()}
                 style={{ marginTop: 16 }}
               >
-                Reload Page
+                Pagina Vernieuwen
               </Button>
             </div>
           }

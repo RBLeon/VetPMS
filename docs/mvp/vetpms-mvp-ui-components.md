@@ -31,12 +31,13 @@ src/
 ### Layout Components
 
 #### AppLayout
+
 Main application layout with header and sidebar.
 
 ```typescript
-import { Outlet } from 'react-router-dom';
-import { Header } from './Header';
-import { Sidebar } from './Sidebar';
+import { Outlet } from "react-router-dom";
+import { Header } from "./Header";
+import { Sidebar } from "./Sidebar";
 
 export const AppLayout: React.FC = () => {
   return (
@@ -54,6 +55,7 @@ export const AppLayout: React.FC = () => {
 ```
 
 #### Header
+
 Application header with user menu.
 
 ```typescript
@@ -65,7 +67,9 @@ export const Header: React.FC = () => {
       <div className="flex items-center justify-between px-6 py-4">
         <h1 className="text-xl font-semibold">VetPMS</h1>
         <div className="flex items-center gap-4">
-          <span>{user?.firstName} {user?.lastName}</span>
+          <span>
+            {user?.firstName} {user?.lastName}
+          </span>
           <Button variant="outline" size="sm" onClick={logout}>
             Logout
           </Button>
@@ -77,6 +81,7 @@ export const Header: React.FC = () => {
 ```
 
 #### Sidebar
+
 Navigation sidebar based on user role.
 
 ```typescript
@@ -85,10 +90,10 @@ export const Sidebar: React.FC = () => {
   const location = useLocation();
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/appointments', label: 'Appointments', icon: Calendar },
-    { path: '/clients', label: 'Clients', icon: Users },
-    { path: '/invoices', label: 'Invoices', icon: FileText },
+    { path: "/", label: "Dashboard", icon: LayoutDashboard },
+    { path: "/appointments", label: "Afspraken", icon: Calendar },
+    { path: "/clients", label: "Klanten", icon: Users },
+    { path: "/invoices", label: "Facturen", icon: FileText },
   ];
 
   return (
@@ -100,8 +105,8 @@ export const Sidebar: React.FC = () => {
             to={item.path}
             className={cn(
               "flex items-center gap-3 px-4 py-2 rounded-lg",
-              location.pathname === item.path 
-                ? "bg-blue-50 text-blue-600" 
+              location.pathname === item.path
+                ? "bg-blue-50 text-blue-600"
                 : "text-gray-700 hover:bg-gray-100"
             )}
           >
@@ -118,6 +123,7 @@ export const Sidebar: React.FC = () => {
 ### Common Components
 
 #### PageHeader
+
 Consistent page header with title and actions.
 
 ```typescript
@@ -137,6 +143,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title, action }) => {
 ```
 
 #### DataTable
+
 Simple data table for listing records.
 
 ```typescript
@@ -176,8 +183,11 @@ export function DataTable<T>({ data, columns, onRowClick }: DataTableProps<T>) {
               className={onRowClick ? "hover:bg-gray-50 cursor-pointer" : ""}
             >
               {columns.map((column) => (
-                <td key={String(column.key)} className="px-6 py-4 whitespace-nowrap">
-                  {column.render 
+                <td
+                  key={String(column.key)}
+                  className="px-6 py-4 whitespace-nowrap"
+                >
+                  {column.render
                     ? column.render(item[column.key], item)
                     : String(item[column.key])}
                 </td>
@@ -192,6 +202,7 @@ export function DataTable<T>({ data, columns, onRowClick }: DataTableProps<T>) {
 ```
 
 #### SearchInput
+
 Search input with debounce.
 
 ```typescript
@@ -204,7 +215,7 @@ interface SearchInputProps {
 export const SearchInput: React.FC<SearchInputProps> = ({
   value,
   onChange,
-  placeholder = "Search..."
+  placeholder = "Search...",
 }) => {
   const [localValue, setLocalValue] = useState(value);
 
@@ -234,6 +245,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
 ### Feature Components
 
 #### AppointmentList
+
 List of appointments with basic functionality.
 
 ```typescript
@@ -243,7 +255,7 @@ interface AppointmentListProps {
 
 export const AppointmentList: React.FC<AppointmentListProps> = ({ date }) => {
   const { data: appointments, isLoading } = useQuery(
-    ['appointments', date],
+    ["appointments", date],
     () => appointmentService.getByDate(date)
   );
 
@@ -259,11 +271,15 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({ date }) => {
           <div>
             <div className="font-medium">{appointment.patientName}</div>
             <div className="text-sm text-gray-600">
-              {format(new Date(appointment.startTime), 'h:mm a')} - 
+              {format(new Date(appointment.startTime), "h:mm a")} -
               {appointment.clientName}
             </div>
           </div>
-          <Badge variant={appointment.status === 'Scheduled' ? 'default' : 'secondary'}>
+          <Badge
+            variant={
+              appointment.status === "Scheduled" ? "default" : "secondary"
+            }
+          >
             {appointment.status}
           </Badge>
         </div>
@@ -274,6 +290,7 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({ date }) => {
 ```
 
 #### ClientForm
+
 Form for creating/editing clients.
 
 ```typescript
@@ -283,14 +300,18 @@ interface ClientFormProps {
   onCancel: () => void;
 }
 
-export const ClientForm: React.FC<ClientFormProps> = ({ client, onSubmit, onCancel }) => {
+export const ClientForm: React.FC<ClientFormProps> = ({
+  client,
+  onSubmit,
+  onCancel,
+}) => {
   const form = useForm<ClientFormData>({
     defaultValues: client || {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      address: '',
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      address: "",
     },
   });
 
@@ -339,6 +360,7 @@ export const ClientForm: React.FC<ClientFormProps> = ({ client, onSubmit, onCanc
 ```
 
 #### MedicalRecordForm
+
 Simple SOAP note form.
 
 ```typescript
@@ -357,12 +379,12 @@ export const MedicalRecordForm: React.FC<MedicalRecordFormProps> = ({
     defaultValues: {
       patientId,
       appointmentId,
-      chiefComplaint: '',
-      subjective: '',
-      objective: '',
-      assessment: '',
-      plan: '',
-      prescriptions: '',
+      chiefComplaint: "",
+      subjective: "",
+      objective: "",
+      assessment: "",
+      plan: "",
+      prescriptions: "",
     },
   });
 
@@ -411,6 +433,7 @@ export const MedicalRecordForm: React.FC<MedicalRecordFormProps> = ({
 ## Custom Hooks
 
 #### useAuth
+
 Authentication hook for user management.
 
 ```typescript
@@ -420,12 +443,12 @@ export const useAuth = () => {
   const login = async (email: string, password: string) => {
     const response = await authService.login(email, password);
     setUser(response.user);
-    localStorage.setItem('token', response.token);
+    localStorage.setItem("token", response.token);
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
   };
 
   return { user, login, logout, isAuthenticated: !!user };
@@ -433,6 +456,7 @@ export const useAuth = () => {
 ```
 
 #### useDebounce
+
 Debounce hook for search inputs.
 
 ```typescript
@@ -464,9 +488,9 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          50: '#f0f7ff',
+          50: "#f0f7ff",
           // ... other shades
-          600: '#0055A4', // Main brand color
+          600: "#0055A4", // Main brand color
         },
       },
     },
@@ -489,8 +513,8 @@ module.exports = {
 
 ```typescript
 // ComponentName.tsx
-import React from 'react';
-import { ComponentProps } from './ComponentName.types';
+import React from "react";
+import { ComponentProps } from "./ComponentName.types";
 
 export const ComponentName: React.FC<ComponentProps> = (props) => {
   // Component logic
@@ -506,6 +530,7 @@ export interface ComponentProps {
 ## Future Enhancements
 
 After MVP, these components will be enhanced with:
+
 - Advanced animations and transitions
 - Complex form validation
 - Drag-and-drop scheduling

@@ -8,7 +8,7 @@ interface Medication {
   patientName: string;
   medication: string;
   dosage: string;
-  status: "scheduled" | "administered" | "missed";
+  status: "ingepland" | "toegediend" | "gemist";
 }
 
 interface MedicationContextType {
@@ -38,7 +38,7 @@ export function MedicationProvider({
           patientName: "Max",
           medication: "Antibiotics",
           dosage: "500mg",
-          status: "scheduled",
+          status: "ingepland",
         },
         {
           id: "2",
@@ -47,7 +47,7 @@ export function MedicationProvider({
           patientName: "Bella",
           medication: "Pain Relief",
           dosage: "200mg",
-          status: "scheduled",
+          status: "ingepland",
         },
         {
           id: "3",
@@ -56,7 +56,7 @@ export function MedicationProvider({
           patientName: "Charlie",
           medication: "Anti-inflammatory",
           dosage: "100mg",
-          status: "scheduled",
+          status: "ingepland",
         },
       ];
     },

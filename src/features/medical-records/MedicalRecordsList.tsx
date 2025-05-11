@@ -1,31 +1,30 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMedicalRecords } from "@/lib/hooks/useApi";
+import { useMedicalRecords, usePatients } from "@/lib/hooks/useApi";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import {
-  Plus,
-  FileText,
-  Calendar,
-  Filter,
-  Download,
-  Printer,
-  Loader2,
-} from "lucide-react";
+import { Plus, Filter, Download, Printer, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { Label } from "@/components/ui/label";
 import { MedicalRecord } from "@/lib/api/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface MedicalRecordsListProps {
   patientId: string;
@@ -36,44 +35,53 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
 }) => {
   const navigate = useNavigate();
   const { data: allRecords = [], isLoading } = useMedicalRecords();
+  const { data: allPatients = [] } = usePatients();
   const records = allRecords.filter(
     (record: MedicalRecord) => record.patientId === patientId
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRecords, setSelectedRecords] = useState<string[]>([]);
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string>("ALLE");
   const [view, setView] = useState<"list" | "timeline">("list");
 
   const filteredRecords = React.useMemo(() => {
-    return records.filter((record: MedicalRecord) => {
-      const searchTermLower = searchTerm.toLowerCase();
-      return (
-        record.type.toLowerCase().includes(searchTermLower) ||
-        record.notes.toLowerCase().includes(searchTermLower) ||
-        record.chiefComplaint.toLowerCase().includes(searchTermLower) ||
-        record.diagnosis.toLowerCase().includes(searchTermLower)
+    let filtered = records;
+    if (statusFilter && statusFilter !== "ALLE") {
+      filtered = filtered.filter(
+        (record: MedicalRecord) => record.status === statusFilter
       );
-    });
-  }, [records, searchTerm]);
+    }
+    if (searchTerm) {
+      const searchTermLower = searchTerm.toLowerCase();
+      filtered = filtered.filter((record: MedicalRecord) => {
+        const patient = allPatients.find((p) => p.id === record.patientId);
+        return (
+          record.type.toLowerCase().includes(searchTermLower) ||
+          (record.notes?.toLowerCase() || "").includes(searchTermLower) ||
+          record.chiefComplaint.toLowerCase().includes(searchTermLower) ||
+          (record.diagnosis?.toLowerCase() || "").includes(searchTermLower) ||
+          (patient?.name?.toLowerCase() || "").includes(searchTermLower)
+        );
+      });
+    }
+    return filtered;
+  }, [records, searchTerm, statusFilter, allPatients]);
 
   const stats = React.useMemo(() => {
     return {
       total: records.length,
-      active: records.filter((r: MedicalRecord) => r.status === "ACTIVE")
+      actief: records.filter((r: MedicalRecord) => r.status === "ACTIEF")
         .length,
-      withPrescriptions: records.filter(
-        (r: MedicalRecord) => (r.prescriptions?.length ?? 0) > 0
+      opgelost: records.filter((r: MedicalRecord) => r.status === "OPGELOST")
+        .length,
+      inAfwachting: records.filter(
+        (r: MedicalRecord) => r.status === "IN_AFWACHTING"
+      ).length,
+      geannuleerd: records.filter(
+        (r: MedicalRecord) => r.status === "GEANNULEERD"
       ).length,
     };
   }, [records]);
-
-  const toggleFilter = (filter: string) => {
-    setActiveFilters((prev) =>
-      prev.includes(filter)
-        ? prev.filter((f) => f !== filter)
-        : [...prev, filter]
-    );
-  };
 
   const handleRecordSelect = (recordId: string) => {
     setSelectedRecords((prev) =>
@@ -83,21 +91,11 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
     );
   };
 
-  const recordsByMonth = filteredRecords.reduce<
-    Record<string, MedicalRecord[]>
-  >((acc: Record<string, MedicalRecord[]>, record: MedicalRecord) => {
-    const month = format(new Date(record.date), "MMMM yyyy");
-    if (!acc[month]) {
-      acc[month] = [];
-    }
-    acc[month].push(record);
-    return acc;
-  }, {});
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
         <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Laden...</span>
       </div>
     );
   }
@@ -105,12 +103,12 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
   return (
     <div className="space-y-4">
       <PageHeader
-        title="Medical Records"
-        description="View and manage patient medical records"
+        title="Medische Dossiers"
+        description="Bekijk en beheer patiëntendossiers"
       >
         <Button onClick={() => navigate(`/patients/${patientId}/records/new`)}>
           <Plus className="mr-2 h-4 w-4" />
-          New Record
+          Nieuw Dossier
         </Button>
       </PageHeader>
 
@@ -118,88 +116,129 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
         <div className="flex items-center gap-2">
           <div className="flex-1">
             <Label htmlFor="search" className="sr-only">
-              Search Records
+              Zoek Dossiers
             </Label>
             <Input
               id="search"
-              placeholder="Search records..."
+              placeholder="Zoek in dossiers..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              role="searchbox"
+              data-testid="search-input"
             />
           </div>
           <Button variant="outline" size="icon">
             <Filter className="h-4 w-4" />
           </Button>
         </div>
-        <Tabs
-          value={view}
-          onValueChange={(v) => setView(v as "list" | "timeline")}
-        >
-          <TabsList>
-            <TabsTrigger value="list">
-              <FileText className="mr-2 h-4 w-4" />
-              List
-            </TabsTrigger>
-            <TabsTrigger value="timeline">
-              <Calendar className="mr-2 h-4 w-4" />
-              Timeline
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="min-w-[200px]">
+          <Label htmlFor="status-filter" className="block mb-1">
+            Status
+          </Label>
+          <Select
+            value={statusFilter}
+            onValueChange={setStatusFilter}
+            name="status"
+          >
+            <SelectTrigger
+              id="status-filter"
+              aria-label="Status"
+              role="combobox"
+              data-testid="status-filter"
+            >
+              <SelectValue placeholder="Alle" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALLE">Alle</SelectItem>
+              <SelectItem value="ACTIEF">Actief</SelectItem>
+              <SelectItem value="OPGELOST">Opgelost</SelectItem>
+              <SelectItem value="IN_AFWACHTING">In afwachting</SelectItem>
+              <SelectItem value="GEANNULEERD">Geannuleerd</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
-      <div className="flex gap-2">
-        <Badge
-          variant={activeFilters.includes("ACTIVE") ? "default" : "outline"}
-          className="cursor-pointer"
-          onClick={() => toggleFilter("ACTIVE")}
+      <div className="flex items-center gap-2 mb-4">
+        <Button
+          variant={statusFilter === "ALLE" ? "default" : "outline"}
+          onClick={() => setStatusFilter("ALLE")}
+          data-testid="filter-alle"
         >
-          Active
-        </Badge>
-        <Badge
-          variant={activeFilters.includes("RESOLVED") ? "default" : "outline"}
-          className="cursor-pointer"
-          onClick={() => toggleFilter("RESOLVED")}
+          Alle
+        </Button>
+        <Button
+          variant={statusFilter === "ACTIEF" ? "default" : "outline"}
+          onClick={() => setStatusFilter("ACTIEF")}
+          data-testid="filter-actief"
         >
-          Resolved
-        </Badge>
-        <Badge
-          variant={
-            activeFilters.includes("With Prescriptions") ? "default" : "outline"
-          }
-          className="cursor-pointer"
-          onClick={() => toggleFilter("With Prescriptions")}
+          Actief
+        </Button>
+        <Button
+          variant={statusFilter === "OPGELOST" ? "default" : "outline"}
+          onClick={() => setStatusFilter("OPGELOST")}
+          data-testid="filter-opgelost"
         >
-          With Prescriptions
-        </Badge>
-        <Badge
-          variant={
-            activeFilters.includes("With Attachments") ? "default" : "outline"
-          }
-          className="cursor-pointer"
-          onClick={() => toggleFilter("With Attachments")}
+          Opgelost
+        </Button>
+        <Button
+          variant={statusFilter === "IN_AFWACHTING" ? "default" : "outline"}
+          onClick={() => setStatusFilter("IN_AFWACHTING")}
+          data-testid="filter-in-afwachting"
         >
-          With Attachments
-        </Badge>
+          In afwachting
+        </Button>
+        <Button
+          variant={statusFilter === "GEANNULEERD" ? "default" : "outline"}
+          onClick={() => setStatusFilter("GEANNULEERD")}
+          data-testid="filter-geannuleerd"
+        >
+          Geannuleerd
+        </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm font-medium">Total Records</div>
-            <div className="text-2xl font-bold">{stats.total}</div>
+            <div className="text-sm font-medium">Totaal</div>
+            <div className="text-2xl font-bold" data-testid="stat-totaal">
+              {stats.total}
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm font-medium">Active</div>
-            <div className="text-2xl font-bold">{stats.active}</div>
+            <div className="text-sm font-medium">Actief</div>
+            <div className="text-2xl font-bold" data-testid="stat-actief">
+              {stats.actief}
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm font-medium">With Prescriptions</div>
-            <div className="text-2xl font-bold">{stats.withPrescriptions}</div>
+            <div className="text-sm font-medium">Opgelost</div>
+            <div className="text-2xl font-bold" data-testid="stat-opgelost">
+              {stats.opgelost}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-sm font-medium">In afwachting</div>
+            <div
+              className="text-2xl font-bold"
+              data-testid="stat-in-afwachting"
+            >
+              {stats.inAfwachting}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-sm font-medium">Geannuleerd</div>
+            <div className="text-2xl font-bold" data-testid="stat-geannuleerd">
+              {stats.geannuleerd}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -207,169 +246,180 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
       {selectedRecords.length > 0 && (
         <div className="flex items-center gap-2 bg-muted p-2 rounded-md">
           <span className="text-sm font-medium">
-            {selectedRecords.length} selected
+            {selectedRecords.length} geselecteerd
           </span>
           <Button variant="outline" size="sm">
             <Download className="mr-2 h-4 w-4" />
-            Export Selected
+            Exporteer Selectie
           </Button>
           <Button variant="outline" size="sm">
             <Printer className="mr-2 h-4 w-4" />
-            Print Selected
+            Print Selectie
           </Button>
         </div>
       )}
 
-      <TabsContent value="list" className="mt-0">
-        <ScrollArea className="h-[600px]">
-          <div className="space-y-2">
-            {filteredRecords.map((record) => (
-              <HoverCard key={record.id}>
-                <HoverCardTrigger asChild>
-                  <Card className="cursor-pointer">
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-4">
-                        <Checkbox
-                          checked={selectedRecords.includes(record.id)}
-                          onCheckedChange={() => handleRecordSelect(record.id)}
-                        />
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h3 className="font-medium">{record.type}</h3>
-                              <p className="text-sm text-muted-foreground">
-                                {format(new Date(record.date), "PPP")}
-                              </p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              {record.prescriptions &&
-                                record.prescriptions.length > 0 && (
-                                  <Badge variant="secondary">
-                                    Prescription
+      <Tabs
+        value={view}
+        onValueChange={(v) => setView(v as "list" | "timeline")}
+      >
+        <TabsContent value="list" className="mt-0">
+          <ScrollArea className="h-[600px]">
+            <div className="space-y-2">
+              {filteredRecords.map((record) => {
+                const patient = allPatients.find(
+                  (p) => p.id === record.patientId
+                );
+                return (
+                  <HoverCard key={record.id}>
+                    <HoverCardTrigger asChild>
+                      <Card
+                        className="cursor-pointer"
+                        data-testid="record-card"
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start gap-4">
+                            <Checkbox
+                              checked={selectedRecords.includes(record.id)}
+                              onCheckedChange={() =>
+                                handleRecordSelect(record.id)
+                              }
+                            />
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <h3
+                                    className="font-medium"
+                                    data-testid="patient-name"
+                                  >
+                                    {patient?.name || "Onbekende patiënt"}
+                                  </h3>
+                                  <p
+                                    className="text-sm text-muted-foreground"
+                                    data-testid="record-type"
+                                  >
+                                    {record.type} -{" "}
+                                    {format(new Date(record.date), "PPP")}
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Badge
+                                    variant={
+                                      record.status === "ACTIEF"
+                                        ? "default"
+                                        : record.status === "OPGELOST"
+                                        ? "secondary"
+                                        : record.status === "IN_AFWACHTING"
+                                        ? "outline"
+                                        : "outline"
+                                    }
+                                    data-testid="record-status"
+                                  >
+                                    {record.status === "ACTIEF"
+                                      ? "Actief"
+                                      : record.status === "OPGELOST"
+                                      ? "Opgelost"
+                                      : record.status === "IN_AFWACHTING"
+                                      ? "In afwachting"
+                                      : "Geannuleerd"}
                                   </Badge>
-                                )}
-                              {record.status === "ACTIVE" ? (
-                                <Badge variant="default">Active</Badge>
-                              ) : (
-                                <Badge variant="secondary">Resolved</Badge>
-                              )}
+                                </div>
+                              </div>
                             </div>
                           </div>
-                          <p className="mt-2 text-sm">
-                            {record.chiefComplaint}
-                          </p>
+                        </CardContent>
+                      </Card>
+                    </HoverCardTrigger>
+                    <HoverCardContent data-testid="hover-details">
+                      <div className="space-y-2">
+                        <div>
+                          <h4 className="font-medium">Patiënt</h4>
+                          <p>{patient?.name || "Onbekende patiënt"}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium">Hoofdklacht</h4>
+                          <p>{record.chiefComplaint}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium">Diagnose</h4>
+                          <p>{record.diagnosis}</p>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                </HoverCardTrigger>
-                <HoverCardContent className="w-80">
-                  <div className="space-y-2">
-                    <div>
-                      <h4 className="font-medium">Diagnosis</h4>
-                      <p className="text-sm">{record.diagnosis}</p>
-                    </div>
-                    {record.treatmentPlan && (
-                      <div>
-                        <h4 className="font-medium">Treatment Plan</h4>
-                        <p className="text-sm">{record.treatmentPlan}</p>
-                      </div>
-                    )}
-                    {record.notes && (
-                      <div>
-                        <h4 className="font-medium">Notes</h4>
-                        <p className="text-sm">{record.notes}</p>
-                      </div>
-                    )}
-                  </div>
-                </HoverCardContent>
-              </HoverCard>
-            ))}
-          </div>
-        </ScrollArea>
-      </TabsContent>
+                    </HoverCardContent>
+                  </HoverCard>
+                );
+              })}
+            </div>
+          </ScrollArea>
+        </TabsContent>
 
-      <TabsContent value="timeline" className="mt-0">
-        <ScrollArea className="h-[600px]">
-          <div className="space-y-8">
-            {Object.entries(recordsByMonth).map(([month, monthRecords]) => (
-              <div key={month}>
-                <h3 className="text-lg font-medium mb-4">{month}</h3>
-                <div className="space-y-2">
-                  {monthRecords.map((record) => (
-                    <HoverCard key={record.id}>
-                      <HoverCardTrigger asChild>
-                        <Card className="cursor-pointer">
+        <TabsContent value="timeline" className="mt-0">
+          <ScrollArea className="h-[600px]">
+            <div className="space-y-8">
+              {Object.entries(
+                filteredRecords.reduce<Record<string, MedicalRecord[]>>(
+                  (acc, record) => {
+                    const month = format(new Date(record.date), "MMMM yyyy");
+                    if (!acc[month]) {
+                      acc[month] = [];
+                    }
+                    acc[month].push(record);
+                    return acc;
+                  },
+                  {}
+                )
+              ).map(([month, records]) => (
+                <div key={month}>
+                  <h3 className="text-lg font-medium mb-4">{month}</h3>
+                  <div className="space-y-2">
+                    {records.map((record) => {
+                      const patient = allPatients.find(
+                        (p) => p.id === record.patientId
+                      );
+                      return (
+                        <Card key={record.id}>
                           <CardContent className="p-4">
-                            <div className="flex items-start gap-4">
-                              <Checkbox
-                                checked={selectedRecords.includes(record.id)}
-                                onCheckedChange={() =>
-                                  handleRecordSelect(record.id)
-                                }
-                              />
-                              <div className="flex-1">
-                                <div className="flex items-center justify-between">
-                                  <div>
-                                    <h3 className="font-medium">
-                                      {record.type}
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground">
-                                      {format(new Date(record.date), "PPP")}
-                                    </p>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    {record.prescriptions &&
-                                      record.prescriptions.length > 0 && (
-                                        <Badge variant="secondary">
-                                          Prescription
-                                        </Badge>
-                                      )}
-                                    {record.status === "ACTIVE" ? (
-                                      <Badge variant="default">Active</Badge>
-                                    ) : (
-                                      <Badge variant="secondary">
-                                        Resolved
-                                      </Badge>
-                                    )}
-                                  </div>
-                                </div>
-                                <p className="mt-2 text-sm">
-                                  {record.chiefComplaint}
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <h4 className="font-medium">
+                                  {patient?.name || "Onbekende patiënt"}
+                                </h4>
+                                <p className="text-sm text-muted-foreground">
+                                  {record.type} -{" "}
+                                  {format(new Date(record.date), "PPP")}
                                 </p>
                               </div>
+                              <Badge
+                                variant={
+                                  record.status === "ACTIEF"
+                                    ? "default"
+                                    : record.status === "OPGELOST"
+                                    ? "secondary"
+                                    : record.status === "IN_AFWACHTING"
+                                    ? "outline"
+                                    : "outline"
+                                }
+                              >
+                                {record.status === "ACTIEF"
+                                  ? "Actief"
+                                  : record.status === "OPGELOST"
+                                  ? "Opgelost"
+                                  : record.status === "IN_AFWACHTING"
+                                  ? "In afwachting"
+                                  : "Geannuleerd"}
+                              </Badge>
                             </div>
                           </CardContent>
                         </Card>
-                      </HoverCardTrigger>
-                      <HoverCardContent className="w-80">
-                        <div className="space-y-2">
-                          <div>
-                            <h4 className="font-medium">Diagnosis</h4>
-                            <p className="text-sm">{record.diagnosis}</p>
-                          </div>
-                          {record.treatmentPlan && (
-                            <div>
-                              <h4 className="font-medium">Treatment Plan</h4>
-                              <p className="text-sm">{record.treatmentPlan}</p>
-                            </div>
-                          )}
-                          {record.notes && (
-                            <div>
-                              <h4 className="font-medium">Notes</h4>
-                              <p className="text-sm">{record.notes}</p>
-                            </div>
-                          )}
-                        </div>
-                      </HoverCardContent>
-                    </HoverCard>
-                  ))}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-      </TabsContent>
+              ))}
+            </div>
+          </ScrollArea>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

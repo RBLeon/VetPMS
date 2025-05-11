@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useMedicalRecords } from "@/hooks/useMedicalRecords";
-import { MedicalRecord } from "@/types/medical";
+import { MedicalRecord, MedicalRecordStatus } from "@/types/medical";
 import {
   Button,
   Table,
@@ -28,7 +28,7 @@ interface FormValues {
   followUpDate: dayjs.Dayjs;
   diagnosis: string;
   treatment: string;
-  status: "active" | "resolved" | "pending";
+  status: MedicalRecordStatus;
   notes: string;
 }
 
@@ -68,9 +68,9 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
       });
       setIsAddModalVisible(false);
       form.resetFields();
-      message.success("Medical record added successfully");
+      message.success("Medisch record toegevoegd");
     } catch (error) {
-      message.error("Failed to add medical record");
+      message.error("Fout bij het toevoegen van medisch record");
     } finally {
       setIsSubmitting(false);
     }
@@ -90,9 +90,9 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
       });
       setIsEditModalVisible(false);
       editForm.resetFields();
-      message.success("Medical record updated successfully");
+      message.success("Medisch record bijgewerkt");
     } catch (error) {
-      message.error("Failed to update medical record");
+      message.error("Fout bij het bijwerken van medisch record");
     } finally {
       setIsSubmitting(false);
     }
@@ -102,9 +102,9 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
     try {
       setIsSubmitting(true);
       await deleteMedicalRecord(id);
-      message.success("Medical record deleted successfully");
+      message.success("Medisch record verwijderd");
     } catch (error) {
-      message.error("Failed to delete medical record");
+      message.error("Fout bij het verwijderen van medisch record");
     } finally {
       setIsSubmitting(false);
     }
@@ -113,7 +113,7 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
   const validateFollowUpDate = (_: unknown, value: dayjs.Dayjs) => {
     const recordDate = form.getFieldValue("date");
     if (value && recordDate && value.isBefore(recordDate)) {
-      return Promise.reject("Follow-up date must be after the record date");
+      return Promise.reject("Vervolgdatum moet na de recorddatum zijn");
     }
     return Promise.resolve();
   };
@@ -121,7 +121,7 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
   const validateEditFollowUpDate = (_: unknown, value: dayjs.Dayjs) => {
     const recordDate = editForm.getFieldValue("date");
     if (value && recordDate && value.isBefore(recordDate)) {
-      return Promise.reject("Follow-up date must be after the record date");
+      return Promise.reject("Vervolgdatum moet na de recorddatum zijn");
     }
     return Promise.resolve();
   };
@@ -144,19 +144,19 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
 
   const columns = [
     {
-      title: "Date",
+      title: "Datum",
       dataIndex: "date",
       key: "date",
       sorter: (a: MedicalRecord, b: MedicalRecord) =>
         dayjs(a.date).unix() - dayjs(b.date).unix(),
     },
     {
-      title: "Diagnosis",
+      title: "Diagnose",
       dataIndex: "diagnosis",
       key: "diagnosis",
     },
     {
-      title: "Treatment",
+      title: "Behandeling",
       dataIndex: "treatment",
       key: "treatment",
     },
@@ -165,24 +165,25 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
       dataIndex: "status",
       key: "status",
       filters: [
-        { text: "Active", value: "active" },
-        { text: "Resolved", value: "resolved" },
-        { text: "Pending", value: "pending" },
+        { text: "Actief", value: "ACTIEF" },
+        { text: "Opgelost", value: "OPGELOST" },
+        { text: "In afwachting", value: "IN_AFWACHTING" },
+        { text: "Geannuleerd", value: "GEANNULEERD" },
       ],
       onFilter: (value: boolean | Key, record: MedicalRecord) =>
         record.status === value.toString(),
     },
     {
-      title: "Follow-up Date",
+      title: "Vervolgdatum",
       dataIndex: "followUpDate",
       key: "followUpDate",
     },
     {
-      title: "Actions",
+      title: "Acties",
       key: "actions",
       render: (_: unknown, record: MedicalRecord) => (
         <>
-          <Tooltip title="Edit medical record">
+          <Tooltip title="Medisch record bewerken">
             <Button
               icon={<EditOutlined />}
               onClick={() => {
@@ -194,17 +195,22 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
                 });
                 setIsEditModalVisible(true);
               }}
+              aria-label="Medisch record bewerken"
             />
           </Tooltip>
-          <Tooltip title="Delete medical record">
+          <Tooltip title="Medisch record verwijderen">
             <Popconfirm
-              title="Delete Medical Record"
-              description="Are you sure you want to delete this medical record?"
+              title="Medisch Record Verwijderen"
+              description="Weet u zeker dat u dit medisch record wilt verwijderen?"
               onConfirm={() => handleDelete(record.id)}
-              okText="Yes"
-              cancelText="No"
+              okText="Ja"
+              cancelText="Nee"
             >
-              <Button icon={<DeleteOutlined />} danger />
+              <Button
+                icon={<DeleteOutlined />}
+                danger
+                aria-label="Medisch record verwijderen"
+              />
             </Popconfirm>
           </Tooltip>
         </>
@@ -221,23 +227,23 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>Fout: {error}</div>;
   }
 
   return (
     <div>
       <div style={{ marginBottom: 16 }}>
-        <Tooltip title="Add a new medical record">
+        <Tooltip title="Nieuw medisch record toevoegen">
           <Button
             type="primary"
             icon={<PlusOutlined />}
             onClick={() => setIsAddModalVisible(true)}
             style={{ marginRight: 16 }}
           >
-            Add Medical Record
+            Nieuw Medisch Record
           </Button>
         </Tooltip>
-        <Tooltip title="Filter records by date range">
+        <Tooltip title="Records filteren op datum">
           <DatePicker.RangePicker
             onChange={(dates) => {
               if (dates) {
@@ -252,16 +258,17 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
             style={{ marginRight: 16 }}
           />
         </Tooltip>
-        <Tooltip title="Filter records by status">
+        <Tooltip title="Records filteren op status">
           <Select
-            placeholder="Filter by status"
+            placeholder="Filter op status"
             allowClear
             style={{ width: 200 }}
             onChange={(value: string | null) => setStatusFilter(value)}
           >
-            <Select.Option value="active">Active</Select.Option>
-            <Select.Option value="resolved">Resolved</Select.Option>
-            <Select.Option value="pending">Pending</Select.Option>
+            <Select.Option value="ACTIEF">Actief</Select.Option>
+            <Select.Option value="OPGELOST">Opgelost</Select.Option>
+            <Select.Option value="IN_AFWACHTING">In afwachting</Select.Option>
+            <Select.Option value="GEANNULEERD">Geannuleerd</Select.Option>
           </Select>
         </Tooltip>
       </div>
@@ -274,120 +281,122 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
       />
 
       <Modal
-        title="Add Medical Record"
+        title="Nieuw Medisch Record"
         open={isAddModalVisible}
         onCancel={() => setIsAddModalVisible(false)}
         footer={null}
       >
         <Form form={form} onFinish={handleAdd} layout="vertical">
           <Form.Item
+            label="Datum"
             name="date"
-            label="Date"
-            rules={[{ required: true, message: "Please select a date" }]}
+            rules={[{ required: true, message: "Datum is verplicht" }]}
           >
-            <DatePicker style={{ width: "100%" }} />
+            <DatePicker />
           </Form.Item>
           <Form.Item
+            label="Vervolgdatum"
             name="followUpDate"
-            label="Follow-up Date"
             rules={[
-              { required: true, message: "Please select a follow-up date" },
+              { required: true, message: "Vervolgdatum is verplicht" },
               { validator: validateFollowUpDate },
             ]}
           >
-            <DatePicker style={{ width: "100%" }} />
+            <DatePicker />
           </Form.Item>
           <Form.Item
+            label="Diagnose"
             name="diagnosis"
-            label="Diagnosis"
-            rules={[{ required: true, message: "Please enter a diagnosis" }]}
+            rules={[{ required: true, message: "Diagnose is verplicht" }]}
           >
-            <Input.TextArea rows={4} />
+            <Input />
           </Form.Item>
           <Form.Item
+            label="Behandeling"
             name="treatment"
-            label="Treatment"
-            rules={[{ required: true, message: "Please enter a treatment" }]}
+            rules={[{ required: true, message: "Behandeling is verplicht" }]}
           >
-            <Input.TextArea rows={4} />
+            <Input />
           </Form.Item>
-          <Form.Item name="notes" label="Notes">
+          <Form.Item name="notes" label="Notities">
             <Input.TextArea rows={4} />
           </Form.Item>
           <Form.Item
-            name="status"
             label="Status"
-            rules={[{ required: true, message: "Please select a status" }]}
+            name="status"
+            rules={[{ required: true, message: "Status is verplicht" }]}
           >
             <Select>
-              <Select.Option value="active">Active</Select.Option>
-              <Select.Option value="resolved">Resolved</Select.Option>
-              <Select.Option value="pending">Pending</Select.Option>
+              <Select.Option value="ACTIEF">Actief</Select.Option>
+              <Select.Option value="OPGELOST">Opgelost</Select.Option>
+              <Select.Option value="IN_AFWACHTING">In afwachting</Select.Option>
+              <Select.Option value="GEANNULEERD">Geannuleerd</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={isSubmitting}>
-              Add Record
+              Record Toevoegen
             </Button>
           </Form.Item>
         </Form>
       </Modal>
 
       <Modal
-        title="Edit Medical Record"
+        title="Medisch Dossier Bewerken"
         open={isEditModalVisible}
         onCancel={() => setIsEditModalVisible(false)}
         footer={null}
       >
         <Form form={editForm} onFinish={handleEdit} layout="vertical">
           <Form.Item
+            label="Datum"
             name="date"
-            label="Date"
-            rules={[{ required: true, message: "Please select a date" }]}
+            rules={[{ required: true, message: "Datum is verplicht" }]}
           >
-            <DatePicker style={{ width: "100%" }} />
+            <DatePicker />
           </Form.Item>
           <Form.Item
+            label="Vervolgdatum"
             name="followUpDate"
-            label="Follow-up Date"
             rules={[
-              { required: true, message: "Please select a follow-up date" },
+              { required: true, message: "Vervolgdatum is verplicht" },
               { validator: validateEditFollowUpDate },
             ]}
           >
-            <DatePicker style={{ width: "100%" }} />
+            <DatePicker />
           </Form.Item>
           <Form.Item
+            label="Diagnose"
             name="diagnosis"
-            label="Diagnosis"
-            rules={[{ required: true, message: "Please enter a diagnosis" }]}
+            rules={[{ required: true, message: "Diagnose is verplicht" }]}
           >
-            <Input.TextArea rows={4} />
+            <Input />
           </Form.Item>
           <Form.Item
+            label="Behandeling"
             name="treatment"
-            label="Treatment"
-            rules={[{ required: true, message: "Please enter a treatment" }]}
+            rules={[{ required: true, message: "Behandeling is verplicht" }]}
           >
-            <Input.TextArea rows={4} />
+            <Input />
           </Form.Item>
-          <Form.Item name="notes" label="Notes">
+          <Form.Item name="notes" label="Notities">
             <Input.TextArea rows={4} />
           </Form.Item>
           <Form.Item
-            name="status"
             label="Status"
-            rules={[{ required: true, message: "Please select a status" }]}
+            name="status"
+            rules={[{ required: true, message: "Status is verplicht" }]}
           >
             <Select>
-              <Select.Option value="active">Active</Select.Option>
-              <Select.Option value="resolved">Resolved</Select.Option>
-              <Select.Option value="pending">Pending</Select.Option>
+              <Select.Option value="ACTIEF">Actief</Select.Option>
+              <Select.Option value="OPGELOST">Opgelost</Select.Option>
+              <Select.Option value="IN_AFWACHTING">In afwachting</Select.Option>
+              <Select.Option value="GEANNULEERD">Geannuleerd</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={isSubmitting}>
-              Update Record
+              Record Bijwerken
             </Button>
           </Form.Item>
         </Form>

@@ -4,11 +4,11 @@ import { useAuth } from "./AuthContext";
 import { roleConfigs, RoleConfig } from "../config/roleConfigs";
 
 export type Role =
-  | "veterinarian"
-  | "receptionist"
-  | "nurse"
-  | "manager"
-  | "ceo";
+  | "VETERINARIAN"
+  | "RECEPTIONIST"
+  | "NURSE"
+  | "MANAGER"
+  | "CEO";
 
 interface RoleContextType {
   role: Role;
@@ -51,7 +51,7 @@ export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({
       return storedRole as Role;
     }
     // Fallback to user's role or default
-    return (user?.role as Role) || "veterinarian";
+    return (user?.role as Role) || "VETERINARIAN";
   });
   const [roleConfig, setRoleConfig] = useState<RoleConfig>(
     roleConfigs[role] || roleConfigs.veterinarian

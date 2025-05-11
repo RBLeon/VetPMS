@@ -12,7 +12,6 @@ import {
   FileText,
   CreditCard,
   BarChart3,
-  FilePlus,
   Heart,
   CircuitBoard,
   TrendingUp,
@@ -59,364 +58,28 @@ export interface RoleConfig {
 }
 
 export const roleConfigs: { [key: string]: RoleConfig } = {
-  veterinarian: {
-    displayName: "Veterinarian",
-    description: "Clinical staff focused on patient care and treatment",
-    permissions: [
-      "medical_records:read",
-      "medical_records:write",
-      "appointments:read",
-      "patients:read",
-      "patients:write",
-      "clients:read",
-      "prescriptions:write",
-    ],
-    navItems: [
-      ...commonNavItems,
-      {
-        title: "Appointments",
-        href: "/appointments",
-        icon: Calendar,
-        color:
-          "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
-      },
-      {
-        title: "Clients",
-        href: "/clients",
-        icon: Users,
-        color:
-          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
-      },
-      {
-        title: "Patients",
-        href: "/patients",
-        icon: User,
-        color:
-          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
-      },
-      {
-        title: "Medical Records",
-        href: "/medical",
-        icon: Stethoscope,
-        color:
-          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
-      },
-      {
-        title: "Settings",
-        href: "/settings",
-        icon: Settings,
-        color:
-          "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
-      },
-    ],
-    quickActions: [
-      ...commonQuickActions,
-      {
-        title: "New SOAP Note",
-        href: "/medical/soap/new",
-        icon: FilePlus,
-        color:
-          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
-      },
-      {
-        title: "New Appointment",
-        href: "/appointments/new",
-        icon: Calendar,
-        color:
-          "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
-      },
-      {
-        title: "Patient Lookup",
-        href: "/patients",
-        icon: Heart,
-        color:
-          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
-      },
-    ],
-    contextualFeatures: {
-      showPatientBanner: true,
-      showMedicalRecordTabs: true,
-      showPrescriptionTools: true,
-      showBillingDetails: false,
-      showAdvancedClinical: true,
-      useRoleBasedDashboard: true,
-    },
-  },
-
-  receptionist: {
-    displayName: "Receptionist",
-    description:
-      "Front desk staff managing appointments and client interaction",
-    permissions: [
-      "appointments:read",
-      "appointments:write",
-      "clients:read",
-      "clients:write",
-      "patients:read",
-      "invoices:read",
-      "invoices:create",
-      "medical_records:read",
-    ],
-    navItems: [
-      ...commonNavItems,
-      {
-        title: "Appointments",
-        href: "/appointments",
-        icon: Calendar,
-        color:
-          "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
-      },
-      {
-        title: "Clients",
-        href: "/clients",
-        icon: Users,
-        color:
-          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
-      },
-      {
-        title: "Patients",
-        href: "/patients",
-        icon: User,
-        color:
-          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
-      },
-      {
-        title: "Medical Records",
-        href: "/medical",
-        icon: Stethoscope,
-        color:
-          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
-      },
-      {
-        title: "Settings",
-        href: "/settings",
-        icon: Settings,
-        color:
-          "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
-      },
-    ],
-    quickActions: [
-      ...commonQuickActions,
-      {
-        title: "New Appointment",
-        href: "/appointments/new",
-        icon: Calendar,
-        color:
-          "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
-      },
-      {
-        title: "New Client",
-        href: "/clients/new",
-        icon: Users,
-        color:
-          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
-      },
-      {
-        title: "Check-In Patient",
-        href: "/appointments/check-in",
-        icon: User,
-        color:
-          "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
-      },
-    ],
-    contextualFeatures: {
-      showPatientBanner: true,
-      showMedicalRecordTabs: false,
-      showPrescriptionTools: false,
-      showBillingDetails: true,
-      showAdvancedClinical: false,
-      useRoleBasedDashboard: true,
-    },
-  },
-
-  nurse: {
-    displayName: "Veterinary Nurse",
-    description: "Clinical support staff assisting veterinarians",
-    permissions: [
-      "medical_records:read",
-      "medical_records:write:basic",
-      "appointments:read",
-      "patients:read",
-      "patients:write:vitals",
-      "clients:read",
-      "treatments:execute",
-    ],
-    navItems: [
-      ...commonNavItems,
-      {
-        title: "Appointments",
-        href: "/appointments",
-        icon: Calendar,
-        color:
-          "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
-      },
-      {
-        title: "Patients",
-        href: "/patients",
-        icon: Users,
-        color:
-          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
-      },
-      {
-        title: "Medical Records",
-        href: "/medical",
-        icon: Stethoscope,
-        color:
-          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
-      },
-      {
-        title: "Tasks",
-        href: "/tasks",
-        icon: FileText,
-        color:
-          "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
-      },
-    ],
-    quickActions: [
-      ...commonQuickActions,
-      {
-        title: "Record Vitals",
-        href: "/patients/vitals",
-        icon: Heart,
-        color:
-          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
-      },
-      {
-        title: "Treatment Tasks",
-        href: "/tasks/treatments",
-        icon: FileText,
-        color:
-          "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
-      },
-      {
-        title: "Patient Lookup",
-        href: "/patients",
-        icon: Heart,
-        color:
-          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
-      },
-    ],
-    contextualFeatures: {
-      showPatientBanner: true,
-      showMedicalRecordTabs: true,
-      showPrescriptionTools: false,
-      showBillingDetails: false,
-      showAdvancedClinical: false,
-      useRoleBasedDashboard: true,
-    },
-  },
-
-  manager: {
-    displayName: "Practice Manager",
-    description: "Administrative staff overseeing practice operations",
-    permissions: [
-      "reports:read",
-      "staff:read",
-      "staff:write",
-      "billing:read",
-      "billing:write",
-      "inventory:read",
-      "inventory:write",
-      "settings:read",
-      "settings:write",
-      "appointments:read",
-      "clients:read",
-      "patients:read",
-    ],
-    navItems: [
-      ...commonNavItems,
-      {
-        title: "Analytics",
-        href: "/analytics",
-        icon: BarChart3,
-        color:
-          "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
-      },
-      {
-        title: "Staff Management",
-        href: "/staff",
-        icon: Users,
-        color:
-          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
-      },
-      {
-        title: "Billing & Finance",
-        href: "/finance",
-        icon: CreditCard,
-        color:
-          "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
-      },
-      {
-        title: "Inventory",
-        href: "/inventory",
-        icon: Database,
-        color:
-          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
-      },
-      {
-        title: "Settings",
-        href: "/settings",
-        icon: Settings,
-        color:
-          "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
-      },
-    ],
-    quickActions: [
-      ...commonQuickActions,
-      {
-        title: "Daily Report",
-        href: "/analytics/daily",
-        icon: BarChart3,
-        color:
-          "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
-      },
-      {
-        title: "Staff Schedule",
-        href: "/staff/schedule",
-        icon: CalendarRange,
-        color:
-          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
-      },
-      {
-        title: "Inventory Check",
-        href: "/inventory/check",
-        icon: Database,
-        color:
-          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
-      },
-    ],
-    contextualFeatures: {
-      showPatientBanner: false,
-      showMedicalRecordTabs: false,
-      showPrescriptionTools: false,
-      showBillingDetails: true,
-      showAdvancedClinical: false,
-      useRoleBasedDashboard: true,
-    },
-  },
-
-  admin: {
-    displayName: "System Administrator",
-    description: "Technical staff with full system access",
+  ADMIN: {
+    displayName: "Systeembeheerder",
+    description: "Technisch personeel met volledige systeemtoegang",
     permissions: ["*"], // All permissions
     navItems: [
       ...commonNavItems,
       {
-        title: "Users & Permissions",
+        title: "Gebruikers & Rechten",
         href: "/admin/users",
         icon: Users,
         color:
           "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
       },
       {
-        title: "System Configuration",
+        title: "Systeemconfiguratie",
         href: "/admin/config",
         icon: Settings,
         color:
           "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
       },
       {
-        title: "Practice Settings",
+        title: "Praktijkinstellingen",
         href: "/admin/practice",
         icon: CircuitBoard,
         color:
@@ -440,14 +103,14 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
     quickActions: [
       ...commonQuickActions,
       {
-        title: "User Management",
+        title: "Gebruikersbeheer",
         href: "/admin/users",
         icon: Users,
         color:
           "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
       },
       {
-        title: "System Status",
+        title: "Systeemstatus",
         href: "/admin/status",
         icon: CircuitBoard,
         color:
@@ -463,44 +126,362 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
       useRoleBasedDashboard: true,
     },
   },
-
-  ceo: {
-    displayName: "Chief Executive Officer",
-    description:
-      "Executive leadership with full system access and strategic oversight",
-    permissions: ["*"], // All permissions
+  VETERINARIAN: {
+    displayName: "Dierenarts",
+    description: "Volledige toegang tot klinische functies en patiëntgegevens",
+    permissions: [
+      "patients.view",
+      "patients.edit",
+      "appointments.view",
+      "appointments.edit",
+      "medical_records.view",
+      "medical_records.edit",
+      "prescriptions.view",
+      "prescriptions.edit",
+    ],
     navItems: [
       ...commonNavItems,
       {
-        title: "Practice Analytics",
+        title: "Afspraken",
+        href: "/appointments",
+        icon: Calendar,
+        color:
+          "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
+      },
+      {
+        title: "Patiënten",
+        href: "/patients",
+        icon: Stethoscope,
+        color:
+          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
+      },
+      {
+        title: "Medische Dossiers",
+        href: "/medical-records",
+        icon: FileText,
+        color:
+          "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
+      },
+    ],
+    quickActions: [
+      ...commonQuickActions,
+      {
+        title: "Nieuwe Afspraak",
+        href: "/appointments/new",
+        icon: Calendar,
+        color:
+          "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
+      },
+      {
+        title: "Nieuwe Patiënt",
+        href: "/patients/new",
+        icon: Stethoscope,
+        color:
+          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
+      },
+      {
+        title: "Medisch Dossier",
+        href: "/medical-records/new",
+        icon: FileText,
+        color:
+          "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
+      },
+    ],
+    contextualFeatures: {
+      showPatientBanner: true,
+      showMedicalRecordTabs: true,
+      showPrescriptionTools: true,
+      showBillingDetails: true,
+      showAdvancedClinical: true,
+      useRoleBasedDashboard: true,
+    },
+  },
+  NURSE: {
+    displayName: "Dierenartsassistent",
+    description: "Klinisch ondersteunend personeel dat dierenartsen assisteert",
+    permissions: [
+      "medical_records:read",
+      "medical_records:write:basic",
+      "appointments:read",
+      "patients:read",
+      "patients:write:vitals",
+      "clients:read",
+      "treatments:execute",
+    ],
+    navItems: [
+      ...commonNavItems,
+      {
+        title: "Afspraken",
+        href: "/appointments",
+        icon: Calendar,
+        color:
+          "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
+      },
+      {
+        title: "Patiënten",
+        href: "/patients",
+        icon: Users,
+        color:
+          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
+      },
+      {
+        title: "Medische Dossiers",
+        href: "/medical",
+        icon: Stethoscope,
+        color:
+          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
+      },
+      {
+        title: "Taken",
+        href: "/tasks",
+        icon: FileText,
+        color:
+          "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
+      },
+    ],
+    quickActions: [
+      ...commonQuickActions,
+      {
+        title: "Vitalen Registreren",
+        href: "/patients/vitals",
+        icon: Heart,
+        color:
+          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
+      },
+      {
+        title: "Behandelingstaken",
+        href: "/tasks/treatments",
+        icon: FileText,
+        color:
+          "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
+      },
+      {
+        title: "Patiënt Zoeken",
+        href: "/patients",
+        icon: Heart,
+        color:
+          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
+      },
+    ],
+    contextualFeatures: {
+      showPatientBanner: true,
+      showMedicalRecordTabs: true,
+      showPrescriptionTools: false,
+      showBillingDetails: false,
+      showAdvancedClinical: false,
+      useRoleBasedDashboard: true,
+    },
+  },
+  RECEPTIONIST: {
+    displayName: "Baliemedewerker",
+    description:
+      "Baliepersoneel voor het beheren van afspraken en klantcontact",
+    permissions: [
+      "appointments:read",
+      "appointments:write",
+      "clients:read",
+      "clients:write",
+      "patients:read",
+      "invoices:read",
+      "invoices:create",
+      "medical_records:read",
+    ],
+    navItems: [
+      ...commonNavItems,
+      {
+        title: "Afspraken",
+        href: "/appointments",
+        icon: Calendar,
+        color:
+          "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
+      },
+      {
+        title: "Klanten",
+        href: "/clients",
+        icon: Users,
+        color:
+          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
+      },
+      {
+        title: "Patiënten",
+        href: "/patients",
+        icon: User,
+        color:
+          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
+      },
+      {
+        title: "Medische Dossiers",
+        href: "/medical",
+        icon: Stethoscope,
+        color:
+          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
+      },
+      {
+        title: "Instellingen",
+        href: "/settings",
+        icon: Settings,
+        color:
+          "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
+      },
+    ],
+    quickActions: [
+      ...commonQuickActions,
+      {
+        title: "Nieuwe Afspraak",
+        href: "/appointments/new",
+        icon: Calendar,
+        color:
+          "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
+      },
+      {
+        title: "Nieuwe Klant",
+        href: "/clients/new",
+        icon: Users,
+        color:
+          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
+      },
+      {
+        title: "Patiënt Inchecken",
+        href: "/appointments/check-in",
+        icon: User,
+        color:
+          "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
+      },
+    ],
+    contextualFeatures: {
+      showPatientBanner: true,
+      showMedicalRecordTabs: false,
+      showPrescriptionTools: false,
+      showBillingDetails: true,
+      showAdvancedClinical: false,
+      useRoleBasedDashboard: true,
+    },
+  },
+  MANAGER: {
+    displayName: "Praktijkmanager",
+    description: "Administratief personeel dat toezicht houdt op de praktijk",
+    permissions: [
+      "rapporten:lezen",
+      "personeel:lezen",
+      "personeel:schrijven",
+      "facturering:lezen",
+      "facturering:schrijven",
+      "voorraad:lezen",
+      "voorraad:schrijven",
+      "instellingen:lezen",
+      "instellingen:schrijven",
+      "afspraken:lezen",
+      "klanten:lezen",
+      "patiënten:lezen",
+    ],
+    navItems: [
+      ...commonNavItems,
+      {
+        title: "Analytics",
         href: "/analytics",
         icon: BarChart3,
         color:
           "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
       },
       {
-        title: "Staff Management",
+        title: "Personeelsbeheer",
+        href: "/personeel",
+        icon: Users,
+        color:
+          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
+      },
+      {
+        title: "Facturering & Financiën",
+        href: "/financien",
+        icon: CreditCard,
+        color:
+          "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
+      },
+      {
+        title: "Voorraad",
+        href: "/voorraad",
+        icon: Database,
+        color:
+          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
+      },
+      {
+        title: "Instellingen",
+        href: "/instellingen",
+        icon: Settings,
+        color:
+          "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
+      },
+    ],
+    quickActions: [
+      ...commonQuickActions,
+      {
+        title: "Dagelijks Rapport",
+        href: "/analytics/daily",
+        icon: BarChart3,
+        color:
+          "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
+      },
+      {
+        title: "Personeelsrooster",
+        href: "/staff/schedule",
+        icon: CalendarRange,
+        color:
+          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
+      },
+      {
+        title: "Voorraadcontrole",
+        href: "/inventory/check",
+        icon: Database,
+        color:
+          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
+      },
+    ],
+    contextualFeatures: {
+      showPatientBanner: true,
+      showMedicalRecordTabs: true,
+      showPrescriptionTools: false,
+      showBillingDetails: true,
+      showAdvancedClinical: false,
+      useRoleBasedDashboard: true,
+    },
+  },
+  CEO: {
+    displayName: "Directeur",
+    description:
+      "Directie met volledige systeemtoegang en strategisch toezicht",
+    permissions: ["*"], // All permissions
+    navItems: [
+      ...commonNavItems,
+      {
+        title: "Praktijk Analytics",
+        href: "/analytics",
+        icon: BarChart3,
+        color:
+          "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
+      },
+      {
+        title: "Personeelsbeheer",
         href: "/staff",
         icon: Users,
         color:
           "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
       },
       {
-        title: "Financial Overview",
+        title: "Financieel Overzicht",
         href: "/finance",
         icon: CreditCard,
         color:
           "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
       },
       {
-        title: "Practice Settings",
+        title: "Praktijk Instellingen",
         href: "/settings",
         icon: Settings,
         color:
           "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
       },
       {
-        title: "Multi-Tenant Management",
+        title: "Multi-Tenant Beheer",
         href: "/tenants",
         icon: CircuitBoard,
         color:
@@ -510,21 +491,21 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
     quickActions: [
       ...commonQuickActions,
       {
-        title: "Financial Report",
+        title: "Financieel Rapport",
         href: "/finance/report",
         icon: BarChart3,
         color:
           "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
       },
       {
-        title: "Staff Overview",
+        title: "Personeels Overzicht",
         href: "/staff/overview",
         icon: Users,
         color:
           "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
       },
       {
-        title: "Practice Growth",
+        title: "Praktijk Groei",
         href: "/analytics/growth",
         icon: TrendingUp,
         color:

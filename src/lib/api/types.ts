@@ -1,9 +1,9 @@
 /**
- * API Type Definitions
- * Contains type definitions for the API clients and their parameters
+ * API Type Definities
+ * Bevat type definities voor de API clients en hun parameters
  */
 
-// Common API Response Types
+// Algemene API Response Types
 export interface ApiResponse<T> {
   data: T;
   status: number;
@@ -72,14 +72,14 @@ export interface Client {
 export interface Patient {
   id: string;
   name: string;
-  species: "DOG" | "CAT" | "BIRD" | "REPTILE" | "SMALL_MAMMAL" | "OTHER";
+  species: "HOND" | "KAT" | "VOGEL" | "REPTIEL" | "KLEIN_ZOOGDIER" | "ANDERS";
   breed: string;
   age: number;
   weight: number;
   dateOfBirth: string;
   lastVisit: string;
   clientId: string;
-  gender: "male" | "female" | "unknown";
+  gender: "mannelijk" | "vrouwelijk" | "onbekend";
   microchipNumber?: string;
   color?: string;
   allergies?: string[];
@@ -92,6 +92,9 @@ export interface Patient {
   medicalRecords?: MedicalRecord[];
   notes?: string;
   alerts?: PatientAlert[];
+  status: "ACTIVE" | "INACTIVE" | "UNDER_CARE" | "DECEASED";
+  needsVitalsCheck: boolean;
+  registrationDate: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -112,89 +115,84 @@ export interface PatientAlert {
 
 // Appointment Types
 export type AppointmentStatus =
-  | "SCHEDULED"
-  | "CHECKED_IN"
-  | "IN_PROGRESS"
-  | "COMPLETED"
-  | "CANCELED"
-  | "NO_SHOW";
+  | "INGEPLAND"
+  | "AANGEMELD"
+  | "IN_BEHANDELING"
+  | "VOLTOOID"
+  | "GEANNULEERD"
+  | "NIET_VERSCHENEN";
 
 export type AppointmentType =
-  | "CHECK_UP"
-  | "VACCINATION"
-  | "SURGERY"
-  | "CONSULTATION"
-  | "DENTAL"
-  | "EMERGENCY";
+  | "CONTROLE"
+  | "VACCINATIE"
+  | "OPERATIE"
+  | "CONSULT"
+  | "GEBITSVERZORGING"
+  | "SPOEDGEVAL";
 
 export type ReminderType = "EMAIL" | "SMS" | "PUSH";
 export type ReminderTime = "15m" | "30m" | "1h" | "24h" | "48h";
-export type RecurringFrequency = "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+export type RecurringFrequency =
+  | "DAGELIJKS"
+  | "WEKELIJKS"
+  | "MAANDELIJKS"
+  | "JAARLIJKS";
 
 export interface Appointment {
   id: string;
   patientId: string;
-  patient?: Patient;
+  patientName: string;
   clientId: string;
-  client?: Client;
+  clientName: string;
   providerId: string;
-  resourceIds?: string[];
-  startTime: Date;
-  endTime: Date;
   date: string;
   time: string;
   type: AppointmentType;
   status: AppointmentStatus;
-  notes: string;
-  isRecurring: boolean;
+  notes?: string;
+  isRecurring?: boolean;
   recurringPattern?: {
-    frequency: RecurringFrequency;
+    frequency: "DAGELIJKS" | "WEKELIJKS" | "MAANDELIJKS" | "JAARLIJKS";
     interval: number;
     endDate?: string;
   };
   reminder?: {
-    type: ReminderType;
-    time: ReminderTime;
+    type: "EMAIL" | "SMS" | "PUSH";
+    time: "15m" | "30m" | "1u" | "24u" | "48u";
   };
+  isNewClient?: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
 // Medical Record Types
 export type MedicalRecordStatus =
-  | "ACTIVE"
-  | "RESOLVED"
-  | "PENDING"
-  | "CANCELLED";
+  | "ACTIEF"
+  | "OPGELOST"
+  | "IN_AFWACHTING"
+  | "GEANNULEERD";
 
 export interface MedicalRecord {
   id: string;
   patientId: string;
-  patient?: Patient;
+  patientName: string;
   veterinarianId: string;
+  veterinarianName: string;
   type: string;
   date: string;
   status: MedicalRecordStatus;
-  notes: string;
-  chiefComplaint: string;
-  diagnosis: string;
-  treatmentPlan?: string;
-  vitalSigns?: {
-    temperature?: number;
-    heartRate?: number;
-    respiratoryRate?: number;
-    bloodPressure?: string;
-    weight?: number;
-  };
+  followUpDate?: string;
+  notes?: string;
+  diagnosis?: string;
+  vitalSigns?: string;
+  followUpNotes?: string;
+  treatment?: string;
   treatments?: Treatment[];
   prescriptions?: Prescription[];
   attachments?: Attachment[];
-  followUpDate?: string;
-  followUpNotes?: string;
-  hasAttachments: boolean;
-  followUpScheduled: boolean;
   createdAt: string;
   updatedAt: string;
+  chiefComplaint: string;
 }
 
 export interface Treatment {
@@ -273,7 +271,7 @@ export interface InventoryItem {
   id: string;
   name: string;
   description: string;
-  category: string;
+  category: "MEDICATIE" | "MATERIAAL" | "APPARATUUR" | "VOER";
   quantity: number;
   unit: string;
   cost: number;
@@ -396,8 +394,8 @@ export interface ClientFeedback {
   appointmentId?: string;
   rating: number;
   comment: string;
-  category: "SERVICE" | "STAFF" | "FACILITY" | "GENERAL";
-  status: "PENDING" | "REVIEWED" | "ADDRESSED";
+  category: "SERVICE" | "PERSONEEL" | "FACILITEIT" | "ALGEMEEN";
+  status: "IN_AFWACHTING" | "BEKEKEN" | "AFGEHANDELD";
   createdAt: string;
   updatedAt: string;
 }
@@ -423,4 +421,72 @@ export interface StaffMember {
   };
   createdAt: string;
   updatedAt: string;
+}
+
+export interface TestResult {
+  id: string;
+  patientId: string;
+  patientName: string;
+  testType: string;
+  status: "VOLTOOID" | "IN_BEHANDELING" | "IN_AFWACHTING";
+  orderedBy: string;
+  orderedDate: string;
+  completedDate: string;
+  results: string;
+  notes: string;
+  priority: "hoog" | "middel" | "laag";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface User extends UserProfile {
+  role: "VETERINARIAN" | "NURSE" | "RECEPTIONIST" | "MANAGER" | "CEO";
+  permissions: string[];
+  tenantId: string;
+}
+
+// Add Bill type for MVP if not present
+export interface Bill {
+  id: string;
+  invoiceNumber: string;
+  date: string;
+  clientName: string;
+  amount: number;
+  status: BillStatus;
+  items: BillItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Add Role type for use throughout the app
+export type Role =
+  | "VETERINARIAN"
+  | "NURSE"
+  | "RECEPTIONIST"
+  | "MANAGER"
+  | "CEO";
+
+export type BillStatus = "OPEN" | "BETAALD" | "GEANNULEERD";
+
+export interface BillItem {
+  id: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+}
+
+export interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface Metrics {
+  totalAppointments: number;
+  totalPatients: number;
+  totalRevenue: number;
+  appointmentsByStatus: Record<string, number>;
 }

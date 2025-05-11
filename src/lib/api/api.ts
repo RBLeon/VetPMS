@@ -2,6 +2,7 @@
 import { useAuth } from "../context/AuthContext";
 import { useTenant } from "../context/TenantContext";
 import { ApiClientInterface, ApiError } from "./types";
+import { Metrics } from "@/lib/hooks/useMetrics";
 
 interface ApiOptions {
   method?: string;
@@ -111,13 +112,17 @@ export const api = new ApiClient();
 
 // Hook for using API with authentication and tenant context
 export function useApi() {
-  const { isAuthenticated, backendType } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { currentTenant } = useTenant();
 
   return {
     api,
     isAuthenticated,
-    backendType,
     currentTenant,
   };
 }
+
+export const getMetrics = async (): Promise<Metrics> => {
+  const response = await api.get<Metrics>("/metrics");
+  return response;
+};

@@ -26,7 +26,7 @@ export function SearchInput({
     <div className={cn("relative", className)}>
       <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
       <Input
-        placeholder="Search..."
+        placeholder="Zoeken..."
         value={value}
         onChange={(e) => setValue(e.target.value)}
         className="pl-8"

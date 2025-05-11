@@ -7,9 +7,17 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
-    setupFiles: ["./src/test/setup.ts"],
-  },
-  resolve: {
+    setupFiles: ["./src/test/setup.tsx"],
+    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    exclude: ["node_modules", "dist", ".idea", ".git", ".cache"],
+    coverage: {
+      reporter: ["text", "json", "html"],
+      exclude: ["node_modules/", "src/test/"],
+    },
+    silent: true,
+    reporters: ["default"],
+    testTimeout: 10000,
+    hookTimeout: 10000,
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },

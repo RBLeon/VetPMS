@@ -79,7 +79,9 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
       );
       navigate("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to set role");
+      setError(
+        err instanceof Error ? err.message : "Fout bij het instellen van rol"
+      );
       console.error("Role selection failed:", err);
     } finally {
       setIsLoading(false);
@@ -103,9 +105,9 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Select Your Role</DialogTitle>
+          <DialogTitle className="text-2xl">Selecteer Uw Rol</DialogTitle>
           <DialogDescription>
-            Choose a role to customize your VetPMS experience for this session
+            Kies een rol om uw VetPMS-ervaring aan te passen voor deze sessie
           </DialogDescription>
         </DialogHeader>
 
@@ -151,7 +153,9 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
                   </CardHeader>
                   <CardContent className="pt-0">
                     <div className="text-xs text-muted-foreground">
-                      <span className="font-semibold">Key features:</span>{" "}
+                      <span className="font-semibold">
+                        Belangrijkste functies:
+                      </span>{" "}
                       {Object.entries(roleConfig.contextualFeatures)
                         .filter(([, value]) => value === true)
                         .map(([key]) => key.replace(/([A-Z])/g, " $1"))
@@ -178,8 +182,8 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
             disabled={!selectedRole || isLoading}
           >
             {isLoading
-              ? "Setting role..."
-              : `Continue as ${
+              ? "Rol instellen..."
+              : `Doorgaan als ${
                   selectedRole ? roleConfigs[selectedRole].displayName : ""
                 }`}
           </Button>

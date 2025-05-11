@@ -3,13 +3,13 @@ import React, { useState } from "react";
 import { Search } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
-import { 
-  CommandDialog, 
-  CommandInput, 
-  CommandList, 
-  CommandEmpty, 
-  CommandGroup, 
-  CommandItem 
+import {
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
 } from "../ui/command";
 
 interface SearchBarProps {
@@ -17,7 +17,10 @@ interface SearchBarProps {
   className?: string;
 }
 
-export function SearchBar({ placeholder = "Search...", className }: SearchBarProps) {
+export function SearchBar({
+  placeholder = "Zoeken...",
+  className,
+}: SearchBarProps) {
   const [open, setOpen] = useState(false);
 
   // Mock search results
@@ -28,15 +31,33 @@ export function SearchBar({ placeholder = "Search...", className }: SearchBarPro
       { id: "3", name: "Michael Brown", email: "michael.brown@example.com" },
     ],
     patients: [
-      { id: "1", name: "Max", species: "Dog", breed: "Golden Retriever" },
-      { id: "2", name: "Bella", species: "Cat", breed: "Siamese" },
-      { id: "3", name: "Charlie", species: "Dog", breed: "Labrador" },
-      { id: "4", name: "Luna", species: "Cat", breed: "Persian" },
+      { id: "1", name: "Max", species: "Hond", breed: "Golden Retriever" },
+      { id: "2", name: "Bella", species: "Kat", breed: "Siamees" },
+      { id: "3", name: "Charlie", species: "Hond", breed: "Labrador" },
+      { id: "4", name: "Luna", species: "Kat", breed: "Perzisch" },
     ],
     appointments: [
-      { id: "1", date: "2023-04-15", time: "10:30 AM", client: "John Smith", patient: "Max" },
-      { id: "2", date: "2023-04-15", time: "11:15 AM", client: "Emma Johnson", patient: "Bella" },
-      { id: "3", date: "2023-04-15", time: "12:00 PM", client: "Michael Brown", patient: "Charlie" },
+      {
+        id: "1",
+        date: "2023-04-15",
+        time: "10:30",
+        client: "John Smith",
+        patient: "Max",
+      },
+      {
+        id: "2",
+        date: "2023-04-15",
+        time: "11:15",
+        client: "Emma Johnson",
+        patient: "Bella",
+      },
+      {
+        id: "3",
+        date: "2023-04-15",
+        time: "12:00",
+        client: "Michael Brown",
+        patient: "Charlie",
+      },
     ],
   };
 
@@ -71,20 +92,22 @@ export function SearchBar({ placeholder = "Search...", className }: SearchBarPro
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder={placeholder} />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          
-          <CommandGroup heading="Clients">
+          <CommandEmpty>Geen resultaten gevonden.</CommandEmpty>
+
+          <CommandGroup heading="Klanten">
             {searchResults.clients.map((client) => (
               <CommandItem key={client.id}>
                 <div className="flex flex-col">
                   <span>{client.name}</span>
-                  <span className="text-xs text-muted-foreground">{client.email}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {client.email}
+                  </span>
                 </div>
               </CommandItem>
             ))}
           </CommandGroup>
-          
-          <CommandGroup heading="Patients">
+
+          <CommandGroup heading="Patiënten">
             {searchResults.patients.map((patient) => (
               <CommandItem key={patient.id}>
                 <div className="flex flex-col">
@@ -96,16 +119,16 @@ export function SearchBar({ placeholder = "Search...", className }: SearchBarPro
               </CommandItem>
             ))}
           </CommandGroup>
-          
-          <CommandGroup heading="Appointments">
+
+          <CommandGroup heading="Afspraken">
             {searchResults.appointments.map((appointment) => (
               <CommandItem key={appointment.id}>
                 <div className="flex flex-col">
                   <span>
-                    {appointment.date} at {appointment.time}
+                    {appointment.date} om {appointment.time}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {appointment.patient} with {appointment.client}
+                    {appointment.patient} met {appointment.client}
                   </span>
                 </div>
               </CommandItem>

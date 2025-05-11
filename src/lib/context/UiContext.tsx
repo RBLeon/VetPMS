@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useCallback,
+  useEffect,
+} from "react";
 
 export interface SearchResult {
   id: string;
@@ -14,11 +21,11 @@ interface UiContextType {
   contextualActions: ContextualAction[];
   activeEntityId: string | null;
   activeEntityType: string | null;
-  
+
   // UI controls
   sidebarOpen: boolean;
   isDarkMode: boolean;
-  
+
   // UI methods
   setCurrentWorkspace: (workspace: string | null) => void;
   setBreadcrumb: (items: BreadcrumbItem[]) => void;
@@ -26,7 +33,7 @@ interface UiContextType {
   setActiveEntity: (type: string | null, id: string | null) => void;
   toggleSidebar: () => void;
   toggleDarkMode: () => void;
-  
+
   // Search and global actions
   globalSearch: (query: string) => void;
   isSearchActive: boolean;
@@ -45,7 +52,13 @@ export interface ContextualAction {
   label: string;
   icon?: string;
   action: () => void;
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
   disabled?: boolean;
 }
 
@@ -58,45 +71,80 @@ interface UiProviderProps {
 export const UiProvider: React.FC<UiProviderProps> = ({ children }) => {
   const [currentWorkspace, setCurrentWorkspace] = useState<string | null>(null);
   const [breadcrumb, setBreadcrumb] = useState<BreadcrumbItem[]>([]);
-  const [contextualActions, setContextualActions] = useState<ContextualAction[]>([]);
+  const [contextualActions, setContextualActions] = useState<
+    ContextualAction[]
+  >([]);
   const [activeEntityType, setActiveEntityType] = useState<string | null>(null);
   const [activeEntityId, setActiveEntityId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const storedTheme = localStorage.getItem("vc_theme");
+    if (storedTheme) {
+      return storedTheme === "dark";
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
   const [isSearchActive, setIsSearchActive] = useState(false);
-  const [searchResults, setSearchResults] = useState<SearchResult[] | null>(null);
+  const [searchResults, setSearchResults] = useState<SearchResult[] | null>(
+    null
+  );
+
+  // Initialize theme on mount
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
 
   const toggleSidebar = useCallback(() => {
-    setSidebarOpen(prev => !prev);
+    setSidebarOpen((prev) => !prev);
   }, []);
 
   const toggleDarkMode = useCallback(() => {
-    setIsDarkMode(prev => {
+    setIsDarkMode((prev) => {
       const newMode = !prev;
       if (newMode) {
-        document.documentElement.classList.add('dark');
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("vc_theme", "dark");
       } else {
-        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("vc_theme", "light");
       }
       return newMode;
     });
   }, []);
 
-  const setActiveEntity = useCallback((type: string | null, id: string | null) => {
-    setActiveEntityType(type);
-    setActiveEntityId(id);
-  }, []);
+  const setActiveEntity = useCallback(
+    (type: string | null, id: string | null) => {
+      setActiveEntityType(type);
+      setActiveEntityId(id);
+    },
+    []
+  );
 
   const globalSearch = useCallback((query: string) => {
     // In a real app, this would call an API
     setIsSearchActive(true);
-    
+
     // Mock implementation for now
     if (query.length > 2) {
       const mockResults = [
-        { id: '1', type: 'patient', name: 'Max', species: 'Dog', breed: 'Labrador' },
-        { id: '2', type: 'client', name: 'John Smith', email: 'john@example.com' },
-        { id: '3', type: 'appointment', date: '2025-04-15', time: '14:30' },
+        {
+          id: "1",
+          type: "patient",
+          name: "Max",
+          species: "Dog",
+          breed: "Labrador",
+        },
+        {
+          id: "2",
+          type: "client",
+          name: "John Smith",
+          email: "john@example.com",
+        },
+        { id: "3", type: "appointment", date: "2025-04-15", time: "14:30" },
       ];
       setSearchResults(mockResults);
     } else {

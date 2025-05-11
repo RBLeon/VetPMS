@@ -1,29 +1,29 @@
-# Medical Records Feature
+# Medische Dossiers Functionaliteit
 
-This feature provides a comprehensive medical records management system for veterinary practices. It allows veterinarians to create, view, update, and delete medical records for their patients.
+Deze functionaliteit biedt een uitgebreid systeem voor het beheren van medische dossiers voor dierenartspraktijken. Het stelt dierenartsen in staat om medische dossiers voor hun patiënten aan te maken, te bekijken, bij te werken en te verwijderen.
 
-## Components
+## Componenten
 
 ### MedicalRecordsList
 
-The main component for displaying and managing medical records.
+Het hoofdcomponent voor het weergeven en beheren van medische dossiers.
 
 #### Props
 
-- `patientId` (string, required): The ID of the patient whose medical records are being displayed.
+- `patientId` (string, verplicht): De ID van de patiënt wiens medische dossiers worden weergegeven.
 
-#### Features
+#### Functionaliteiten
 
-- Display medical records in a table format
-- Add new medical records
-- Edit existing medical records
-- Delete medical records
-- Filter records by date range
-- Filter records by status
-- Sort records by date
-- Pagination support
+- Weergave van medische dossiers in tabelformaat
+- Nieuwe medische dossiers toevoegen
+- Bestaande medische dossiers bewerken
+- Medische dossiers verwijderen
+- Filteren van dossiers op datumbereik
+- Filteren van dossiers op status
+- Sorteren van dossiers op datum
+- Ondersteuning voor paginering
 
-#### Usage
+#### Gebruik
 
 ```tsx
 import { MedicalRecordsList } from "@/components/medical-records/MedicalRecordsList";
@@ -31,7 +31,7 @@ import { MedicalRecordsList } from "@/components/medical-records/MedicalRecordsL
 function PatientPage({ patientId }) {
   return (
     <div>
-      <h1>Patient Medical Records</h1>
+      <h1>Medische Dossiers Patiënt</h1>
       <MedicalRecordsList patientId={patientId} />
     </div>
   );
@@ -42,22 +42,22 @@ function PatientPage({ patientId }) {
 
 ### useMedicalRecords
 
-A custom hook for managing medical records data and operations.
+Een aangepaste hook voor het beheren van medische dossiers en operaties.
 
 #### Parameters
 
-- `patientId` (string, required): The ID of the patient whose medical records are being managed.
+- `patientId` (string, verplicht): De ID van de patiënt wiens medische dossiers worden beheerd.
 
-#### Returns
+#### Retourneert
 
-- `medicalRecords` (MedicalRecord[]): Array of medical records
-- `isLoading` (boolean): Loading state indicator
-- `error` (string | null): Error message if any
-- `addMedicalRecord` (function): Function to add a new medical record
-- `updateMedicalRecord` (function): Function to update an existing medical record
-- `deleteMedicalRecord` (function): Function to delete a medical record
+- `medicalRecords` (MedicalRecord[]): Array van medische dossiers
+- `isLoading` (boolean): Indicator voor laadstatus
+- `error` (string | null): Foutmelding indien aanwezig
+- `addMedicalRecord` (function): Functie om een nieuw medisch dossier toe te voegen
+- `updateMedicalRecord` (function): Functie om een bestaand medisch dossier bij te werken
+- `deleteMedicalRecord` (function): Functie om een medisch dossier te verwijderen
 
-#### Usage
+#### Gebruik
 
 ```tsx
 import { useMedicalRecords } from "@/hooks/useMedicalRecords";
@@ -72,7 +72,7 @@ function MedicalRecordsManager({ patientId }) {
     deleteMedicalRecord,
   } = useMedicalRecords(patientId);
 
-  // Use the hook's returned values and functions
+  // Gebruik de geretourneerde waarden en functies van de hook
 }
 ```
 
@@ -100,15 +100,15 @@ interface MedicalRecord {
 
 ### GET /api/medical-records
 
-Fetches medical records for a specific patient.
+Haalt medische dossiers op voor een specifieke patiënt.
 
 Query Parameters:
 
-- `patientId` (string, required): The ID of the patient
+- `patientId` (string, verplicht): De ID van de patiënt
 
 ### POST /api/medical-records
 
-Creates a new medical record.
+Maakt een nieuw medisch dossier aan.
 
 Request Body:
 
@@ -127,7 +127,7 @@ Request Body:
 
 ### PUT /api/medical-records/:id
 
-Updates an existing medical record.
+Werkt een bestaand medisch dossier bij.
 
 Request Body:
 
@@ -147,17 +147,17 @@ Request Body:
 
 ### DELETE /api/medical-records/:id
 
-Deletes a medical record.
+Verwijdert een medisch dossier.
 
-## Future Enhancements
+## Toekomstige Verbeteringen
 
-1. Add confirmation dialog for delete action
-2. Add form validation for dates (follow-up date should be after record date)
-3. Add loading spinners for actions
-4. Add error boundaries
-5. Add unit tests for date validation
-6. Add integration tests for the complete flow
-7. Add accessibility features
-8. Add keyboard navigation
-9. Add tooltips for actions
-10. Add bulk actions (delete multiple records)
+1. Bevestigingsdialoog toevoegen voor verwijderactie
+2. Formuliervalidatie toevoegen voor datums (vervolgdatum moet na recorddatum zijn)
+3. Laadindicatoren toevoegen voor acties
+4. Foutafhandeling toevoegen
+5. Unittests toevoegen voor datumvalidatie
+6. Integratietests toevoegen voor de volledige flow
+7. Toegankelijkheidsfuncties toevoegen
+8. Toetsenbordnavigatie toevoegen
+9. Tooltips toevoegen voor acties
+10. Bulkacties toevoegen (meerdere dossiers verwijderen)

@@ -47,7 +47,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
       {trend && (
         <p className="text-xs text-muted-foreground">
           {trend.isPositive ? "+" : "-"}
-          {Math.abs(trend.value)}% from last month
+          {Math.abs(trend.value)}% ten opzichte van vorige maand
         </p>
       )}
     </div>
@@ -109,32 +109,32 @@ export const ManagerDashboard: React.FC = () => {
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <DashboardCard
-          title="Today's Appointments"
+          title="Afspraken Vandaag"
           value={metrics.todayAppointments}
           icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
         />
         <DashboardCard
-          title="Today's Revenue"
-          value={`$${metrics.todayRevenue.toLocaleString()}`}
+          title="Omzet Vandaag"
+          value={`€${metrics.todayRevenue.toLocaleString()}`}
           icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
         />
         <DashboardCard
-          title="Pending Invoices"
+          title="Openstaande Facturen"
           value={metrics.pendingInvoices}
           icon={<AlertTriangle className="h-4 w-4 text-muted-foreground" />}
         />
         <DashboardCard
-          title="Payment Rate"
+          title="Betalingspercentage"
           value={`${metrics.paymentRate.toFixed(1)}%`}
           icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
         />
         <DashboardCard
-          title="Staff Utilization"
+          title="Personeelsbenutting"
           value={`${metrics.staffUtilization.toFixed(1)}%`}
           icon={<Users className="h-4 w-4 text-muted-foreground" />}
         />
         <DashboardCard
-          title="Average Rating"
+          title="Gemiddelde Beoordeling"
           value={metrics.averageRating.toFixed(1)}
           icon={<Star className="h-4 w-4 text-muted-foreground" />}
         />
@@ -143,43 +143,7 @@ export const ManagerDashboard: React.FC = () => {
       <div className="grid gap-4 md:grid-cols-2">
         <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
           <div className="p-6">
-            <h3 className="text-lg font-semibold">Today's Schedule</h3>
-            <div className="mt-4 space-y-4">
-              {(appointments as Appointment[])
-                .filter((apt) => apt.date === today)
-                .map((appointment) => (
-                  <div
-                    key={appointment.id}
-                    className="flex items-center justify-between"
-                  >
-                    <div>
-                      <p className="font-medium">
-                        {appointment.patient?.name || "Unknown Patient"}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {appointment.time} - {appointment.type}
-                      </p>
-                    </div>
-                    <Badge
-                      variant={
-                        appointment.status === "COMPLETED"
-                          ? "default"
-                          : appointment.status === "CHECKED_IN"
-                          ? "secondary"
-                          : "default"
-                      }
-                    >
-                      {appointment.status}
-                    </Badge>
-                  </div>
-                ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-          <div className="p-6">
-            <h3 className="text-lg font-semibold">Staff Overview</h3>
+            <h3 className="text-lg font-semibold">Personeels Overzicht</h3>
             <div className="mt-4 space-y-4">
               {(staff as StaffMember[]).map((member) => (
                 <div
@@ -197,10 +161,34 @@ export const ManagerDashboard: React.FC = () => {
                   <Badge
                     variant={member.hoursWorked > 0 ? "default" : "secondary"}
                   >
-                    {member.hoursWorked > 0 ? "Active" : "Inactive"}
+                    {member.hoursWorked > 0 ? "Actief" : "Inactief"}
                   </Badge>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+          <div className="p-6">
+            <h3 className="text-lg font-semibold">Voorraad Waarschuwingen</h3>
+            <div className="mt-4 space-y-4">
+              {(inventory as InventoryItem[])
+                .filter((item) => item.quantity <= item.reorderLevel)
+                .map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between"
+                  >
+                    <div>
+                      <p className="font-medium">{item.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {item.quantity} {item.unit} resterend
+                      </p>
+                    </div>
+                    <Badge variant="destructive">Bestellen</Badge>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
@@ -208,22 +196,34 @@ export const ManagerDashboard: React.FC = () => {
 
       <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
         <div className="p-6">
-          <h3 className="text-lg font-semibold">Inventory Alerts</h3>
+          <h3 className="text-lg font-semibold">Dagelijkse Planning</h3>
           <div className="mt-4 space-y-4">
-            {(inventory as InventoryItem[])
-              .filter((item) => item.quantity <= item.reorderLevel)
-              .map((item) => (
+            {(appointments as Appointment[])
+              .filter((apt) => apt.date === today)
+              .map((appointment) => (
                 <div
-                  key={item.id}
+                  key={appointment.id}
                   className="flex items-center justify-between"
                 >
                   <div>
-                    <p className="font-medium">{item.name}</p>
+                    <p className="font-medium">
+                      {appointment.patientId || "Unknown Patient"}
+                    </p>
                     <p className="text-sm text-muted-foreground">
-                      {item.quantity} {item.unit} remaining
+                      {appointment.time} - {appointment.type}
                     </p>
                   </div>
-                  <Badge variant="destructive">Reorder</Badge>
+                  <Badge
+                    variant={
+                      appointment.status === "VOLTOOID"
+                        ? "default"
+                        : appointment.status === "AANGEMELD"
+                        ? "secondary"
+                        : "default"
+                    }
+                  >
+                    {appointment.status}
+                  </Badge>
                 </div>
               ))}
           </div>

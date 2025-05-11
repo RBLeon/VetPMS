@@ -1,3 +1,9 @@
+export type MedicalRecordStatus =
+  | "ACTIEF"
+  | "OPGELOST"
+  | "IN_AFWACHTING"
+  | "GEANNULEERD";
+
 export interface MedicalRecord {
   id: string;
   patientId: string;
@@ -7,7 +13,7 @@ export interface MedicalRecord {
   treatment: string;
   notes: string;
   followUpDate: string;
-  status: "active" | "resolved" | "pending";
+  status: MedicalRecordStatus;
   createdAt: string;
   updatedAt: string;
 }

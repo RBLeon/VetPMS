@@ -16,7 +16,7 @@ interface Activity {
   patient: string;
   client: string;
   time: string;
-  status: "completed" | "active" | "pending" | "attention";
+  status: "voltooid" | "actief" | "in_afwachting" | "aandacht";
 }
 
 // Dashboard page component
@@ -56,27 +56,27 @@ const DashboardPage = () => {
           {
             id: 1,
             type: "appointment",
-            title: "Consultation completed",
+            title: "Consult afgerond",
             patient: "Max",
-            client: "John Smith",
-            time: "10:30 AM",
-            status: "completed",
+            client: "Jan Jansen",
+            time: "10:30",
+            status: "voltooid",
           },
           {
             id: 2,
             type: "checkin",
-            title: "Patient checked in",
+            title: "Patiënt aangemeld",
             patient: "Bella",
-            client: "Emma Johnson",
-            time: "09:45 AM",
-            status: "active",
+            client: "Emma Jansen",
+            time: "09:45",
+            status: "actief",
           },
         ]);
 
         setIsLoading(false);
       }, 800);
     } catch (error) {
-      console.error("Error fetching dashboard data:", error);
+      console.error("Fout bij het ophalen van dashboard gegevens:", error);
       setIsLoading(false);
     }
   };
@@ -94,28 +94,28 @@ const DashboardPage = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Laden...</div>;
   }
 
   return (
     <div className="space-y-4 p-8">
       <Card>
         <CardHeader>
-          <CardTitle>Today's Overview</CardTitle>
+          <CardTitle>Overzicht van Vandaag</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div className="flex items-center space-x-4">
               <CalendarIcon className="h-6 w-6 text-primary" />
               <div>
-                <p className="text-sm font-medium">Appointments</p>
+                <p className="text-sm font-medium">Afspraken</p>
                 <p className="text-2xl font-bold">{todayStats.appointments}</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <CheckCircleIcon className="h-6 w-6 text-green-500" />
               <div>
-                <p className="text-sm font-medium">Completed</p>
+                <p className="text-sm font-medium">Voltooid</p>
                 <p className="text-2xl font-bold">{todayStats.completed}</p>
               </div>
             </div>
@@ -125,7 +125,7 @@ const DashboardPage = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
+          <CardTitle>Recente Activiteit</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
