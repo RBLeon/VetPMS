@@ -14,9 +14,6 @@ import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import RoleSelectionPage from "@/features/role-selection/RoleSelectionPage";
 import { Layout } from "@/components/layout/Layout";
-
-// Import page components
-import { AppointmentsPage } from "@/pages/appointments/AppointmentsPage";
 import AppointmentScheduler from "@/features/appointments/AppointmentScheduler";
 import { AppointmentForm } from "@/features/appointments/AppointmentForm";
 import { PatientsPage } from "@/pages/patients/PatientsPage";
@@ -37,8 +34,7 @@ const AppointmentFormWrapper = () => {
   const navigate = useNavigate();
   return (
     <AppointmentForm
-      onSubmit={(data) => {
-        // Handle appointment creation
+      onSubmit={() => {
         navigate("/appointments");
       }}
       onCancel={() => navigate("/appointments")}
@@ -47,19 +43,16 @@ const AppointmentFormWrapper = () => {
 };
 
 const MedicalRecordFormWrapper = () => {
-  const navigate = useNavigate();
   const { patientId } = useParams();
   return <MedicalRecordForm patientId={patientId || ""} defaultValues={{}} />;
 };
 
 const FollowUpFormWrapper = () => {
   const navigate = useNavigate();
-  const { recordId } = useParams();
   return (
     <FollowUpForm
       recordDate={new Date().toISOString()}
-      onSchedule={(data) => {
-        // Handle follow-up scheduling
+      onSchedule={() => {
         navigate("/medical-records");
       }}
       onCancel={() => navigate("/medical-records")}
@@ -70,8 +63,6 @@ const FollowUpFormWrapper = () => {
 export const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
   const { role } = useRole();
-
-  // Helper function to determine if we should show protected routes
   const shouldShowProtectedRoutes = isAuthenticated && role;
 
   return (
@@ -117,7 +108,6 @@ export const AppRoutes = () => {
           )
         }
       />
-
       {/* Protected routes */}
       <Route
         path="/"
@@ -130,13 +120,11 @@ export const AppRoutes = () => {
         }
       >
         <Route index element={<DashboardPage />} />
-
         {/* Appointments routes */}
         <Route path="appointments">
           <Route index element={<AppointmentScheduler />} />
           <Route path="new" element={<AppointmentFormWrapper />} />
         </Route>
-
         {/* Patients routes */}
         <Route path="patients">
           <Route index element={<PatientsPage />} />
@@ -150,18 +138,15 @@ export const AppRoutes = () => {
             />
           </Route>
         </Route>
-
         {/* Clients routes */}
         <Route path="clients">
           <Route index element={<ClientsPage />} />
           <Route path="new" element={<ClientForm />} />
         </Route>
-
         {/* Medical Records routes */}
         <Route path="medical-records">
           <Route index element={<MedicalRecordsPage />} />
         </Route>
-
         {/* Other main routes */}
         <Route path="tasks" element={<TasksPage />} />
         <Route path="search" element={<SearchPage />} />
@@ -169,7 +154,6 @@ export const AppRoutes = () => {
         <Route path="settings" element={<SettingsPage />} />
         <Route path="billing" element={<BillingPage />} />
       </Route>
-
       {/* 404 route */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

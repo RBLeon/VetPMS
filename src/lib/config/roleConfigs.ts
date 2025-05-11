@@ -167,7 +167,7 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
       ...commonQuickActions,
       {
         title: "Nieuwe Afspraak",
-        href: "/appointments/new",
+        href: "/appointments",
         icon: Calendar,
         color:
           "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
@@ -250,7 +250,7 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
       },
       {
         title: "Nieuwe Afspraak",
-        href: "/appointments/new",
+        href: "/appointments",
         icon: Calendar,
         color:
           "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
@@ -321,7 +321,7 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
       ...commonQuickActions,
       {
         title: "Nieuwe Afspraak",
-        href: "/appointments/new",
+        href: "/appointments",
         icon: Calendar,
         color:
           "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",

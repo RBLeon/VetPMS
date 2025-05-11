@@ -18,14 +18,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../components/ui/dialog";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "../../lib/utils";
+import type { Role } from "@/lib/context/RoleContext";
 
 // Map role to appropriate icon
 const getRoleIcon = (role: string) => {
@@ -140,9 +135,6 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
                       </div>
                       <div>
                         <CardTitle>{roleConfig.displayName}</CardTitle>
-                        <CardDescription>
-                          {roleConfig.description}
-                        </CardDescription>
                       </div>
                     </div>
                   </CardHeader>
