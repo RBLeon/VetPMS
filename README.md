@@ -23,7 +23,7 @@ A modern web application for managing veterinary practices, built with React, Ty
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/VetPMS.git
+git clone https://github.com/RBLeon/VetPMS.git
 cd VetPMS
 ```
 
@@ -66,6 +66,8 @@ The application is automatically deployed to GitHub Pages when changes are pushe
 1. Builds the application
 2. Runs all tests
 3. Deploys to GitHub Pages
+
+You can access the deployed application at: https://rbleon.github.io/VetPMS/
 
 You can also manually trigger a deployment from the GitHub Actions tab.
 
