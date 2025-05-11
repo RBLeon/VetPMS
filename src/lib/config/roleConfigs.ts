@@ -26,6 +26,20 @@ const commonNavItems: NavItem[] = [
     icon: Home,
     color: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
   },
+  {
+    title: "Instellingen",
+    href: "/settings",
+    icon: Settings,
+    color:
+      "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
+  },
+  {
+    title: "Profiel",
+    href: "/settings/profile",
+    icon: User,
+    color:
+      "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
+  },
 ];
 
 // Common quick actions shared across multiple roles
@@ -309,13 +323,6 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
         color:
           "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
       },
-      {
-        title: "Instellingen",
-        href: "/settings",
-        icon: Settings,
-        color:
-          "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
-      },
     ],
     quickActions: [
       ...commonQuickActions,
@@ -366,6 +373,8 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
       "afspraken:lezen",
       "klanten:lezen",
       "patiënten:lezen",
+      "financieel:lezen",
+      "financieel:schrijven",
     ],
     navItems: [
       ...commonNavItems,
@@ -384,8 +393,8 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
           "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
       },
       {
-        title: "Facturering & Financiën",
-        href: "/financien",
+        title: "Financieel Beheer",
+        href: "/finance",
         icon: CreditCard,
         color:
           "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
@@ -396,13 +405,6 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
         icon: Database,
         color:
           "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
-      },
-      {
-        title: "Instellingen",
-        href: "/instellingen",
-        icon: Settings,
-        color:
-          "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
       },
     ],
     quickActions: [
@@ -427,6 +429,20 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
         icon: Database,
         color:
           "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
+      },
+      {
+        title: "Financieel Overzicht",
+        href: "/finance/overview",
+        icon: CreditCard,
+        color:
+          "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
+      },
+      {
+        title: "Facturen",
+        href: "/finance/invoices",
+        icon: FileText,
+        color:
+          "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
       },
     ],
     contextualFeatures: {
@@ -460,18 +476,11 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
           "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
       },
       {
-        title: "Financieel Overzicht",
+        title: "Financieel Beheer",
         href: "/finance",
         icon: CreditCard,
         color:
           "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
-      },
-      {
-        title: "Praktijk Instellingen",
-        href: "/settings",
-        icon: Settings,
-        color:
-          "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
       },
       {
         title: "Multi-Tenant Beheer",
@@ -503,6 +512,20 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
         icon: TrendingUp,
         color:
           "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
+      },
+      {
+        title: "Financieel Dashboard",
+        href: "/finance/overview",
+        icon: CreditCard,
+        color:
+          "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
+      },
+      {
+        title: "Financiële Rapportages",
+        href: "/finance/reports",
+        icon: FileText,
+        color:
+          "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
       },
     ],
     contextualFeatures: {

@@ -1,5 +1,102 @@
 # VetPMS - Veterinary Practice Management System
 
+A modern web application for managing veterinary practices, built with React, TypeScript, and Vite.
+
+## Features
+
+- Patient management
+- Appointment scheduling
+- Medical records
+- Billing and invoicing
+- Analytics and reporting
+- Multi-language support (Dutch/English)
+
+## Development
+
+### Prerequisites
+
+- Node.js 20 or higher
+- npm 10 or higher
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/VetPMS.git
+cd VetPMS
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Start the development server:
+
+```bash
+npm run dev
+```
+
+### Testing
+
+Run the test suite:
+
+```bash
+npm test
+```
+
+Run tests in watch mode:
+
+```bash
+npm run test:watch
+```
+
+Generate test coverage report:
+
+```bash
+npm run test:coverage
+```
+
+## Deployment
+
+The application is automatically deployed to GitHub Pages when changes are pushed to the main branch. The deployment process:
+
+1. Builds the application
+2. Runs all tests
+3. Deploys to GitHub Pages
+
+You can also manually trigger a deployment from the GitHub Actions tab.
+
+### Manual Deployment
+
+To manually deploy the application:
+
+1. Build the application:
+
+```bash
+npm run build
+```
+
+2. Preview the build:
+
+```bash
+npm run preview
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
 ## Overview
 
 VetPMS is a modern web-based Practice Management System designed specifically for veterinary clinics and hospitals. Built with React, TypeScript, and Tailwind CSS, it offers a comprehensive solution for managing appointments, patient records, billing, inventory, and clinic operations.
@@ -14,25 +111,6 @@ VetPMS is a modern web-based Practice Management System designed specifically fo
 - **Theme Support**: Light and dark mode
 
 ## Quick Start
-
-### Prerequisites
-
-- Node.js v18+
-- pnpm (recommended) or npm
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/RBLeon/VetPMS.git
-cd VetPMS
-
-# Install dependencies
-pnpm install
-
-# Start development server
-pnpm run dev
-```
 
 Access the application at http://localhost:5173
 

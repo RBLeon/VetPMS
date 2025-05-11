@@ -66,7 +66,6 @@ export function ContextAwareNavigation({
                 size="lg"
                 className="h-14 w-14 rounded-full shadow-lg"
                 onClick={() => setIsOpen(true)}
-                aria-label="Open menu"
               >
                 <Menu className="h-6 w-6" />
               </Button>

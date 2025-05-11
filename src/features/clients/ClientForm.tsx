@@ -86,7 +86,7 @@ export function ClientForm({ clientId }: ClientFormProps) {
       >
         <Button
           variant="outline"
-          onClick={() => navigate("/klanten")}
+          onClick={() => navigate("/clients")}
           className="gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -202,7 +202,7 @@ export function ClientForm({ clientId }: ClientFormProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate("/klanten")}
+                onClick={() => navigate("/clients")}
               >
                 Annuleren
               </Button>
