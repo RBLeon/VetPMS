@@ -38,6 +38,9 @@ export function UserMenu() {
   };
 
   const handleRoleSwitch = () => {
+    // Clear the current role
+    localStorage.removeItem("vc_role");
+    setRole(null);
     navigate("/role-selection");
   };
 
@@ -69,25 +72,25 @@ export function UserMenu() {
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={handleProfileClick}>
             <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+            <span>Profiel</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleSettingsClick}>
             <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+            <span>Instellingen</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleRoleSwitch}>
             <Users className="mr-2 h-4 w-4" />
-            <span>Switch Role</span>
+            <span>Wissel Rol</span>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <HelpCircle className="mr-2 h-4 w-4" />
-            <span>Help & Support</span>
+            <span>Help & Ondersteuning</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
+          <span>Uitloggen</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

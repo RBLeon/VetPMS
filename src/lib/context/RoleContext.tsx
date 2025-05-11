@@ -13,7 +13,7 @@ export type Role =
 
 interface RoleContextType {
   role: Role | null;
-  setRole: (role: Role) => void;
+  setRole: (role: Role | null) => void;
   roleConfig: RoleConfig;
   permissions: string[];
   hasPermission: (permission: string) => boolean;
@@ -63,6 +63,16 @@ export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (role) {
       setRoleConfig(roleConfigs[role]);
+    } else {
+      // When role is null, use a default config with minimal permissions
+      setRoleConfig({
+        displayName: "No Role",
+        description: "Please select a role",
+        permissions: [],
+        navItems: [],
+        quickActions: [],
+        contextualFeatures: {},
+      });
     }
   }, [role]);
 
@@ -76,17 +86,17 @@ export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({
       // Redirect to role selection if user is logged in but has no role
       navigate("/role-selection");
     }
-  }, [user]);
+  }, [user, role, navigate]);
 
   // Wrapper for setRole that also persists to localStorage
-  const setRole = (newRole: Role) => {
-    // Clear any existing role first
-    localStorage.removeItem("vc_role");
-    // Set the new role
-    setRoleState(newRole);
-    localStorage.setItem("vc_role", newRole);
-    // Update role config immediately
-    setRoleConfig(roleConfigs[newRole]);
+  const setRole = (newRole: Role | null) => {
+    if (newRole === null) {
+      setRoleState(null);
+      localStorage.removeItem("vc_role");
+    } else {
+      setRoleState(newRole);
+      localStorage.setItem("vc_role", newRole);
+    }
   };
 
   const hasPermission = (permission: string): boolean => {

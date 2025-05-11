@@ -1,10 +1,5 @@
-import { Calendar } from "@/features/calendar/Calendar";
+import AppointmentScheduler from "@/features/appointments/AppointmentScheduler";
 
-export function AppointmentsPage() {
-  return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Afspraken</h1>
-      <Calendar />
-    </div>
-  );
-}
+export const AppointmentsPage = () => {
+  return <AppointmentScheduler />;
+};

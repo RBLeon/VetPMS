@@ -31,8 +31,6 @@ import { ClientDetails } from "./features/clients/ClientDetails";
 import { PatientList } from "./features/patients/PatientList";
 import { PatientForm } from "./features/patients/PatientForm";
 import { PatientDetails } from "./features/patients/PatientDetails";
-import { Calendar } from "./features/calendar/Calendar";
-import { AppointmentForm } from "./features/calendar/AppointmentForm";
 import RoleSelectionPage from "./features/role-selection/RoleSelectionPage";
 import { Toaster } from "./components/ui/toaster";
 import { AppRoutes } from "./AppRoutes";

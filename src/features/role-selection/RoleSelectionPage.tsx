@@ -60,9 +60,6 @@ const RoleSelectionPage: React.FC = () => {
   }, [isAuthenticated, navigate]);
 
   const handleRoleSelect = (roleId: Role) => {
-    // Clear the current role from localStorage first
-    localStorage.removeItem("vc_role");
-    // Set the new role
     setRole(roleId);
     navigate("/");
   };
