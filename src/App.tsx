@@ -28,14 +28,14 @@ import { InventoryProvider } from "./lib/context/InventoryContext";
 import { ClientList } from "./features/clients/ClientList";
 import { ClientForm } from "./features/clients/ClientForm";
 import { ClientDetails } from "./features/clients/ClientDetails";
-import { PatientList } from "@/features/patients/PatientList";
-import { PatientForm } from "@/features/patients/PatientForm";
-import { PatientDetails } from "@/features/patients/PatientDetails";
-import { Calendar } from "@/features/calendar/Calendar";
-import { AppointmentForm } from "@/features/calendar/AppointmentForm";
+import { PatientList } from "./features/patients/PatientList";
+import { PatientForm } from "./features/patients/PatientForm";
+import { PatientDetails } from "./features/patients/PatientDetails";
+import { Calendar } from "./features/calendar/Calendar";
+import { AppointmentForm } from "./features/calendar/AppointmentForm";
 import RoleSelectionPage from "./features/role-selection/RoleSelectionPage";
-import { Toaster } from "@/components/ui/toaster";
-import { AppRoutes } from "@/routes";
+import { Toaster } from "./components/ui/toaster";
+import { AppRoutes } from "./AppRoutes";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -64,14 +64,16 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <RoleProvider>
-          <UiProvider>
-            <div className="min-h-screen bg-background">
-              <AppRoutes />
-              <Toaster />
-            </div>
-          </UiProvider>
-        </RoleProvider>
+        <TenantProvider>
+          <RoleProvider>
+            <UiProvider>
+              <div className="min-h-screen bg-background">
+                <AppRoutes />
+                <Toaster />
+              </div>
+            </UiProvider>
+          </RoleProvider>
+        </TenantProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

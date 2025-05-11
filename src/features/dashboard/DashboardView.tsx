@@ -1,7 +1,7 @@
-import { useAuth } from "@/lib/context/AuthContext";
 import { RoleBasedDashboard } from "@/components/dashboard/RoleBasedDashboard";
+import { useRole } from "@/lib/context/RoleContext";
 
 export const DashboardView = () => {
-  const { user } = useAuth();
-  return <RoleBasedDashboard role={user?.role || "default"} />;
+  const { role } = useRole();
+  return <RoleBasedDashboard role={role} />;
 };

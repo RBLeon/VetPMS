@@ -34,22 +34,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [user]);
 
-  const login = async (email: string, _password: string) => {
+  const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
       setError(null);
+
+      // Demo credentials check
+      if (email === "demo@vetpms.nl" && password === "demo123") {
+        const mockUser: User = {
+          id: "1",
+          email,
+          firstName: "Demo",
+          lastName: "User",
+          role: "VETERINARIAN",
+          permissions: [],
+          tenantId: "1",
+          username: "demo",
+        };
+        setUser(mockUser);
+        return;
+      }
+
       // TODO: Implement actual login logic
-      const mockUser: User = {
-        id: "1",
-        email,
-        role: "VETERINARIAN",
-        permissions: [],
-        tenantId: "1",
-        username: "testuser",
-      };
-      setUser(mockUser);
+      throw new Error("Invalid credentials");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
+      throw err;
     } finally {
       setIsLoading(false);
     }

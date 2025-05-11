@@ -25,19 +25,20 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
+import { cn } from "../../lib/utils";
 
 // Map role to appropriate icon
 const getRoleIcon = (role: string) => {
   switch (role) {
-    case "veterinarian":
+    case "VETERINARIAN":
       return Stethoscope;
-    case "receptionist":
+    case "RECEPTIONIST":
       return Calendar;
-    case "nurse":
+    case "NURSE":
       return Users;
-    case "manager":
+    case "MANAGER":
       return BarChart3;
-    case "admin":
+    case "CEO":
       return CircuitBoard;
     default:
       return Users;
@@ -74,9 +75,7 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
     setError(null);
 
     try {
-      await setRole(
-        selectedRole as import("../../lib/context/RoleContext").Role
-      );
+      await setRole(selectedRole as Role);
       navigate("/");
     } catch (err) {
       setError(
@@ -103,20 +102,17 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Selecteer Uw Rol</DialogTitle>
+          <DialogTitle>Selecteer je rol</DialogTitle>
           <DialogDescription>
-            Kies een rol om uw VetPMS-ervaring aan te passen voor deze sessie
+            Kies de rol die het beste past bij je huidige taken.
           </DialogDescription>
         </DialogHeader>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+        <div className="grid gap-4 py-4">
           {roles.map((roleKey, index) => {
             const roleConfig = roleConfigs[roleKey];
-            const RoleIcon = getRoleIcon(roleKey);
-            const isSelected = roleKey === selectedRole;
-
+            const Icon = getRoleIcon(roleKey);
             return (
               <motion.div
                 key={roleKey}
@@ -126,68 +122,53 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
                 variants={cardVariants}
               >
                 <Card
-                  className={`cursor-pointer transition-all hover:shadow-md ${
-                    isSelected
-                      ? "ring-2 ring-primary border-primary bg-primary/5"
-                      : ""
-                  }`}
+                  className={cn(
+                    "cursor-pointer transition-all hover:shadow-md",
+                    selectedRole === roleKey && "ring-2 ring-primary"
+                  )}
                   onClick={() => handleRoleSelect(roleKey)}
                 >
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
+                  <CardHeader>
+                    <div className="flex items-center gap-4">
                       <div
-                        className={`p-2 rounded-full ${
-                          roleConfig.navItems[0]?.color || "bg-blue-100"
-                        }`}
+                        className={cn(
+                          "rounded-full p-2",
+                          roleConfig.navItems[0].color
+                        )}
                       >
-                        <RoleIcon className="h-5 w-5" />
+                        <Icon className="h-6 w-6" />
                       </div>
-                      {isSelected && (
-                        <div className="h-4 w-4 rounded-full bg-primary" />
-                      )}
+                      <div>
+                        <CardTitle>{roleConfig.displayName}</CardTitle>
+                        <CardDescription>
+                          {roleConfig.description}
+                        </CardDescription>
+                      </div>
                     </div>
-                    <CardTitle>{roleConfig.displayName}</CardTitle>
-                    <CardDescription className="line-clamp-2">
-                      {roleConfig.description}
-                    </CardDescription>
                   </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="text-xs text-muted-foreground">
-                      <span className="font-semibold">
-                        Belangrijkste functies:
-                      </span>{" "}
-                      {Object.entries(roleConfig.contextualFeatures)
-                        .filter(([, value]) => value === true)
-                        .map(([key]) => key.replace(/([A-Z])/g, " $1"))
-                        .map((feature) =>
-                          feature
-                            .replace(/^show/g, "")
-                            .replace(/^use/g, "")
-                            .trim()
-                        )
-                        .slice(0, 3)
-                        .join(", ")}
-                    </div>
-                  </CardContent>
                 </Card>
               </motion.div>
             );
           })}
         </div>
-
-        <div className="flex justify-end gap-2 mt-4">
-          {error && <div className="text-sm text-red-500 mr-auto">{error}</div>}
+        <div className="flex justify-end gap-4">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange?.(false)}
+            disabled={isLoading}
+          >
+            Annuleren
+          </Button>
           <Button
             onClick={confirmRoleSelection}
             disabled={!selectedRole || isLoading}
           >
-            {isLoading
-              ? "Rol instellen..."
-              : `Doorgaan als ${
-                  selectedRole ? roleConfigs[selectedRole].displayName : ""
-                }`}
+            {isLoading ? "Bezig..." : "Bevestigen"}
           </Button>
         </div>
+        {error && (
+          <div className="mt-4 text-sm text-red-500 text-center">{error}</div>
+        )}
       </DialogContent>
     </Dialog>
   );

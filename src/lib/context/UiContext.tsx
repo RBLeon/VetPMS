@@ -82,7 +82,8 @@ export const UiProvider: React.FC<UiProviderProps> = ({ children }) => {
     if (storedTheme) {
       return storedTheme === "dark";
     }
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    // Default to light mode instead of system preference
+    return false;
   });
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[] | null>(
@@ -96,7 +97,11 @@ export const UiProvider: React.FC<UiProviderProps> = ({ children }) => {
     } else {
       document.documentElement.classList.remove("dark");
     }
-  }, []);
+    // Set initial theme in localStorage if not set
+    if (!localStorage.getItem("vc_theme")) {
+      localStorage.setItem("vc_theme", "light");
+    }
+  }, [isDarkMode]);
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);

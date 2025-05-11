@@ -1,5 +1,6 @@
 // src/components/dashboard/UserMenu.tsx
 import { useAuth } from "../../lib/context/AuthContext";
+import { useRole } from "../../lib/context/RoleContext";
 import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -16,10 +17,11 @@ import {
   AvatarImage,
 } from "../../components/ui/avatar";
 import { Button } from "../../components/ui/button";
-import { Settings, LogOut, User, HelpCircle } from "lucide-react";
+import { Settings, LogOut, User, HelpCircle, Users } from "lucide-react";
 
 export function UserMenu() {
   const { user, logout } = useAuth();
+  const { setRole } = useRole();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -33,6 +35,10 @@ export function UserMenu() {
 
   const handleSettingsClick = () => {
     navigate("/settings");
+  };
+
+  const handleRoleSwitch = () => {
+    navigate("/role-selection");
   };
 
   return (
@@ -68,6 +74,10 @@ export function UserMenu() {
           <DropdownMenuItem onClick={handleSettingsClick}>
             <Settings className="mr-2 h-4 w-4" />
             <span>Settings</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleRoleSwitch}>
+            <Users className="mr-2 h-4 w-4" />
+            <span>Switch Role</span>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <HelpCircle className="mr-2 h-4 w-4" />

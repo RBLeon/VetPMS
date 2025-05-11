@@ -2,17 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, Menu, X, PlusCircle } from "lucide-react";
-import { Button } from "../../components/ui/button";
-import { cn } from "../../lib/utils";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../../components/ui/avatar";
-import { useAuth } from "../../lib/context/AuthContext";
-import { useRole } from "../../lib/context/RoleContext";
-import { fadeAnimation } from "../../lib/motion";
-import { FeatureGated } from "../context/AdaptiveContainer";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/lib/context/AuthContext";
+import { useRole } from "@/lib/context/RoleContext";
+import { fadeAnimation } from "@/lib/motion";
+import { FeatureGated } from "@/components/context/AdaptiveContainer";
 
 interface ContextAwareNavigationProps {
   className?: string;

@@ -42,75 +42,7 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({
     }
   };
 
-  return (
-    <div className="space-y-6 p-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg border p-4">
-          <h3 className="text-sm font-medium">Volgende Afspraak</h3>
-          <p className="mt-2 text-2xl font-bold">
-            {metrics?.nextAppointment?.patientName || "Geen"} (
-            {metrics?.nextAppointment?.type || "Geen"})
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {metrics?.nextAppointment
-              ? format(
-                  new Date(
-                    `${metrics.nextAppointment.date}T${metrics.nextAppointment.time}`
-                  ),
-                  "d MMMM yyyy 'om' HH:mm",
-                  { locale: nl }
-                )
-              : "Geen afspraken gepland"}
-          </p>
-        </div>
-
-        <div className="rounded-lg border p-4">
-          <h3 className="text-sm font-medium">Omzet</h3>
-          <p className="mt-2 text-2xl font-bold">
-            €{metrics?.revenue?.toFixed(2) || "0.00"}{" "}
-            {metrics?.revenueChange ? (
-              <span
-                className={`text-sm ${
-                  metrics.revenueChange > 0 ? "text-green-500" : "text-red-500"
-                }`}
-              >
-                {metrics.revenueChange > 0 ? "+" : ""}
-                {metrics.revenueChange}%
-              </span>
-            ) : null}
-          </p>
-        </div>
-
-        <div className="rounded-lg border p-4">
-          <h3 className="text-sm font-medium">Afspraken</h3>
-          <p className="mt-2 text-2xl font-bold">
-            {metrics?.appointments?.length || 0}{" "}
-            {metrics?.appointmentChange ? (
-              <span
-                className={`text-sm ${
-                  metrics.appointmentChange > 0
-                    ? "text-green-500"
-                    : "text-red-500"
-                }`}
-              >
-                {metrics.appointmentChange > 0 ? "+" : ""}
-                {metrics.appointmentChange}%
-              </span>
-            ) : null}
-          </p>
-        </div>
-
-        <div className="rounded-lg border p-4">
-          <h3 className="text-sm font-medium">Patiënten</h3>
-          <p className="mt-2 text-2xl font-bold">
-            {metrics?.totalPatients || 0}
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-8">{renderDashboard()}</div>
-    </div>
-  );
+  return <div className="space-y-6 p-6">{renderDashboard()}</div>;
 };
 
 function DefaultDashboard() {
@@ -120,7 +52,8 @@ function DefaultDashboard() {
         Welkom bij het Veterinair Praktijk Management Systeem
       </h2>
       <p className="mt-2 text-muted-foreground">
-        Selecteer een optie uit het menu om te beginnen.
+        Selecteer een rol om toegang te krijgen tot de bijbehorende
+        functionaliteit.
       </p>
     </div>
   );

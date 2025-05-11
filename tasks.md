@@ -130,3 +130,39 @@
 - Regelmatig build en tests blijven uitvoeren bij nieuwe wijzigingen
 - Alle nieuwe functionaliteit en tekst in het Nederlands tonen
 - Product zo lean mogelijk houden, alleen noodzakelijke MVP-functionaliteit toevoegen
+
+# Navigation and Routing Tasks
+
+## Completed Tasks
+
+- [x] Set up basic project structure
+- [x] Implement authentication system
+- [x] Create login page with demo credentials
+- [x] Add role selection page
+- [x] Remove registration functionality
+- [x] Create basic 404 page
+- [x] Create password reset pages (UI only)
+
+## Remaining Tasks
+
+- [ ] Implement password reset functionality
+- [ ] Add proper error handling for authentication
+- [ ] Create dashboard layout
+- [ ] Implement patient management
+- [ ] Implement appointment scheduling
+- [ ] Implement medical records
+- [ ] Add billing functionality
+- [ ] Create admin interface
+- [ ] Add analytics and reporting
+- [ ] Implement search functionality
+- [ ] Add task management
+- [ ] Create settings page
+
+## Future Improvements
+
+- [ ] Add route-based code splitting for better performance
+- [ ] Implement proper error boundaries for route components
+- [ ] Add loading states for route transitions
+- [ ] Implement proper route guards based on user permissions
+- [ ] Add breadcrumb navigation for better UX
+- [ ] Add route transition animations

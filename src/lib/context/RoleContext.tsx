@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext";
 import { roleConfigs, RoleConfig } from "../config/roleConfigs";
+import { useNavigate } from "react-router-dom";
 
 export type Role =
   | "VETERINARIAN"
@@ -11,7 +12,7 @@ export type Role =
   | "CEO";
 
 interface RoleContextType {
-  role: Role;
+  role: Role | null;
   setRole: (role: Role) => void;
   roleConfig: RoleConfig;
   permissions: string[];
@@ -44,33 +45,48 @@ export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { user } = useAuth();
-  const [role, setRoleState] = useState<Role>(() => {
+  const navigate = useNavigate();
+  const [role, setRoleState] = useState<Role | null>(() => {
     // Try to get role from localStorage first
     const storedRole = localStorage.getItem("vc_role");
     if (storedRole && Object.keys(roleConfigs).includes(storedRole)) {
       return storedRole as Role;
     }
-    // Fallback to user's role or default
-    return (user?.role as Role) || "VETERINARIAN";
+    return null;
   });
+
   const [roleConfig, setRoleConfig] = useState<RoleConfig>(
-    roleConfigs[role] || roleConfigs.veterinarian
+    role ? roleConfigs[role] : roleConfigs.VETERINARIAN
   );
 
   // Update role configuration whenever role changes
   useEffect(() => {
-    // If user has a role defined, use it
-    if (user?.role && Object.keys(roleConfigs).includes(user.role)) {
-      setRoleState(user.role as Role);
+    if (role) {
+      setRoleConfig(roleConfigs[role]);
     }
+  }, [role]);
 
-    setRoleConfig(roleConfigs[role] || roleConfigs.veterinarian);
-  }, [role, user?.role]);
+  // Handle user authentication state changes
+  useEffect(() => {
+    if (!user) {
+      // Clear role when user logs out
+      setRoleState(null);
+      localStorage.removeItem("vc_role");
+    } else if (user && !role) {
+      // Redirect to role selection if user is logged in but has no role
+      navigate("/role-selection");
+    }
+  }, [user]);
 
   // Wrapper for setRole that also persists to localStorage
   const setRole = (newRole: Role) => {
+    // Clear any existing role first
+    localStorage.removeItem("vc_role");
+    // Set the new role
     setRoleState(newRole);
     localStorage.setItem("vc_role", newRole);
+    // Update role config immediately
+    setRoleConfig(roleConfigs[newRole]);
   };
 
   const hasPermission = (permission: string): boolean => {

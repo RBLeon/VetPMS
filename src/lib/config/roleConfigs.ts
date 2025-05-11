@@ -111,7 +111,7 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
       },
       {
         title: "Systeemstatus",
-        href: "/admin/status",
+        href: "/admin/config",
         icon: CircuitBoard,
         color:
           "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
@@ -226,7 +226,7 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
       },
       {
         title: "Medische Dossiers",
-        href: "/medical",
+        href: "/medical-records",
         icon: Stethoscope,
         color:
           "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
@@ -249,18 +249,11 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
           "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
       },
       {
-        title: "Behandelingstaken",
-        href: "/tasks/treatments",
-        icon: FileText,
+        title: "Nieuwe Afspraak",
+        href: "/appointments/new",
+        icon: Calendar,
         color:
-          "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
-      },
-      {
-        title: "Patiënt Zoeken",
-        href: "/patients",
-        icon: Heart,
-        color:
-          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
+          "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
       },
     ],
     contextualFeatures: {
@@ -311,7 +304,7 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
       },
       {
         title: "Medische Dossiers",
-        href: "/medical",
+        href: "/medical-records",
         icon: Stethoscope,
         color:
           "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
