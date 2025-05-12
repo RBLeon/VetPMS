@@ -16,7 +16,7 @@ A modern web application for managing veterinary practices, built with React, Ty
 ### Prerequisites
 
 - Node.js 20 or higher
-- npm 10 or higher
+- pnpm 8 or higher
 
 ### Installation
 
@@ -30,13 +30,13 @@ cd VetPMS
 2. Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 3. Start the development server:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ### Testing
@@ -44,19 +44,19 @@ npm run dev
 Run the test suite:
 
 ```bash
-npm test
+pnpm test
 ```
 
 Run tests in watch mode:
 
 ```bash
-npm run test:watch
+pnpm test:watch
 ```
 
 Generate test coverage report:
 
 ```bash
-npm run test:coverage
+pnpm test:coverage
 ```
 
 ## Deployment
@@ -78,13 +78,13 @@ To manually deploy the application:
 1. Build the application:
 
 ```bash
-npm run build
+pnpm build
 ```
 
 2. Preview the build:
 
 ```bash
-npm run preview
+pnpm preview
 ```
 
 ## Contributing
