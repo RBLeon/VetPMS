@@ -75,7 +75,7 @@ describe("ReceptionistDashboard", () => {
 
   it("displays appointments", () => {
     renderWithProviders(<ReceptionistDashboard />);
-    expect(screen.getByText("Vandaag")).toBeInTheDocument();
+    expect(screen.getAllByText("Vandaag").length).toBeGreaterThan(0);
     expect(screen.getByText("Max")).toBeInTheDocument();
     expect(screen.getByText("09:00")).toBeInTheDocument();
   });

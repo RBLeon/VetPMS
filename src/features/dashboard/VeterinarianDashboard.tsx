@@ -1,4 +1,4 @@
-import { useAppointments, usePatients } from "@/lib/hooks/useApi";
+import { useAppointments, usePatients, useClients } from "@/lib/hooks/useApi";
 import { useMedicalRecords } from "@/lib/hooks/useMedicalRecords";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ import {
   Activity,
   Syringe,
   FileText,
+  Phone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -60,6 +61,7 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
     isLoading: patientsLoading,
     error: patientsError,
   } = usePatients();
+  const { data: hookClients = [], isLoading: clientsLoading } = useClients();
   const {
     data: hookMedicalRecords = [],
     isLoading: recordsLoading,
@@ -68,11 +70,15 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
 
   const appointments = propAppointments ?? hookAppointments;
   const patients = propPatients ?? hookPatients;
+  const clients = hookClients;
   const medicalRecords = propMedicalRecords ?? hookMedicalRecords;
   const isLoading =
     propIsLoading !== undefined
       ? propIsLoading
-      : appointmentsLoading || patientsLoading || recordsLoading;
+      : appointmentsLoading ||
+        patientsLoading ||
+        recordsLoading ||
+        clientsLoading;
 
   const today = new Date();
 
@@ -317,30 +323,35 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
                   const patient = patients.find(
                     (p) => p.id === appointment.patientId
                   );
+                  const client = clients?.find(
+                    (c) => c.id === appointment.clientId
+                  );
                   return (
                     <div
                       key={appointment.id}
-                      className="flex items-center justify-between p-4 rounded-lg border bg-blue-50"
+                      className="flex items-center justify-between p-4 rounded-lg border bg-green-50 dark:bg-green-950/50"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           {getAppointmentTypeIcon(appointment.type)}
-                          <p className="font-medium">{patient?.name}</p>
+                          <p className="font-medium dark:text-green-100">
+                            {patient?.name}
+                          </p>
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-muted-foreground dark:text-green-300">
                           {format(new Date(appointment.date), "HH:mm")}
                         </p>
-                        <p className="text-sm text-muted-foreground">
-                          {appointment.type}
-                        </p>
+                        <div className="flex items-center gap-2 text-sm dark:text-green-300">
+                          <Phone className="h-3 w-3" />
+                          <span>{client?.phone}</span>
+                        </div>
                       </div>
-                      <Button
-                        onClick={() => propOnStartTreatment?.(appointment.id)}
+                      <Badge
                         variant="outline"
-                        className="bg-white"
+                        className="bg-white dark:bg-green-900 dark:text-green-100 dark:border-green-700"
                       >
-                        Start Behandeling
-                      </Button>
+                        {appointment.status}
+                      </Badge>
                     </div>
                   );
                 })}
@@ -364,20 +375,27 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
                   return (
                     <Dialog key={record.id}>
                       <DialogTrigger asChild>
-                        <div className="flex items-center justify-between p-4 rounded-lg border bg-white cursor-pointer hover:bg-gray-50">
+                        <div className="flex items-center justify-between p-4 rounded-lg border bg-gray-50 dark:bg-gray-800/50 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <FileText className="h-4 w-4" />
-                              <p className="font-medium">{patient?.name}</p>
+                              <p className="font-medium dark:text-gray-100">
+                                {patient?.name}
+                              </p>
                             </div>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-muted-foreground dark:text-gray-300">
                               {format(new Date(record.date), "dd/MM/yyyy")}
                             </p>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-muted-foreground dark:text-gray-300">
                               {record.type}
                             </p>
                           </div>
-                          <Badge variant="outline">{record.status}</Badge>
+                          <Badge
+                            variant="outline"
+                            className="bg-white dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                          >
+                            {record.status}
+                          </Badge>
                         </div>
                       </DialogTrigger>
                       <DialogContent>

@@ -12,4 +12,30 @@ export default defineConfig({
     },
   },
   base: "/VetPMS",
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("react") || id.includes("react-dom")) {
+              return "vendor-react";
+            }
+            if (
+              id.includes("react-router") ||
+              id.includes("react-router-dom")
+            ) {
+              return "vendor-router";
+            }
+            if (id.includes("@tanstack")) {
+              return "vendor-query";
+            }
+            if (id.includes("tailwindcss")) {
+              return "vendor-tailwind";
+            }
+            return "vendor";
+          }
+        },
+      },
+    },
+  },
 });

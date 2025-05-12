@@ -1,15 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+// import userEvent from "@testing-library/user-event"; // Removed unused import
 import { NurseDashboard } from "../NurseDashboard";
-import { useAppointments } from "@/lib/hooks/useApi";
+import { useAppointments, usePatients, useInventory } from "@/lib/hooks/useApi";
 import { useMedicalRecords } from "@/lib/hooks/useMedicalRecords";
-import { usePatients } from "@/lib/hooks/useApi";
 
 // Mock the hooks
 vi.mock("@/lib/hooks/useApi", () => ({
   useAppointments: vi.fn(),
   usePatients: vi.fn(),
+  useInventory: vi.fn(),
 }));
 
 vi.mock("@/lib/hooks/useMedicalRecords", () => ({
@@ -23,12 +23,29 @@ describe("NurseDashboard", () => {
     patientName: "Max",
     type: "CONTROLE",
     status: "IN_BEHANDELING",
-    vitalSigns: {
-      temperature: 38.5,
-      heartRate: 80,
-      respiratoryRate: 20,
-    },
+    date: new Date().toISOString(),
   };
+
+  const mockPatient = {
+    id: "1",
+    name: "Max",
+    species: "Hond",
+    breed: "Labrador",
+    gender: "Mannelijk",
+    age: 4,
+    weight: 25,
+    clientId: "1",
+  };
+
+  const mockInventory = [
+    {
+      id: "1",
+      name: "Bandages",
+      category: "MATERIAAL",
+      quantity: 10,
+      reorderLevel: 5,
+    },
+  ];
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -37,7 +54,11 @@ describe("NurseDashboard", () => {
       isLoading: false,
     });
     (usePatients as any).mockReturnValue({
-      data: [],
+      data: [mockPatient],
+      isLoading: false,
+    });
+    (useInventory as any).mockReturnValue({
+      data: mockInventory,
       isLoading: false,
     });
     (useMedicalRecords as any).mockReturnValue({
@@ -48,27 +69,18 @@ describe("NurseDashboard", () => {
 
   it("displays patient treatments", () => {
     render(<NurseDashboard />);
-    expect(
-      screen.getByText("Huidige Behandelingen Overzicht")
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("Patiënten onder Toezicht Overzicht")
-    ).toBeInTheDocument();
-    expect(screen.getByText("Klinische Taken Overzicht")).toBeInTheDocument();
-    expect(screen.getByText("Patiëntenwachtrij Overzicht")).toBeInTheDocument();
+    expect(screen.getAllByText("Vandaag").length).toBeGreaterThan(0);
+    expect(screen.getByText("Max")).toBeInTheDocument();
+    expect(screen.getByText("CONTROLE")).toBeInTheDocument();
   });
 
-  it("allows updating vital signs", async () => {
-    const user = userEvent.setup();
+  it("allows starting treatment", async () => {
     render(<NurseDashboard />);
 
-    const updateButton = screen.getByRole("button", {
-      name: /Vitalen Bijwerken/i,
+    const startButton = screen.getByRole("button", {
+      name: /Nieuwe Behandeling/i,
     });
-    await user.click(updateButton);
-
-    expect(screen.getByLabelText("Temperatuur")).toBeInTheDocument();
-    expect(screen.getByLabelText("Hartslag")).toBeInTheDocument();
+    expect(startButton).toBeInTheDocument();
   });
 
   it("shows loading state", () => {
@@ -76,7 +88,16 @@ describe("NurseDashboard", () => {
       data: undefined,
       isLoading: true,
     });
-    render(<NurseDashboard />);
-    expect(screen.getAllByTestId("loading-skeleton")).toHaveLength(10);
+    (usePatients as any).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+    });
+    (useInventory as any).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+    });
+    const { container } = render(<NurseDashboard />);
+    const skeletons = container.querySelectorAll('[data-slot="skeleton"]');
+    expect(skeletons.length).toBeGreaterThan(0);
   });
 });

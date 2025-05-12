@@ -326,22 +326,27 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                   return (
                     <div
                       key={appointment.id}
-                      className="flex items-center justify-between p-4 rounded-lg border bg-blue-50"
+                      className="flex items-center justify-between p-4 rounded-lg border bg-blue-50 dark:bg-blue-950/50"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           {getAppointmentTypeIcon(appointment.type)}
-                          <p className="font-medium">{patient?.name}</p>
+                          <p className="font-medium dark:text-blue-100">
+                            {patient?.name}
+                          </p>
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-muted-foreground dark:text-blue-300">
                           {format(new Date(appointment.date), "HH:mm")}
                         </p>
-                        <div className="flex items-center gap-2 text-sm">
+                        <div className="flex items-center gap-2 text-sm dark:text-blue-300">
                           <Phone className="h-3 w-3" />
                           <span>{client?.phone}</span>
                         </div>
                       </div>
-                      <Badge variant="outline" className="bg-white">
+                      <Badge
+                        variant="outline"
+                        className="bg-white dark:bg-blue-900 dark:text-blue-100 dark:border-blue-700"
+                      >
                         {appointment.status}
                       </Badge>
                     </div>
@@ -369,17 +374,19 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                   return (
                     <div
                       key={appointment.id}
-                      className="flex items-center justify-between p-4 rounded-lg border bg-gray-50"
+                      className="flex items-center justify-between p-4 rounded-lg border bg-gray-50 dark:bg-gray-800/50"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           {getAppointmentTypeIcon(appointment.type)}
-                          <p className="font-medium">{patient?.name}</p>
+                          <p className="font-medium dark:text-gray-100">
+                            {patient?.name}
+                          </p>
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-muted-foreground dark:text-gray-300">
                           {format(new Date(appointment.date), "d MMM HH:mm")}
                         </p>
-                        <div className="flex items-center gap-2 text-sm">
+                        <div className="flex items-center gap-2 text-sm dark:text-gray-300">
                           <Phone className="h-3 w-3" />
                           <span>{client?.phone}</span>
                         </div>
@@ -387,7 +394,7 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                       {appointment.status === "INGEPLAND" && (
                         <Badge
                           variant="outline"
-                          className="bg-yellow-100 text-yellow-800"
+                          className="bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-100 dark:border-yellow-700"
                         >
                           Bevestiging Nodig
                         </Badge>

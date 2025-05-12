@@ -97,16 +97,6 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
     }
   };
 
-  const getInventoryStatusColor = (item: InventoryItem) => {
-    if (item.quantity <= item.reorderLevel) {
-      return "bg-red-100 text-red-800";
-    }
-    if (item.quantity <= item.reorderLevel * 1.5) {
-      return "bg-yellow-100 text-yellow-800";
-    }
-    return "bg-green-100 text-green-800";
-  };
-
   const getInventoryIcon = (category: string) => {
     switch (category) {
       case "MEDICATIE":
@@ -313,24 +303,26 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
                   return (
                     <div
                       key={appointment.id}
-                      className="flex items-center justify-between p-4 rounded-lg border bg-blue-50"
+                      className="flex items-center justify-between p-4 rounded-lg border bg-blue-50 dark:bg-blue-950/50"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           {getAppointmentTypeIcon(appointment.type)}
-                          <p className="font-medium">{patient?.name}</p>
+                          <p className="font-medium dark:text-blue-100">
+                            {patient?.name}
+                          </p>
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-muted-foreground dark:text-blue-300">
                           {format(new Date(appointment.date), "HH:mm")}
                         </p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-muted-foreground dark:text-blue-300">
                           {appointment.type}
                         </p>
                       </div>
                       <Button
                         onClick={() => propOnStartTreatment?.(appointment.id)}
                         variant="outline"
-                        className="bg-white"
+                        className="bg-white dark:bg-blue-900 dark:text-blue-100 dark:border-blue-700"
                       >
                         Start Behandeling
                       </Button>
@@ -352,19 +344,25 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
                 {inventory.map((item) => (
                   <div
                     key={item.id}
-                    className={`flex items-center justify-between p-4 rounded-lg border ${getInventoryStatusColor(
-                      item
-                    )}`}
+                    className={`flex items-center justify-between p-4 rounded-lg border ${
+                      item.quantity <= item.reorderLevel
+                        ? "bg-red-50 dark:bg-red-950/50"
+                        : item.quantity <= item.reorderLevel * 1.5
+                        ? "bg-yellow-50 dark:bg-yellow-950/50"
+                        : "bg-green-50 dark:bg-green-950/50"
+                    }`}
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         {getInventoryIcon(item.category)}
-                        <p className="font-medium">{item.name}</p>
+                        <p className="font-medium dark:text-gray-100">
+                          {item.name}
+                        </p>
                       </div>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground dark:text-gray-300">
                         {item.category}
                       </p>
-                      <div className="flex items-center gap-2 text-sm">
+                      <div className="flex items-center gap-2 text-sm dark:text-gray-300">
                         <span>Voorraad: {item.quantity}</span>
                         <span>•</span>
                         <span>Min: {item.reorderLevel}</span>
@@ -373,7 +371,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
                     {item.quantity <= item.reorderLevel && (
                       <Badge
                         variant="outline"
-                        className="bg-white text-red-600"
+                        className="bg-white dark:bg-red-900 dark:text-red-100 dark:border-red-700"
                       >
                         Bestellen
                       </Badge>
