@@ -4,6 +4,7 @@ import { useInvoices } from "@/lib/hooks/useInvoices";
 import { useStaff } from "@/lib/hooks/useStaff";
 import { useInventory } from "@/lib/hooks/useInventory";
 import { useClientFeedback } from "@/lib/hooks/useApi";
+import { Invoice } from "@/lib/api/types";
 import type { InventoryItem } from "@/lib/api/types";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -75,12 +76,15 @@ export const CEODashboard: React.FC = () => {
     const todayAppointments = appointments.filter((apt) => apt.date === today);
 
     const monthlyRevenue = invoices
-      .filter(
-        (inv) =>
-          new Date(inv.createdAt) >= new Date(monthStart) &&
-          new Date(inv.createdAt) <= new Date(monthEnd)
-      )
-      .reduce((sum, inv) => sum + inv.total, 0);
+      .filter((inv: Invoice) => {
+        const invoiceDate = new Date(inv.createdAt);
+        const today = new Date();
+        return (
+          invoiceDate.getMonth() === today.getMonth() &&
+          invoiceDate.getFullYear() === today.getFullYear()
+        );
+      })
+      .reduce((sum: number, inv: Invoice) => sum + inv.total, 0);
 
     const completionRate =
       appointments.length > 0
@@ -99,7 +103,12 @@ export const CEODashboard: React.FC = () => {
     );
 
     const averageRating =
-      feedback.reduce((sum, f) => sum + f.rating, 0) / feedback.length;
+      feedback.length > 0
+        ? feedback.reduce(
+            (sum: number, f: { rating: number }) => sum + f.rating,
+            0
+          ) / feedback.length
+        : 0;
 
     return {
       todayAppointments: todayAppointments.length,

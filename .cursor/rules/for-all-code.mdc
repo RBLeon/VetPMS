@@ -36,6 +36,7 @@ When working on MVP features, refer to:
 4. Maintain consistency with the established architecture patterns
 5. Document any deviations from the design specifications
 6. All displayed text and dummy data should be in dutch.
+7. DO NOT change styling until asked or before having asked. Current styling is good and should be applied at all new places.
 
 ## Component Development
 1. Before creating a new component:

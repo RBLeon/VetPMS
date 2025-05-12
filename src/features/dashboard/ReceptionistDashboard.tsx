@@ -1,8 +1,22 @@
-import { useAppointments, usePatients } from "@/lib/hooks/useApi";
+import { useAppointments, usePatients, useClients } from "@/lib/hooks/useApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Calendar,
+  Clock,
+  Users,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  Phone,
+  Mail,
+  MessageSquare,
+} from "lucide-react";
 import type { Appointment, Client, Patient } from "@/lib/api/types";
 
 interface ReceptionistDashboardProps {
@@ -34,14 +48,17 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
     useAppointments();
   const { data: hookPatients = [], isLoading: isLoadingPatients } =
     usePatients();
+  const { data: hookClients = [], isLoading: isLoadingClients } = useClients();
 
   const appointments = propAppointments ?? hookAppointments;
   const patients = propPatients ?? hookPatients;
+  const clients = propClients ?? hookClients;
   const isLoading =
     propIsLoading !== undefined
       ? propIsLoading
       : (!propAppointments && isLoadingAppointments) ||
-        (!propPatients && isLoadingPatients);
+        (!propPatients && isLoadingPatients) ||
+        (!propClients && isLoadingClients);
   const error = propError;
 
   console.log("ReceptionistDashboard props:", {
@@ -75,6 +92,36 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
       : "15 min",
   };
 
+  const getAppointmentStatusColor = (status: string) => {
+    switch (status) {
+      case "VOLTOOID":
+        return "bg-green-100 text-green-800";
+      case "AANGEMELD":
+        return "bg-blue-100 text-blue-800";
+      case "IN_BEHANDELING":
+        return "bg-yellow-100 text-yellow-800";
+      case "GEANNULEERD":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getAppointmentTypeIcon = (type: string) => {
+    switch (type) {
+      case "CONTROLE":
+        return <Calendar className="h-4 w-4" />;
+      case "VACCINATIE":
+        return <CheckCircle2 className="h-4 w-4" />;
+      case "OPERATIE":
+        return <AlertTriangle className="h-4 w-4" />;
+      case "SPOEDGEVAL":
+        return <XCircle className="h-4 w-4" />;
+      default:
+        return <Calendar className="h-4 w-4" />;
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-6">
@@ -106,144 +153,318 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
   }
 
   return (
-    <div className="container mx-auto py-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Vandaag</CardTitle>
+    <div className="container mx-auto py-6 space-y-6">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Vandaag</CardTitle>
+            <Calendar className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {appointments
-                .filter((a) => {
+            <div className="text-2xl font-bold text-blue-700">
+              {
+                appointments.filter((a) => {
                   const d = new Date(a.date);
                   return (
                     d.getDate() === today.getDate() &&
                     d.getMonth() === today.getMonth() &&
                     d.getFullYear() === today.getFullYear()
                   );
-                })
-                .map((appointment) => {
+                }).length
+              }
+            </div>
+            <p className="text-xs text-blue-600">Afspraken</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-green-50 to-green-100">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Wachtkamer</CardTitle>
+            <Users className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-700">
+              {waitingRoom.length}
+            </div>
+            <p className="text-xs text-green-600">Patiënten</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Gemiddelde Wachttijd
+            </CardTitle>
+            <Clock className="h-4 w-4 text-yellow-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-yellow-700">
+              {metrics.averageWaitTime}
+            </div>
+            <p className="text-xs text-yellow-600">Minuten</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-purple-50 to-purple-100">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">No-Show Rate</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-purple-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-purple-700">
+              {metrics.noShowRate}
+            </div>
+            <p className="text-xs text-purple-600">Percentage</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs defaultValue="today" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="today">Vandaag</TabsTrigger>
+          <TabsTrigger value="waiting">Wachtkamer</TabsTrigger>
+          <TabsTrigger value="upcoming">Aankomend</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="today" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Afspraken Vandaag</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {appointments
+                  .filter((a) => {
+                    const d = new Date(a.date);
+                    return (
+                      d.getDate() === today.getDate() &&
+                      d.getMonth() === today.getMonth() &&
+                      d.getFullYear() === today.getFullYear()
+                    );
+                  })
+                  .map((appointment) => {
+                    const patient = patients.find(
+                      (p) => p.id === appointment.patientId
+                    );
+                    const client = clients?.find(
+                      (c) => c.id === appointment.clientId
+                    );
+                    return (
+                      <div
+                        key={appointment.id}
+                        className={`flex items-center justify-between p-4 rounded-lg border ${getAppointmentStatusColor(
+                          appointment.status
+                        )}`}
+                      >
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            {getAppointmentTypeIcon(appointment.type)}
+                            <p className="font-medium">{patient?.name}</p>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {appointment.time ||
+                              format(new Date(appointment.date), "HH:mm")}
+                          </p>
+                          <div className="flex items-center gap-2 text-sm">
+                            <Phone className="h-3 w-3" />
+                            <span>{client?.phone}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {appointment.status === "INGEPLAND" && (
+                            <Button
+                              onClick={() => propOnConfirm?.(appointment.id)}
+                              variant="outline"
+                              className="bg-white"
+                            >
+                              Bevestigen
+                            </Button>
+                          )}
+                          {appointment.status === "IN_BEHANDELING" && (
+                            <Button
+                              onClick={() => propOnCheckIn?.(appointment.id)}
+                              variant="outline"
+                              className="bg-white"
+                            >
+                              Inschrijven
+                            </Button>
+                          )}
+                          <Badge variant="outline" className="bg-white">
+                            {appointment.status}
+                          </Badge>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="waiting" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Wachtkamer</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {waitingRoom.map((appointment) => {
                   const patient = patients.find(
                     (p) => p.id === appointment.patientId
+                  );
+                  const client = clients?.find(
+                    (c) => c.id === appointment.clientId
                   );
                   return (
                     <div
                       key={appointment.id}
-                      className="flex items-center justify-between p-2 border rounded-lg"
+                      className="flex items-center justify-between p-4 rounded-lg border bg-blue-50"
                     >
-                      <div>
-                        <p className="font-medium">
-                          {patient?.name || appointment.patientName}
-                        </p>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          {getAppointmentTypeIcon(appointment.type)}
+                          <p className="font-medium">{patient?.name}</p>
+                        </div>
                         <p className="text-sm text-muted-foreground">
-                          {appointment.time ||
-                            (appointment.date &&
-                              format(new Date(appointment.date), "HH:mm"))}
+                          {format(new Date(appointment.date), "HH:mm")}
                         </p>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Phone className="h-3 w-3" />
+                          <span>{client?.phone}</span>
+                        </div>
+                      </div>
+                      <Badge variant="outline" className="bg-white">
+                        {appointment.status}
+                      </Badge>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="upcoming" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Aankomende Afspraken</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {upcomingAppointments.map((appointment) => {
+                  const patient = patients.find(
+                    (p) => p.id === appointment.patientId
+                  );
+                  const client = clients?.find(
+                    (c) => c.id === appointment.clientId
+                  );
+                  return (
+                    <div
+                      key={appointment.id}
+                      className="flex items-center justify-between p-4 rounded-lg border bg-gray-50"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          {getAppointmentTypeIcon(appointment.type)}
+                          <p className="font-medium">{patient?.name}</p>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {format(new Date(appointment.date), "d MMM HH:mm")}
+                        </p>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Phone className="h-3 w-3" />
+                          <span>{client?.phone}</span>
+                        </div>
                       </div>
                       {appointment.status === "INGEPLAND" && (
-                        <Button
-                          onClick={() => propOnConfirm?.(appointment.id)}
+                        <Badge
                           variant="outline"
+                          className="bg-yellow-100 text-yellow-800"
                         >
-                          Bevestigen
-                        </Button>
-                      )}
-                      {appointment.status === "IN_BEHANDELING" && (
-                        <Button
-                          onClick={() => propOnCheckIn?.(appointment.id)}
-                          variant="outline"
-                        >
-                          Inschrijven
-                        </Button>
+                          Bevestiging Nodig
+                        </Badge>
                       )}
                     </div>
                   );
                 })}
-            </div>
-          </CardContent>
-        </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Wachtkamer</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {waitingRoom.map((appointment) => {
-                const patient = patients.find(
-                  (p) => p.id === appointment.patientId
-                );
-                return (
-                  <div
-                    key={appointment.id}
-                    className="flex items-center justify-between p-2 border rounded-lg"
-                  >
-                    <div>
-                      <p className="font-medium">{patient?.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {format(new Date(appointment.date), "HH:mm")}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Aankomende Afspraken</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {upcomingAppointments.map((appointment) => {
-                const patient = patients.find(
-                  (p) => p.id === appointment.patientId
-                );
-                return (
-                  <div
-                    key={appointment.id}
-                    className="flex items-center justify-between p-2 border rounded-lg"
-                  >
-                    <div>
-                      <p className="font-medium">{patient?.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {format(new Date(appointment.date), "d MMM HH:mm")}
-                      </p>
-                    </div>
-                    {appointment.status === "INGEPLAND" && (
-                      <span className="text-sm text-yellow-600">
-                        Bevestiging Nodig
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-
+      <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Snelle Statistieken</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between">
-                <span>Dagelijkse Inschrijvingen</span>
-                <span className="font-medium">{metrics.dailyCheckIns}</span>
+            <div className="space-y-6">
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium">
+                    Dagelijkse Inschrijvingen
+                  </span>
+                  <span className="text-sm font-medium">
+                    {metrics.dailyCheckIns}
+                  </span>
+                </div>
+                <Progress value={metrics.dailyCheckIns * 10} className="h-2" />
               </div>
-              <div className="flex justify-between">
-                <span>No-Show Percentage</span>
-                <span className="font-medium">{metrics.noShowRate}</span>
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium">
+                    No-Show Percentage
+                  </span>
+                  <span className="text-sm font-medium">
+                    {metrics.noShowRate}
+                  </span>
+                </div>
+                <Progress
+                  value={parseInt(metrics.noShowRate)}
+                  className="h-2"
+                />
               </div>
-              <div className="flex justify-between">
-                <span>Gemiddelde Wachttijd</span>
-                <span className="font-medium">{metrics.averageWaitTime}</span>
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium">
+                    Gemiddelde Wachttijd
+                  </span>
+                  <span className="text-sm font-medium">
+                    {metrics.averageWaitTime}
+                  </span>
+                </div>
+                <Progress
+                  value={parseInt(metrics.averageWaitTime) * 2}
+                  className="h-2"
+                />
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Snelle Acties</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <Button className="w-full" variant="outline">
+                <Phone className="mr-2 h-4 w-4" />
+                Bel Patiënt
+              </Button>
+              <Button className="w-full" variant="outline">
+                <Mail className="mr-2 h-4 w-4" />
+                Stuur Email
+              </Button>
+              <Button className="w-full" variant="outline">
+                <MessageSquare className="mr-2 h-4 w-4" />
+                SMS Herinnering
+              </Button>
+              <Button className="w-full" variant="outline">
+                <Calendar className="mr-2 h-4 w-4" />
+                Nieuwe Afspraak
+              </Button>
             </div>
           </CardContent>
         </Card>
