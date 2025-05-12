@@ -155,13 +155,13 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Vandaag</CardTitle>
-            <Calendar className="h-4 w-4 text-blue-600" />
+            <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-700">
+            <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
               {
                 appointments.filter((a) => {
                   const d = new Date(a.date);
@@ -173,48 +173,56 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                 }).length
               }
             </div>
-            <p className="text-xs text-blue-600">Afspraken</p>
+            <p className="text-xs text-blue-600 dark:text-blue-400">
+              Afspraken
+            </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-green-100">
+        <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Wachtkamer</CardTitle>
-            <Users className="h-4 w-4 text-green-600" />
+            <Users className="h-4 w-4 text-green-600 dark:text-green-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-700">
+            <div className="text-2xl font-bold text-green-700 dark:text-green-300">
               {waitingRoom.length}
             </div>
-            <p className="text-xs text-green-600">Patiënten</p>
+            <p className="text-xs text-green-600 dark:text-green-400">
+              Patiënten
+            </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100">
+        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-950 dark:to-yellow-900">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Gemiddelde Wachttijd
             </CardTitle>
-            <Clock className="h-4 w-4 text-yellow-600" />
+            <Clock className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-700">
+            <div className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">
               {metrics.averageWaitTime}
             </div>
-            <p className="text-xs text-yellow-600">Minuten</p>
+            <p className="text-xs text-yellow-600 dark:text-yellow-400">
+              Minuten
+            </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100">
+        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">No-Show Rate</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-purple-600" />
+            <AlertTriangle className="h-4 w-4 text-purple-600 dark:text-purple-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-700">
+            <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
               {metrics.noShowRate}
             </div>
-            <p className="text-xs text-purple-600">Percentage</p>
+            <p className="text-xs text-purple-600 dark:text-purple-400">
+              Percentage
+            </p>
           </CardContent>
         </Card>
       </div>

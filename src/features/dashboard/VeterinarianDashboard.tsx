@@ -150,13 +150,13 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Vandaag</CardTitle>
-            <Calendar className="h-4 w-4 text-blue-600" />
+            <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-700">
+            <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
               {
                 appointments.filter((a) => {
                   const d = new Date(a.date);
@@ -168,50 +168,58 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
                 }).length
               }
             </div>
-            <p className="text-xs text-blue-600">Afspraken</p>
+            <p className="text-xs text-blue-600 dark:text-blue-400">
+              Afspraken
+            </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-green-100">
+        <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Wachtkamer</CardTitle>
-            <User className="h-4 w-4 text-green-600" />
+            <User className="h-4 w-4 text-green-600 dark:text-green-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-700">
+            <div className="text-2xl font-bold text-green-700 dark:text-green-300">
               {waitingRoom.length}
             </div>
-            <p className="text-xs text-green-600">Patiënten</p>
+            <p className="text-xs text-green-600 dark:text-green-400">
+              Patiënten
+            </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100">
+        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-950 dark:to-yellow-900">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Voltooide Behandelingen
             </CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-yellow-600" />
+            <CheckCircle2 className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-700">
+            <div className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">
               {stats.completedTreatments}
             </div>
-            <p className="text-xs text-yellow-600">Vandaag</p>
+            <p className="text-xs text-yellow-600 dark:text-yellow-400">
+              Vandaag
+            </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100">
+        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Totaal Patiënten
             </CardTitle>
-            <User className="h-4 w-4 text-purple-600" />
+            <User className="h-4 w-4 text-purple-600 dark:text-purple-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-700">
+            <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
               {patients.length}
             </div>
-            <p className="text-xs text-purple-600">Actief</p>
+            <p className="text-xs text-purple-600 dark:text-purple-400">
+              Actief
+            </p>
           </CardContent>
         </Card>
       </div>

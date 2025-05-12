@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
+import { useUi } from "@/lib/context/UiContext";
 
 interface Settings {
-  darkMode: boolean;
   notifications: boolean;
   practiceName: string;
   address: string;
@@ -14,8 +14,8 @@ interface Settings {
 }
 
 export function SettingsForm() {
+  const { isDarkMode, toggleDarkMode } = useUi();
   const [settings, setSettings] = useState<Settings>({
-    darkMode: false,
     notifications: true,
     practiceName: "",
     address: "",
@@ -51,8 +51,8 @@ export function SettingsForm() {
             <Label htmlFor="darkMode">Donker thema</Label>
             <Switch
               id="darkMode"
-              checked={settings.darkMode}
-              onCheckedChange={() => handleToggle("darkMode")}
+              checked={isDarkMode}
+              onCheckedChange={toggleDarkMode}
             />
           </div>
           <div className="flex items-center justify-between">

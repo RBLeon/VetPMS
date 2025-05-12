@@ -13,6 +13,7 @@ import { Bell } from "lucide-react";
 import { SearchBar } from "@/components/dashboard/SearchBar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserMenu } from "@/components/dashboard/UserMenu";
+import { Link } from "react-router-dom";
 
 export function Header() {
   const { role } = useRole();
@@ -77,7 +78,12 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-14 items-center px-4">
         <div className="flex items-center">
-          <span className="text-xl font-bold tracking-tight">VetPMS</span>
+          <Link
+            to="/"
+            className="text-xl font-bold tracking-tight hover:text-primary transition-colors"
+          >
+            VetPMS
+          </Link>
         </div>
         <div className="flex-1 flex justify-center px-4">
           <div className="w-full max-w-3xl">
