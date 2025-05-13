@@ -14,7 +14,12 @@ import {
   Calendar,
   AlertTriangle,
   Star,
+  UserPlus,
+  Activity,
 } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Tabs, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 interface DashboardCardProps {
   title: string;
@@ -197,7 +202,7 @@ export const CEODashboard: React.FC = () => {
                 .map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between"
+                    className="flex items-center justify-between p-4 border rounded-lg bg-[#3B82F6]/5 dark:bg-[#3B82F6]/10"
                   >
                     <div>
                       <p className="font-medium">{item.name}</p>
@@ -206,7 +211,12 @@ export const CEODashboard: React.FC = () => {
                         )
                       </p>
                     </div>
-                    <Badge variant="destructive">Lage Voorraad</Badge>
+                    <Badge
+                      variant="destructive"
+                      className="bg-red-300 hover:bg-red-400 text-white dark:bg-red-900/50 dark:hover:bg-red-900/70"
+                    >
+                      Lage Voorraad
+                    </Badge>
                   </div>
                 ))}
             </div>

@@ -16,8 +16,10 @@ import {
   Phone,
   Mail,
   MessageSquare,
+  User,
 } from "lucide-react";
 import type { Appointment, Client, Patient } from "@/lib/api/types";
+import { useNavigate } from "react-router-dom";
 
 interface ReceptionistDashboardProps {
   appointments?: Appointment[];
@@ -44,6 +46,8 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
   onConfirm: propOnConfirm,
   stats,
 }) => {
+  const navigate = useNavigate();
+
   const { data: hookAppointments = [], isLoading: isLoadingAppointments } =
     useAppointments();
   const { data: hookPatients = [], isLoading: isLoadingPatients } =
@@ -122,6 +126,31 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
     }
   };
 
+  const handleNewAppointment = () => {
+    navigate("/appointments/new");
+  };
+
+  const handleViewPatient = (patientId: string) => {
+    navigate(`/patients/${patientId}`);
+  };
+
+  const handleViewClient = (clientId: string) => {
+    navigate(`/clients/${clientId}`);
+  };
+
+  const handleCallPatient = (phone: string) => {
+    window.location.href = `tel:${phone}`;
+  };
+
+  const handleSendEmail = (email: string) => {
+    window.location.href = `mailto:${email}`;
+  };
+
+  const handleSendSMS = (phone: string) => {
+    // In a real implementation, this would open an SMS modal or redirect to an SMS service
+    console.log("Sending SMS to:", phone);
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-6">
@@ -155,13 +184,13 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
+        <Card className="bg-gradient-to-br from-[#3B82F6]/10 to-[#3B82F6]/20 dark:from-[#3B82F6]/20 dark:to-[#3B82F6]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Vandaag</CardTitle>
-            <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <Calendar className="h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+            <div className="text-2xl font-bold text-[#3B82F6] dark:text-[#3B82F6]">
               {
                 appointments.filter((a) => {
                   const d = new Date(a.date);
@@ -173,54 +202,54 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                 }).length
               }
             </div>
-            <p className="text-xs text-blue-600 dark:text-blue-400">
+            <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">
               Afspraken
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
+        <Card className="bg-gradient-to-br from-[#10B981]/10 to-[#10B981]/20 dark:from-[#10B981]/20 dark:to-[#10B981]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Wachtkamer</CardTitle>
-            <Users className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <Users className="h-4 w-4 text-[#10B981] dark:text-[#10B981]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-700 dark:text-green-300">
+            <div className="text-2xl font-bold text-[#10B981] dark:text-[#10B981]">
               {waitingRoom.length}
             </div>
-            <p className="text-xs text-green-600 dark:text-green-400">
+            <p className="text-xs text-[#10B981] dark:text-[#10B981]">
               Patiënten
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-950 dark:to-yellow-900">
+        <Card className="bg-gradient-to-br from-[#8B5CF6]/10 to-[#8B5CF6]/20 dark:from-[#8B5CF6]/20 dark:to-[#8B5CF6]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Gemiddelde Wachttijd
             </CardTitle>
-            <Clock className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+            <Clock className="h-4 w-4 text-[#8B5CF6] dark:text-[#8B5CF6]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">
+            <div className="text-2xl font-bold text-[#8B5CF6] dark:text-[#8B5CF6]">
               {metrics.averageWaitTime}
             </div>
-            <p className="text-xs text-yellow-600 dark:text-yellow-400">
+            <p className="text-xs text-[#8B5CF6] dark:text-[#8B5CF6]">
               Minuten
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
+        <Card className="bg-gradient-to-br from-[#3B82F6]/10 to-[#3B82F6]/20 dark:from-[#3B82F6]/20 dark:to-[#3B82F6]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">No-Show Rate</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+            <AlertTriangle className="h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+            <div className="text-2xl font-bold text-[#3B82F6] dark:text-[#3B82F6]">
               {metrics.noShowRate}
             </div>
-            <p className="text-xs text-purple-600 dark:text-purple-400">
+            <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">
               Percentage
             </p>
           </CardContent>
@@ -228,10 +257,42 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
       </div>
 
       <Tabs defaultValue="today" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="today">Vandaag</TabsTrigger>
-          <TabsTrigger value="waiting">Wachtkamer</TabsTrigger>
-          <TabsTrigger value="upcoming">Aankomend</TabsTrigger>
+        <TabsList className="bg-gray-100 dark:bg-gray-800">
+          <TabsTrigger
+            value="today"
+            className="data-[state=active]:bg-[#3B82F6]/10 dark:data-[state=active]:bg-[#3B82F6]/20"
+          >
+            <Calendar className="h-4 w-4 mr-2 text-[#3B82F6] dark:text-[#3B82F6]" />
+            Vandaag
+          </TabsTrigger>
+          <TabsTrigger
+            value="waiting"
+            className="data-[state=active]:bg-[#10B981]/10 dark:data-[state=active]:bg-[#10B981]/20"
+          >
+            <Users className="h-4 w-4 mr-2 text-[#10B981] dark:text-[#10B981]" />
+            Wachtkamer
+          </TabsTrigger>
+          <TabsTrigger
+            value="upcoming"
+            className="data-[state=active]:bg-[#8B5CF6]/10 dark:data-[state=active]:bg-[#8B5CF6]/20"
+          >
+            <Clock className="h-4 w-4 mr-2 text-[#8B5CF6] dark:text-[#8B5CF6]" />
+            Aankomend
+          </TabsTrigger>
+          <TabsTrigger
+            value="patients"
+            className="data-[state=active]:bg-purple-100 dark:data-[state=active]:bg-purple-900/50"
+          >
+            <User className="h-4 w-4 mr-2 text-purple-600 dark:text-purple-400" />
+            Patiënten
+          </TabsTrigger>
+          <TabsTrigger
+            value="clients"
+            className="data-[state=active]:bg-indigo-100 dark:data-[state=active]:bg-indigo-900/50"
+          >
+            <Users className="h-4 w-4 mr-2 text-indigo-600 dark:text-indigo-400" />
+            Klanten
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="today" className="space-y-4">
@@ -260,9 +321,7 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                     return (
                       <div
                         key={appointment.id}
-                        className={`flex items-center justify-between p-4 rounded-lg border ${getAppointmentStatusColor(
-                          appointment.status
-                        )}`}
+                        className="flex items-center justify-between p-4 rounded-lg border bg-[#3B82F6]/5 dark:bg-[#3B82F6]/10"
                       >
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
@@ -273,7 +332,7 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                             {appointment.time ||
                               format(new Date(appointment.date), "HH:mm")}
                           </p>
-                          <div className="flex items-center gap-2 text-sm">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Phone className="h-3 w-3" />
                             <span>{client?.phone}</span>
                           </div>
@@ -283,7 +342,7 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                             <Button
                               onClick={() => propOnConfirm?.(appointment.id)}
                               variant="outline"
-                              className="bg-white"
+                              className="bg-[#3B82F6]/10 hover:bg-[#3B82F6]/20 dark:bg-[#3B82F6]/20 dark:hover:bg-[#3B82F6]/30 text-[#3B82F6] dark:text-[#3B82F6]"
                             >
                               Bevestigen
                             </Button>
@@ -292,12 +351,17 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                             <Button
                               onClick={() => propOnCheckIn?.(appointment.id)}
                               variant="outline"
-                              className="bg-white"
+                              className="bg-[#10B981]/10 hover:bg-[#10B981]/20 dark:bg-[#10B981]/20 dark:hover:bg-[#10B981]/30 text-[#10B981] dark:text-[#10B981]"
                             >
                               Inschrijven
                             </Button>
                           )}
-                          <Badge variant="outline" className="bg-white">
+                          <Badge
+                            variant="outline"
+                            className={getAppointmentStatusColor(
+                              appointment.status
+                            )}
+                          >
                             {appointment.status}
                           </Badge>
                         </div>
@@ -326,26 +390,26 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                   return (
                     <div
                       key={appointment.id}
-                      className="flex items-center justify-between p-4 rounded-lg border bg-blue-50 dark:bg-blue-950/50"
+                      className="flex items-center justify-between p-4 rounded-lg border bg-[#10B981]/5 dark:bg-[#10B981]/10"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           {getAppointmentTypeIcon(appointment.type)}
-                          <p className="font-medium dark:text-blue-100">
+                          <p className="font-medium dark:text-green-100">
                             {patient?.name}
                           </p>
                         </div>
-                        <p className="text-sm text-muted-foreground dark:text-blue-300">
+                        <p className="text-sm text-muted-foreground dark:text-green-300">
                           {format(new Date(appointment.date), "HH:mm")}
                         </p>
-                        <div className="flex items-center gap-2 text-sm dark:text-blue-300">
+                        <div className="flex items-center gap-2 text-sm dark:text-green-300">
                           <Phone className="h-3 w-3" />
                           <span>{client?.phone}</span>
                         </div>
                       </div>
                       <Badge
                         variant="outline"
-                        className="bg-white dark:bg-blue-900 dark:text-blue-100 dark:border-blue-700"
+                        className="bg-white dark:bg-green-900/50 dark:text-green-100 dark:border-green-700"
                       >
                         {appointment.status}
                       </Badge>
@@ -374,19 +438,19 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                   return (
                     <div
                       key={appointment.id}
-                      className="flex items-center justify-between p-4 rounded-lg border bg-gray-50 dark:bg-gray-800/50"
+                      className="flex items-center justify-between p-4 rounded-lg border bg-[#8B5CF6]/5 dark:bg-[#8B5CF6]/10"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           {getAppointmentTypeIcon(appointment.type)}
-                          <p className="font-medium dark:text-gray-100">
+                          <p className="font-medium dark:text-yellow-100">
                             {patient?.name}
                           </p>
                         </div>
-                        <p className="text-sm text-muted-foreground dark:text-gray-300">
+                        <p className="text-sm text-muted-foreground dark:text-yellow-300">
                           {format(new Date(appointment.date), "d MMM HH:mm")}
                         </p>
-                        <div className="flex items-center gap-2 text-sm dark:text-gray-300">
+                        <div className="flex items-center gap-2 text-sm dark:text-yellow-300">
                           <Phone className="h-3 w-3" />
                           <span>{client?.phone}</span>
                         </div>
@@ -406,6 +470,76 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="patients" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Patiënten</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {patients.map((patient) => (
+                  <div
+                    key={patient.id}
+                    className="flex items-center justify-between p-4 border rounded-lg bg-[#8B5CF6]/5 dark:bg-[#8B5CF6]/10"
+                  >
+                    <div>
+                      <p className="font-medium dark:text-purple-100">
+                        {patient.name}
+                      </p>
+                      <p className="text-sm text-muted-foreground dark:text-purple-300">
+                        {patient.species} - {patient.breed}
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleViewPatient(patient.id)}
+                      className="bg-white dark:bg-purple-900/5"
+                    >
+                      Bekijk Patiënt
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="clients" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Klanten</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {clients.map((client) => (
+                  <div
+                    key={client.id}
+                    className="flex items-center justify-between p-4 border rounded-lg bg-[#3B82F6]/5 dark:bg-[#3B82F6]/10"
+                  >
+                    <div>
+                      <p className="font-medium dark:text-indigo-100">
+                        {client.name}
+                      </p>
+                      <p className="text-sm text-muted-foreground dark:text-indigo-300">
+                        {client.email} - {client.phone}
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleViewClient(client.id)}
+                      className="bg-white dark:bg-indigo-900/5"
+                    >
+                      Bekijk Klant
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -417,18 +551,21 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
             <div className="space-y-6">
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium">
+                  <span className="text-sm font-medium text-muted-foreground">
                     Dagelijkse Inschrijvingen
                   </span>
                   <span className="text-sm font-medium">
                     {metrics.dailyCheckIns}
                   </span>
                 </div>
-                <Progress value={metrics.dailyCheckIns * 10} className="h-2" />
+                <Progress
+                  value={metrics.dailyCheckIns * 10}
+                  className="h-2 bg-gray-100 dark:bg-gray-800 [&>div]:bg-[#3B82F6] dark:[&>div]:bg-[#3B82F6]"
+                />
               </div>
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium">
+                  <span className="text-sm font-medium text-muted-foreground">
                     No-Show Percentage
                   </span>
                   <span className="text-sm font-medium">
@@ -437,12 +574,12 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                 </div>
                 <Progress
                   value={parseInt(metrics.noShowRate)}
-                  className="h-2"
+                  className="h-2 bg-gray-100 dark:bg-gray-800 [&>div]:bg-[#8B5CF6] dark:[&>div]:bg-[#8B5CF6]"
                 />
               </div>
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium">
+                  <span className="text-sm font-medium text-muted-foreground">
                     Gemiddelde Wachttijd
                   </span>
                   <span className="text-sm font-medium">
@@ -451,7 +588,7 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                 </div>
                 <Progress
                   value={parseInt(metrics.averageWaitTime) * 2}
-                  className="h-2"
+                  className="h-2 bg-gray-100 dark:bg-gray-800 [&>div]:bg-[#3B82F6] dark:[&>div]:bg-[#3B82F6]"
                 />
               </div>
             </div>
@@ -464,20 +601,36 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
-              <Button className="w-full" variant="outline">
-                <Phone className="mr-2 h-4 w-4" />
+              <Button
+                className="w-full bg-[#3B82F6]/10 hover:bg-[#3B82F6]/20 dark:bg-[#3B82F6]/20 dark:hover:bg-[#3B82F6]/30"
+                variant="outline"
+                onClick={() => handleCallPatient(clients[0]?.phone)}
+              >
+                <Phone className="mr-2 h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
                 Bel Patiënt
               </Button>
-              <Button className="w-full" variant="outline">
-                <Mail className="mr-2 h-4 w-4" />
+              <Button
+                className="w-full bg-[#10B981]/10 hover:bg-[#10B981]/20 dark:bg-[#10B981]/20 dark:hover:bg-[#10B981]/30"
+                variant="outline"
+                onClick={() => handleSendEmail(clients[0]?.email)}
+              >
+                <Mail className="mr-2 h-4 w-4 text-[#10B981] dark:text-[#10B981]" />
                 Stuur Email
               </Button>
-              <Button className="w-full" variant="outline">
-                <MessageSquare className="mr-2 h-4 w-4" />
+              <Button
+                className="w-full bg-[#8B5CF6]/10 hover:bg-[#8B5CF6]/20 dark:bg-[#8B5CF6]/20 dark:hover:bg-[#8B5CF6]/30"
+                variant="outline"
+                onClick={() => handleSendSMS(clients[0]?.phone)}
+              >
+                <MessageSquare className="mr-2 h-4 w-4 text-[#8B5CF6] dark:text-[#8B5CF6]" />
                 SMS Herinnering
               </Button>
-              <Button className="w-full" variant="outline">
-                <Calendar className="mr-2 h-4 w-4" />
+              <Button
+                className="w-full bg-[#3B82F6]/10 hover:bg-[#3B82F6]/20 dark:bg-[#3B82F6]/20 dark:hover:bg-[#3B82F6]/30"
+                variant="outline"
+                onClick={handleNewAppointment}
+              >
+                <Calendar className="mr-2 h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
                 Nieuwe Afspraak
               </Button>
             </div>

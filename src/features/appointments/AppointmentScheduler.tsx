@@ -35,6 +35,12 @@ import {
   PlusIcon,
   XIcon,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
+import { Appointment, AppointmentStatus } from "@/types/appointment";
+import { Provider } from "@/types/provider";
+import { Pet } from "@/types/pet";
+import { nl } from "date-fns/locale";
 
 // Type definitions
 interface Resource {
@@ -81,14 +87,51 @@ interface Appointment {
     | "NIET_VERSCHENEN";
 }
 
+// Mock data voor testing
+const mockProviders: Provider[] = [
+  { id: 1, name: "Dr. Smith", role: "Dierenarts" },
+  { id: 2, name: "Dr. Johnson", role: "Dierenarts" },
+];
+
+const mockPets: Pet[] = [
+  { id: 1, name: "Max", species: "Hond", breed: "Labrador", owner: "John Doe" },
+  { id: 2, name: "Luna", species: "Kat", breed: "Siamees", owner: "Jane Doe" },
+];
+
+const mockAppointments: Appointment[] = [
+  {
+    id: 1,
+    providerId: 1,
+    petId: 1,
+    startTime: new Date(2024, 2, 20, 9, 0),
+    endTime: new Date(2024, 2, 20, 9, 30),
+    status: "GEPLAND",
+    type: "Consultatie",
+    notes: "Jaarlijkse controle",
+  },
+  {
+    id: 2,
+    providerId: 2,
+    petId: 2,
+    startTime: new Date(2024, 2, 20, 10, 0),
+    endTime: new Date(2024, 2, 20, 10, 30),
+    status: "GEPLAND",
+    type: "Vaccinatie",
+    notes: "Jaarlijkse vaccinaties",
+  },
+];
+
 const AppointmentScheduler: React.FC = () => {
   const { setCurrentWorkspace } = useUi();
   const { currentTenant } = useTenant();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isLoading, setIsLoading] = useState(true);
   const [resources, setResources] = useState<Resource[]>([]);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointments, setAppointments] =
+    useState<Appointment[]>(mockAppointments);
   const [appointmentTypes, setAppointmentTypes] = useState<AppointmentType[]>(
     []
   );
@@ -115,6 +158,17 @@ const AppointmentScheduler: React.FC = () => {
   const [patientSearchResults, setPatientSearchResults] = useState<Patient[]>(
     []
   );
+
+  // Appointment details state
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<{
+    providerId: number;
+    hour: number;
+  } | null>(null);
 
   // Set appointments as current workspace and fetch data
   useEffect(() => {
@@ -434,8 +488,76 @@ const AppointmentScheduler: React.FC = () => {
 
   // Show appointment details when clicking on an appointment
   const handleAppointmentClick = (appointment: Appointment) => {
-    console.log("Appointment clicked:", appointment);
-    // In a real app, this would open a detailed view or modal
+    setSelectedAppointment(appointment);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleEditClick = () => {
+    setIsEditModalOpen(true);
+  };
+
+  const handleCancelClick = () => {
+    setIsCancelModalOpen(true);
+  };
+
+  const handleConfirmCancel = () => {
+    if (selectedAppointment) {
+      setAppointments(
+        appointments.map((apt) =>
+          apt.id === selectedAppointment.id
+            ? { ...apt, status: "GEANNULEERD" as AppointmentStatus }
+            : apt
+        )
+      );
+      setIsCancelModalOpen(false);
+      setSelectedAppointment(null);
+      toast({
+        title: "Afspraak geannuleerd",
+        description: "De afspraak is succesvol geannuleerd.",
+      });
+    }
+  };
+
+  const handleEmptySlotClick = (providerId: number, hour: number) => {
+    setSelectedTimeSlot({ providerId, hour });
+    setIsNewAppointmentModalOpen(true);
+  };
+
+  const handleSaveEdit = (updatedAppointment: Appointment) => {
+    setAppointments(
+      appointments.map((apt) =>
+        apt.id === updatedAppointment.id ? updatedAppointment : apt
+      )
+    );
+    setIsEditModalOpen(false);
+    setSelectedAppointment(null);
+    toast({
+      title: "Afspraak bijgewerkt",
+      description: "De afspraak is succesvol bijgewerkt.",
+    });
+  };
+
+  const handleCreateAppointment = (newAppointment: Omit<Appointment, "id">) => {
+    const appointment: Appointment = {
+      ...newAppointment,
+      id: Math.max(...appointments.map((a) => a.id)) + 1,
+    };
+    setAppointments([...appointments, appointment]);
+    setIsNewAppointmentModalOpen(false);
+    setSelectedTimeSlot(null);
+    toast({
+      title: "Nieuwe afspraak",
+      description: "De afspraak is succesvol aangemaakt.",
+    });
+  };
+
+  const getAppointmentsForTimeSlot = (providerId: number, hour: number) => {
+    return appointments.filter(
+      (apt) =>
+        apt.providerId === providerId &&
+        apt.startTime.getHours() === hour &&
+        apt.status !== "GEANNULEERD"
+    );
   };
 
   return (
@@ -901,6 +1023,213 @@ const AppointmentScheduler: React.FC = () => {
               }
             >
               Afspraak Plannen
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Appointment Details Modal */}
+      <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Afspraak details</DialogTitle>
+            <DialogDescription>
+              Bekijk en bewerk de gegevens van deze afspraak.
+            </DialogDescription>
+          </DialogHeader>
+          {selectedAppointment && (
+            <div className="space-y-4">
+              <div>
+                <span className="font-semibold">Patiënt: </span>
+                {selectedAppointment.patientName}
+              </div>
+              <div>
+                <span className="font-semibold">Eigenaar: </span>
+                {selectedAppointment.clientName}
+              </div>
+              <div>
+                <span className="font-semibold">Type: </span>
+                {selectedAppointment.type.name}
+              </div>
+              <div>
+                <span className="font-semibold">Tijd: </span>
+                {selectedAppointment.startTime.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+                {" - "}
+                {selectedAppointment.endTime.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </div>
+              <div>
+                <span className="font-semibold">Status: </span>
+                {selectedAppointment.status}
+              </div>
+              {selectedAppointment.notes && (
+                <div>
+                  <span className="font-semibold">Notities: </span>
+                  {selectedAppointment.notes}
+                </div>
+              )}
+            </div>
+          )}
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                /* edit logic placeholder */
+              }}
+            >
+              Bewerken
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsDetailsModalOpen(false)}
+            >
+              Sluiten
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Appointment Modal */}
+      {selectedAppointment && (
+        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Afspraak bewerken</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label>Dier</Label>
+                <Select defaultValue={selectedAppointment.petId.toString()}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockPets.map((pet) => (
+                      <SelectItem key={pet.id} value={pet.id.toString()}>
+                        {pet.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Type</Label>
+                <Input defaultValue={selectedAppointment.type} />
+              </div>
+              <div>
+                <Label>Notities</Label>
+                <Input defaultValue={selectedAppointment.notes} />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsEditModalOpen(false)}
+              >
+                Annuleren
+              </Button>
+              <Button
+                onClick={() =>
+                  handleSaveEdit({
+                    ...selectedAppointment,
+                    type: "Bijgewerkte type",
+                    notes: "Bijgewerkte notities",
+                  })
+                }
+              >
+                Opslaan
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* New Appointment Modal */}
+      {selectedTimeSlot && (
+        <Dialog
+          open={isNewAppointmentModalOpen}
+          onOpenChange={setIsNewAppointmentModalOpen}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Nieuwe Afspraak</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label>Dier</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockPets.map((pet) => (
+                      <SelectItem key={pet.id} value={pet.id.toString()}>
+                        {pet.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Type</Label>
+                <Input />
+              </div>
+              <div>
+                <Label>Notities</Label>
+                <Input />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsNewAppointmentModalOpen(false)}
+              >
+                Annuleren
+              </Button>
+              <Button
+                onClick={() =>
+                  handleCreateAppointment({
+                    providerId: selectedTimeSlot.providerId,
+                    petId: 1,
+                    startTime: new Date(
+                      selectedDate.setHours(selectedTimeSlot.hour, 0)
+                    ),
+                    endTime: new Date(
+                      selectedDate.setHours(selectedTimeSlot.hour + 1, 0)
+                    ),
+                    status: "GEPLAND",
+                    type: "Nieuwe afspraak",
+                    notes: "",
+                  })
+                }
+              >
+                Aanmaken
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Cancel Confirmation Modal */}
+      <Dialog open={isCancelModalOpen} onOpenChange={setIsCancelModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Afspraak annuleren</DialogTitle>
+          </DialogHeader>
+          <p>Weet je zeker dat je deze afspraak wilt annuleren?</p>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsCancelModalOpen(false)}
+            >
+              Terug
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmCancel}>
+              Bevestig annulering
             </Button>
           </DialogFooter>
         </DialogContent>

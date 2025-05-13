@@ -19,7 +19,14 @@ import {
   Users,
   AlertTriangle,
   Star,
+  CheckCircle,
+  Clock,
+  Activity,
+  Package,
 } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Tabs, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 interface DashboardCardProps {
   title: string;
@@ -108,36 +115,156 @@ export const ManagerDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <DashboardCard
-          title="Afspraken Vandaag"
-          value={metrics.todayAppointments}
-          icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-        />
-        <DashboardCard
-          title="Omzet Vandaag"
-          value={`€${metrics.todayRevenue.toLocaleString()}`}
-          icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
-        />
-        <DashboardCard
-          title="Openstaande Facturen"
-          value={metrics.pendingInvoices}
-          icon={<AlertTriangle className="h-4 w-4 text-muted-foreground" />}
-        />
-        <DashboardCard
-          title="Betalingspercentage"
-          value={`${metrics.paymentRate.toFixed(1)}%`}
-          icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
-        />
-        <DashboardCard
-          title="Personeelsbenutting"
-          value={`${metrics.staffUtilization.toFixed(1)}%`}
-          icon={<Users className="h-4 w-4 text-muted-foreground" />}
-        />
-        <DashboardCard
-          title="Gemiddelde Beoordeling"
-          value={metrics.averageRating.toFixed(1)}
-          icon={<Star className="h-4 w-4 text-muted-foreground" />}
-        />
+        <Card className="bg-gradient-to-br from-[#3B82F6]/10 to-[#3B82F6]/20 dark:from-[#3B82F6]/20 dark:to-[#3B82F6]/30">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Totaal Afspraken
+            </CardTitle>
+            <Calendar className="h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-[#3B82F6] dark:text-[#3B82F6]">
+              {metrics.todayAppointments}
+            </div>
+            <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">
+              Deze maand
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-[#10B981]/10 to-[#10B981]/20 dark:from-[#10B981]/20 dark:to-[#10B981]/30">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Voltooide Behandelingen
+            </CardTitle>
+            <CheckCircle className="h-4 w-4 text-[#10B981] dark:text-[#10B981]" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-[#10B981] dark:text-[#10B981]">
+              {metrics.todayAppointments}
+            </div>
+            <p className="text-xs text-[#10B981] dark:text-[#10B981]">
+              Deze maand
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-[#8B5CF6]/10 to-[#8B5CF6]/20 dark:from-[#8B5CF6]/20 dark:to-[#8B5CF6]/30">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Gemiddelde Wachttijd
+            </CardTitle>
+            <Clock className="h-4 w-4 text-[#8B5CF6] dark:text-[#8B5CF6]" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-[#8B5CF6] dark:text-[#8B5CF6]">
+              {metrics.averageRating.toFixed(1)} min
+            </div>
+            <p className="text-xs text-[#8B5CF6] dark:text-[#8B5CF6]">
+              Vandaag
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-[#3B82F6]/10 to-[#3B82F6]/20 dark:from-[#3B82F6]/20 dark:to-[#3B82F6]/30">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Voorraad Alert
+            </CardTitle>
+            <AlertTriangle className="h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-[#3B82F6] dark:text-[#3B82F6]">
+              {metrics.lowStockItems}
+            </div>
+            <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">
+              Items bijna op
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-[#3B82F6]/10 to-[#3B82F6]/20 dark:from-[#3B82F6]/20 dark:to-[#3B82F6]/30">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Omzet Vandaag</CardTitle>
+            <DollarSign className="h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-[#3B82F6] dark:text-[#3B82F6]">
+              €{metrics.todayRevenue.toLocaleString()}
+            </div>
+            <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">
+              Vandaag
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-[#10B981]/10 to-[#10B981]/20 dark:from-[#10B981]/20 dark:to-[#10B981]/30">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Openstaande Facturen
+            </CardTitle>
+            <AlertTriangle className="h-4 w-4 text-[#10B981] dark:text-[#10B981]" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-[#10B981] dark:text-[#10B981]">
+              {metrics.pendingInvoices}
+            </div>
+            <p className="text-xs text-[#10B981] dark:text-[#10B981]">
+              Openstaande facturen
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-[#8B5CF6]/10 to-[#8B5CF6]/20 dark:from-[#8B5CF6]/20 dark:to-[#8B5CF6]/30">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Betalingspercentage
+            </CardTitle>
+            <TrendingUp className="h-4 w-4 text-[#8B5CF6] dark:text-[#8B5CF6]" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-[#8B5CF6] dark:text-[#8B5CF6]">
+              {metrics.paymentRate.toFixed(1)}%
+            </div>
+            <p className="text-xs text-[#8B5CF6] dark:text-[#8B5CF6]">
+              Vandaag
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-[#3B82F6]/10 to-[#3B82F6]/20 dark:from-[#3B82F6]/20 dark:to-[#3B82F6]/30">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Personeelsbenutting
+            </CardTitle>
+            <Users className="h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-[#3B82F6] dark:text-[#3B82F6]">
+              {metrics.staffUtilization.toFixed(1)}%
+            </div>
+            <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">
+              Vandaag
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-[#3B82F6]/10 to-[#3B82F6]/20 dark:from-[#3B82F6]/20 dark:to-[#3B82F6]/30">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Gemiddelde Beoordeling
+            </CardTitle>
+            <Star className="h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-[#3B82F6] dark:text-[#3B82F6]">
+              {metrics.averageRating.toFixed(1)}
+            </div>
+            <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">
+              Vandaag
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -186,7 +313,12 @@ export const ManagerDashboard: React.FC = () => {
                         {item.quantity} {item.unit} resterend
                       </p>
                     </div>
-                    <Badge variant="destructive">Bestellen</Badge>
+                    <Badge
+                      variant="destructive"
+                      className="bg-red-300 hover:bg-red-400 text-white dark:bg-red-900/50 dark:hover:bg-red-900/70"
+                    >
+                      Bestellen
+                    </Badge>
                   </div>
                 ))}
             </div>
@@ -203,7 +335,7 @@ export const ManagerDashboard: React.FC = () => {
               .map((appointment) => (
                 <div
                   key={appointment.id}
-                  className="flex items-center justify-between"
+                  className="flex items-center justify-between p-4 border rounded-lg bg-[#3B82F6]/5 dark:bg-[#3B82F6]/10"
                 >
                   <div>
                     <p className="font-medium">
