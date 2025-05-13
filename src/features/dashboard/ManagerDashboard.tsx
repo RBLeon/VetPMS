@@ -3,13 +3,14 @@ import { useAppointments } from "@/lib/hooks/useAppointments";
 import { useInvoices } from "@/lib/hooks/useInvoices";
 import { useStaff } from "@/lib/hooks/useStaff";
 import { useInventory } from "@/lib/hooks/useInventory";
-import { useClientFeedback } from "@/lib/hooks/useApi";
+import { useClientFeedback, useTreatments } from "@/lib/hooks/useApi";
 import type {
   Appointment,
   Invoice,
   StaffMember,
   InventoryItem,
   ClientFeedback,
+  Treatment,
 } from "@/lib/api/types";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -23,10 +24,17 @@ import {
   Clock,
   Activity,
   Package,
+  CheckCircle2,
+  Stethoscope,
+  Bandage,
+  UserPlus,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Tabs, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsTrigger, TabsContent, TabsList } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 interface DashboardCardProps {
   title: string;
@@ -67,8 +75,34 @@ export const ManagerDashboard: React.FC = () => {
   const { data: staff = [] } = useStaff();
   const { data: inventory = [] } = useInventory();
   const { data: feedback = [] } = useClientFeedback();
+  const { data: treatments = [] } = useTreatments();
+  const navigate = useNavigate();
 
   const today = new Date().toISOString().split("T")[0];
+
+  const handleNewAppointment = () => {
+    navigate("/appointments/new");
+  };
+
+  const handleNewTreatment = () => {
+    navigate("/treatments/new");
+  };
+
+  const handleNewPatient = () => {
+    navigate("/patients/new");
+  };
+
+  const handleInventory = () => {
+    navigate("/inventory");
+  };
+
+  const handleViewAppointment = (appointmentId: string) => {
+    navigate(`/appointments/${appointmentId}`);
+  };
+
+  const handleViewTreatment = (treatmentId: string) => {
+    navigate(`/treatments/${treatmentId}`);
+  };
 
   const metrics = useMemo(() => {
     const todayAppointments = (appointments as Appointment[]).filter(
@@ -124,10 +158,10 @@ export const ManagerDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-[#3B82F6] dark:text-[#3B82F6]">
-              {metrics.todayAppointments}
+              {appointments.length}
             </div>
             <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">
-              Deze maand
+              Deze Week
             </p>
           </CardContent>
         </Card>
@@ -137,7 +171,7 @@ export const ManagerDashboard: React.FC = () => {
             <CardTitle className="text-sm font-medium">
               Voltooide Behandelingen
             </CardTitle>
-            <CheckCircle className="h-4 w-4 text-[#10B981] dark:text-[#10B981]" />
+            <CheckCircle2 className="h-4 w-4 text-[#10B981] dark:text-[#10B981]" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-[#10B981] dark:text-[#10B981]">
@@ -360,6 +394,230 @@ export const ManagerDashboard: React.FC = () => {
               ))}
           </div>
         </div>
+      </div>
+
+      <Tabs defaultValue="appointments">
+        <TabsList className="bg-gray-100 dark:bg-gray-800">
+          <TabsTrigger
+            value="appointments"
+            className="data-[state=active]:bg-[#3B82F6]/10 dark:data-[state=active]:bg-[#3B82F6]/20"
+          >
+            <Calendar className="h-4 w-4 mr-2 text-[#3B82F6] dark:text-[#3B82F6]" />
+            Afspraken
+          </TabsTrigger>
+          <TabsTrigger
+            value="treatments"
+            className="data-[state=active]:bg-[#10B981]/10 dark:data-[state=active]:bg-[#10B981]/20"
+          >
+            <Stethoscope className="h-4 w-4 mr-2 text-[#10B981] dark:text-[#10B981]" />
+            Behandelingen
+          </TabsTrigger>
+          <TabsTrigger
+            value="inventory"
+            className="data-[state=active]:bg-[#3B82F6]/10 dark:data-[state=active]:bg-[#3B82F6]/20"
+          >
+            <Activity className="h-4 w-4 mr-2 text-[#3B82F6] dark:text-[#3B82F6]" />
+            Voorraad
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="appointments">
+          <Card>
+            <CardHeader>
+              <CardTitle>Afspraken Deze Week</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {appointments.map((appointment) => (
+                  <div
+                    key={appointment.id}
+                    className="flex items-center justify-between p-4 border rounded-lg bg-[#3B82F6]/5 dark:bg-[#3B82F6]/10"
+                  >
+                    <div>
+                      <p className="font-medium">{appointment.patientName}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {format(new Date(appointment.date), "HH:mm")} -{" "}
+                        {appointment.type}
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleViewAppointment(appointment.id)}
+                      className="bg-[#3B82F6]/10 hover:bg-[#3B82F6]/20 dark:bg-[#3B82F6]/20 dark:hover:bg-[#3B82F6]/30 text-[#3B82F6] dark:text-[#3B82F6]"
+                    >
+                      Bekijk Afspraak
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="treatments">
+          <Card>
+            <CardHeader>
+              <CardTitle>Behandelingen Deze Week</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {treatments.map((treatment) => (
+                  <div
+                    key={treatment.id}
+                    className="flex items-center justify-between p-4 border rounded-lg bg-[#10B981]/5 dark:bg-[#10B981]/10"
+                  >
+                    <div>
+                      <p className="font-medium">{treatment.patientName}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {format(new Date(treatment.date), "HH:mm")} -{" "}
+                        {treatment.type}
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleViewTreatment(treatment.id)}
+                      className="bg-[#10B981]/10 hover:bg-[#10B981]/20 dark:bg-[#10B981]/20 dark:hover:bg-[#10B981]/30 text-[#10B981] dark:text-[#10B981]"
+                    >
+                      Bekijk Behandeling
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="inventory">
+          <Card>
+            <CardHeader>
+              <CardTitle>Voorraad</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {inventory.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between p-4 border rounded-lg bg-[#3B82F6]/5 dark:bg-[#3B82F6]/10"
+                  >
+                    <div>
+                      <p className="font-medium">{item.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Aantal: {item.quantity} (Bestelpunt: {item.reorderLevel}
+                        )
+                      </p>
+                    </div>
+                    {item.quantity <= item.reorderLevel && (
+                      <Badge
+                        variant="destructive"
+                        className="bg-red-300 hover:bg-red-400 text-white dark:bg-red-900/50 dark:hover:bg-red-900/70"
+                      >
+                        Lage Voorraad
+                      </Badge>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Statistieken</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Voltooide Behandelingen
+                  </span>
+                  <span className="text-sm font-medium">
+                    {metrics.todayAppointments}
+                  </span>
+                </div>
+                <Progress
+                  value={metrics.todayAppointments * 10}
+                  className="h-2 bg-gray-100 dark:bg-gray-800 [&>div]:bg-[#10B981] dark:[&>div]:bg-[#10B981]"
+                />
+              </div>
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Gemiddelde Wachttijd
+                  </span>
+                  <span className="text-sm font-medium">
+                    {metrics.averageRating.toFixed(1)} min
+                  </span>
+                </div>
+                <Progress
+                  value={parseInt(metrics.averageRating.toFixed(1)) * 2}
+                  className="h-2 bg-gray-100 dark:bg-gray-800 [&>div]:bg-[#8B5CF6] dark:[&>div]:bg-[#8B5CF6]"
+                />
+              </div>
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Voorraad Alert
+                  </span>
+                  <span className="text-sm font-medium">
+                    {metrics.lowStockItems}
+                  </span>
+                </div>
+                <Progress
+                  value={metrics.lowStockItems * 10}
+                  className="h-2 bg-gray-100 dark:bg-gray-800 [&>div]:bg-[#3B82F6] dark:[&>div]:bg-[#3B82F6]"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Snelle Acties</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <Button
+                className="w-full bg-[#3B82F6]/10 hover:bg-[#3B82F6]/20 dark:bg-[#3B82F6]/20 dark:hover:bg-[#3B82F6]/30"
+                variant="outline"
+                onClick={handleNewAppointment}
+              >
+                <Calendar className="mr-2 h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
+                Nieuwe Afspraak
+              </Button>
+              <Button
+                className="w-full bg-[#10B981]/10 hover:bg-[#10B981]/20 dark:bg-[#10B981]/20 dark:hover:bg-[#10B981]/30"
+                variant="outline"
+                onClick={handleNewTreatment}
+              >
+                <Bandage className="mr-2 h-4 w-4 text-[#10B981] dark:text-[#10B981]" />
+                Nieuwe Behandeling
+              </Button>
+              <Button
+                className="w-full bg-[#8B5CF6]/10 hover:bg-[#8B5CF6]/20 dark:bg-[#8B5CF6]/20 dark:hover:bg-[#8B5CF6]/30"
+                variant="outline"
+                onClick={handleNewPatient}
+              >
+                <UserPlus className="mr-2 h-4 w-4 text-[#8B5CF6] dark:text-[#8B5CF6]" />
+                Nieuwe Patiënt
+              </Button>
+              <Button
+                className="w-full bg-[#3B82F6]/10 hover:bg-[#3B82F6]/20 dark:bg-[#3B82F6]/20 dark:hover:bg-[#3B82F6]/30"
+                variant="outline"
+                onClick={handleInventory}
+              >
+                <Package className="mr-2 h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
+                Voorraad
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

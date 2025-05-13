@@ -423,3 +423,22 @@ export const useDeleteClientFeedback = () => {
     },
   });
 };
+
+// Treatment hooks
+export const useTreatments = () => {
+  return useQuery({
+    queryKey: ["treatments"],
+    queryFn: async () => {
+      const data = await mockApi.getTreatments();
+      return data || []; // Ensure we always return an array
+    },
+  });
+};
+
+export const useTreatment = (id: string) => {
+  return useQuery({
+    queryKey: ["treatments", id],
+    queryFn: () => mockApi.getTreatment(id),
+    enabled: !!id,
+  });
+};

@@ -1,4 +1,9 @@
-import { useAppointments, usePatients, useClients } from "@/lib/hooks/useApi";
+import {
+  useAppointments,
+  usePatients,
+  useClients,
+  useInventory,
+} from "@/lib/hooks/useApi";
 import { useMedicalRecords } from "@/lib/hooks/useMedicalRecords";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -71,6 +76,11 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
     isLoading: recordsLoading,
     error: recordsError,
   } = useMedicalRecords();
+  const {
+    data: inventory = [],
+    isLoading: inventoryLoading,
+    error: inventoryError,
+  } = useInventory();
 
   const appointments = propAppointments ?? hookAppointments;
   const patients = propPatients ?? hookPatients;
@@ -82,7 +92,8 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
       : appointmentsLoading ||
         patientsLoading ||
         recordsLoading ||
-        clientsLoading;
+        clientsLoading ||
+        inventoryLoading;
 
   const today = new Date();
 
@@ -171,7 +182,7 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
     );
   }
 
-  if (appointmentsError || patientsError || recordsError) {
+  if (appointmentsError || patientsError || recordsError || inventoryError) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
@@ -209,33 +220,33 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-[#10B981]/10 to-[#10B981]/20 dark:from-[#10B981]/20 dark:to-[#10B981]/30">
+        <Card className="bg-gradient-to-br from-[#8B5CF6]/10 to-[#8B5CF6]/20 dark:from-[#8B5CF6]/20 dark:to-[#8B5CF6]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Wachtkamer</CardTitle>
-            <User className="h-4 w-4 text-[#10B981] dark:text-[#10B981]" />
+            <User className="h-4 w-4 text-[#8B5CF6] dark:text-[#8B5CF6]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#10B981] dark:text-[#10B981]">
+            <div className="text-2xl font-bold text-[#8B5CF6] dark:text-[#8B5CF6]">
               {waitingRoom.length}
             </div>
-            <p className="text-xs text-[#10B981] dark:text-[#10B981]">
+            <p className="text-xs text-[#8B5CF6] dark:text-[#8B5CF6]">
               Patiënten
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-[#8B5CF6]/10 to-[#8B5CF6]/20 dark:from-[#8B5CF6]/20 dark:to-[#8B5CF6]/30">
+        <Card className="bg-gradient-to-br from-[#10B981]/10 to-[#10B981]/20 dark:from-[#10B981]/20 dark:to-[#10B981]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Voltooide Behandelingen
             </CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-[#8B5CF6] dark:text-[#8B5CF6]" />
+            <CheckCircle2 className="h-4 w-4 text-[#10B981] dark:text-[#10B981]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#8B5CF6] dark:text-[#8B5CF6]">
+            <div className="text-2xl font-bold text-[#10B981] dark:text-[#10B981]">
               {stats.completedTreatments}
             </div>
-            <p className="text-xs text-[#8B5CF6] dark:text-[#8B5CF6]">
+            <p className="text-xs text-[#10B981] dark:text-[#10B981]">
               Vandaag
             </p>
           </CardContent>
@@ -244,15 +255,18 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
         <Card className="bg-gradient-to-br from-[#3B82F6]/10 to-[#3B82F6]/20 dark:from-[#3B82F6]/20 dark:to-[#3B82F6]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Totaal Patiënten
+              Voorraad Alert
             </CardTitle>
-            <User className="h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
+            <AlertTriangle className="h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-[#3B82F6] dark:text-[#3B82F6]">
-              {patients.length}
+              {
+                inventory.filter((item) => item.quantity <= item.reorderLevel)
+                  .length
+              }
             </div>
-            <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">Actief</p>
+            <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">Items</p>
           </CardContent>
         </Card>
       </div>

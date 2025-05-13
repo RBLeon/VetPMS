@@ -192,18 +192,18 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-[#8B5CF6]/10 to-[#8B5CF6]/20 dark:from-[#8B5CF6]/20 dark:to-[#8B5CF6]/30">
+        <Card className="bg-gradient-to-br from-[#10B981]/10 to-[#10B981]/20 dark:from-[#10B981]/20 dark:to-[#10B981]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Voltooide Behandelingen
             </CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-[#8B5CF6] dark:text-[#8B5CF6]" />
+            <CheckCircle2 className="h-4 w-4 text-[#10B981] dark:text-[#10B981]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#8B5CF6] dark:text-[#8B5CF6]">
+            <div className="text-2xl font-bold text-[#10B981] dark:text-[#10B981]">
               {stats.completedTreatments}
             </div>
-            <p className="text-xs text-[#8B5CF6] dark:text-[#8B5CF6]">
+            <p className="text-xs text-[#10B981] dark:text-[#10B981]">
               Vandaag
             </p>
           </CardContent>
@@ -239,16 +239,16 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
           </TabsTrigger>
           <TabsTrigger
             value="treatments"
-            className="data-[state=active]:bg-[#3B82F6]/10 dark:data-[state=active]:bg-[#3B82F6]/20"
+            className="data-[state=active]:bg-[#10B981]/10 dark:data-[state=active]:bg-[#10B981]/20"
           >
-            <Stethoscope className="h-4 w-4 mr-2 text-[#3B82F6] dark:text-[#3B82F6]" />
+            <Stethoscope className="h-4 w-4 mr-2 text-[#10B981] dark:text-[#10B981]" />
             Behandelingen
           </TabsTrigger>
           <TabsTrigger
             value="inventory"
-            className="data-[state=active]:bg-[#10B981]/10 dark:data-[state=active]:bg-[#10B981]/20"
+            className="data-[state=active]:bg-[#3B82F6]/10 dark:data-[state=active]:bg-[#3B82F6]/20"
           >
-            <Activity className="h-4 w-4 mr-2 text-[#10B981] dark:text-[#10B981]" />
+            <Activity className="h-4 w-4 mr-2 text-[#3B82F6] dark:text-[#3B82F6]" />
             Voorraad
           </TabsTrigger>
         </TabsList>
@@ -296,7 +296,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
                 {appointments.map((appointment) => (
                   <div
                     key={appointment.id}
-                    className="flex items-center justify-between p-4 border rounded-lg bg-[#3B82F6]/5 dark:bg-[#3B82F6]/10"
+                    className="flex items-center justify-between p-4 border rounded-lg bg-[#10B981]/5 dark:bg-[#10B981]/10"
                   >
                     <div>
                       <p className="font-medium">{appointment.patientName}</p>
@@ -310,7 +310,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
                         variant="outline"
                         size="sm"
                         onClick={() => handleViewPatient(appointment.patientId)}
-                        className="bg-[#3B82F6]/10 hover:bg-[#3B82F6]/20 dark:bg-[#3B82F6]/20 dark:hover:bg-[#3B82F6]/30 text-[#3B82F6] dark:text-[#3B82F6]"
+                        className="bg-[#8B5CF6]/10 hover:bg-[#8B5CF6]/20 dark:bg-[#8B5CF6]/20 dark:hover:bg-[#8B5CF6]/30 text-[#8B5CF6] dark:text-[#8B5CF6]"
                       >
                         Bekijk Patiënt
                       </Button>
@@ -319,7 +319,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
                           variant="default"
                           size="sm"
                           onClick={() => propOnStartTreatment?.(appointment.id)}
-                          className="bg-[#3B82F6]/10 hover:bg-[#3B82F6]/20 dark:bg-[#3B82F6]/20 dark:hover:bg-[#3B82F6]/30 text-[#3B82F6] dark:text-[#3B82F6]"
+                          className="bg-[#10B981]/10 hover:bg-[#10B981]/20 dark:bg-[#10B981]/20 dark:hover:bg-[#10B981]/30 text-[#10B981] dark:text-[#10B981]"
                         >
                           Start Behandeling
                         </Button>
@@ -354,7 +354,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
                 {inventory.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between p-4 border rounded-lg bg-[#10B981]/5 dark:bg-[#10B981]/10"
+                    className="flex items-center justify-between p-4 border rounded-lg bg-[#3B82F6]/5 dark:bg-[#3B82F6]/10"
                   >
                     <div>
                       <p className="font-medium">{item.name}</p>
@@ -366,7 +366,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
                     {item.quantity <= item.reorderLevel && (
                       <Badge
                         variant="destructive"
-                        className="bg-red-400 hover:bg-red-500 text-white dark:bg-red-900/50 dark:hover:bg-red-900/70"
+                        className="bg-red-300 hover:bg-red-400 text-white dark:bg-red-900/50 dark:hover:bg-red-900/70"
                       >
                         Lage Voorraad
                       </Badge>
@@ -411,7 +411,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
                 </div>
                 <Progress
                   value={parseInt(stats.averageTreatmentTime) * 2}
-                  className="h-2 bg-gray-100 dark:bg-gray-800 [&>div]:bg-[#3B82F6] dark:[&>div]:bg-[#3B82F6]"
+                  className="h-2 bg-gray-100 dark:bg-gray-800 [&>div]:bg-[#10B981] dark:[&>div]:bg-[#10B981]"
                 />
               </div>
               <div>
@@ -433,7 +433,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
                       (item) => item.quantity <= item.reorderLevel
                     ).length * 10
                   }
-                  className="h-2 bg-gray-100 dark:bg-gray-800 [&>div]:bg-[#8B5CF6] dark:[&>div]:bg-[#8B5CF6]"
+                  className="h-2 bg-gray-100 dark:bg-gray-800 [&>div]:bg-[#3B82F6] dark:[&>div]:bg-[#3B82F6]"
                 />
               </div>
             </div>
@@ -447,11 +447,11 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
               <Button
-                className="w-full bg-[#3B82F6]/10 hover:bg-[#3B82F6]/20 dark:bg-[#3B82F6]/20 dark:hover:bg-[#3B82F6]/30"
+                className="w-full bg-[#10B981]/10 hover:bg-[#10B981]/20 dark:bg-[#10B981]/20 dark:hover:bg-[#10B981]/30"
                 variant="outline"
                 onClick={handleNewTreatment}
               >
-                <Bandage className="mr-2 h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
+                <Bandage className="mr-2 h-4 w-4 text-[#10B981] dark:text-[#10B981]" />
                 Nieuwe Behandeling
               </Button>
               <Button

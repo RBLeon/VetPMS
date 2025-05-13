@@ -311,6 +311,43 @@ const mockApi = {
     ...data,
   }),
   deleteClientFeedback: async (id: string) => id,
+
+  // Treatment methods
+  getTreatments: async () => [
+    {
+      id: "1",
+      patientName: "Max",
+      type: "Vaccinatie",
+      date: new Date().toISOString(),
+      status: "VOLTOOID",
+      notes: "Jaarlijkse vaccinatie",
+    },
+    {
+      id: "2",
+      patientName: "Bella",
+      type: "Controle",
+      date: new Date().toISOString(),
+      status: "IN_BEHANDELING",
+      notes: "Routine controle",
+    },
+    {
+      id: "3",
+      patientName: "Charlie",
+      type: "Operatie",
+      date: new Date().toISOString(),
+      status: "INGEPLAND",
+      notes: "Sterilisatie",
+    },
+  ],
+
+  getTreatment: async (id: string) => ({
+    id,
+    patientName: "Max",
+    type: "Vaccinatie",
+    date: new Date().toISOString(),
+    status: "VOLTOOID",
+    notes: "Jaarlijkse vaccinatie",
+  }),
 };
 
 export { mockApi, queryClient };
