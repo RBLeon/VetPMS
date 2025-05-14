@@ -7,7 +7,6 @@ import {
   Users,
   Search,
   Database,
-  CalendarRange,
   User,
   FileText,
   CreditCard,
@@ -145,9 +144,10 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
     description: "Volledige toegang tot klinische functies en patiëntgegevens",
     permissions: [
       "patients.view",
-      "patients.edit",
+      "patients.update",
       "appointments.view",
-      "appointments.edit",
+      "appointments.create",
+      "appointments.update",
       "medical_records.view",
       "medical_records.edit",
       "prescriptions.view",
@@ -187,13 +187,6 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
           "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
       },
       {
-        title: "Nieuwe Patiënt",
-        href: "/patients/new",
-        icon: Stethoscope,
-        color:
-          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
-      },
-      {
         title: "Medisch Dossier",
         href: "/medical-records/new",
         icon: FileText,
@@ -215,8 +208,9 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
     description: "Klinisch ondersteunend personeel dat dierenartsen assisteert",
     permissions: [
       "medical_records:read",
-      "medical_records:write:basic",
+      "medical_records:update:vitals",
       "appointments:read",
+      "appointments:update",
       "patients:read",
       "patients:write:vitals",
       "clients:read",
@@ -262,13 +256,6 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
         color:
           "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
       },
-      {
-        title: "Nieuwe Afspraak",
-        href: "/appointments",
-        icon: Calendar,
-        color:
-          "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
-      },
     ],
     contextualFeatures: {
       showPatientBanner: true,
@@ -288,10 +275,8 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
       "appointments:write",
       "clients:read",
       "clients:write",
-      "patients:read",
+      "patients:view:basic",
       "invoices:read",
-      "invoices:create",
-      "medical_records:read",
     ],
     navItems: [
       ...commonNavItems,
@@ -313,13 +298,6 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
         title: "Patiënten",
         href: "/patients",
         icon: User,
-        color:
-          "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
-      },
-      {
-        title: "Medische Dossiers",
-        href: "/medical-records",
-        icon: Stethoscope,
         color:
           "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
       },
@@ -361,9 +339,8 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
     displayName: "Praktijkmanager",
     description: "Administratief personeel dat toezicht houdt op de praktijk",
     permissions: [
-      "rapporten:lezen",
-      "personeel:lezen",
-      "personeel:schrijven",
+      "reports:view",
+      "reports:create",
       "facturering:lezen",
       "facturering:schrijven",
       "voorraad:lezen",
@@ -384,13 +361,6 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
         icon: BarChart3,
         color:
           "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
-      },
-      {
-        title: "Personeelsbeheer",
-        href: "/personeel",
-        icon: Users,
-        color:
-          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
       },
       {
         title: "Financieel Beheer",
@@ -417,13 +387,6 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
           "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
       },
       {
-        title: "Personeelsrooster",
-        href: "/staff/schedule",
-        icon: CalendarRange,
-        color:
-          "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
-      },
-      {
         title: "Voorraadcontrole",
         href: "/inventory/check",
         icon: Database,
@@ -446,8 +409,8 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
       },
     ],
     contextualFeatures: {
-      showPatientBanner: true,
-      showMedicalRecordTabs: true,
+      showPatientBanner: false,
+      showMedicalRecordTabs: false,
       showPrescriptionTools: false,
       showBillingDetails: true,
       showAdvancedClinical: false,
@@ -458,7 +421,17 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
     displayName: "Directeur",
     description:
       "Directie met volledige systeemtoegang en strategisch toezicht",
-    permissions: ["*"], // All permissions
+    permissions: [
+      "personnel:manage",
+      "strategy:view",
+      "strategy:edit",
+      "reports:view",
+      "reports:create",
+      "financieel:lezen",
+      "financieel:schrijven",
+      "instellingen:lezen",
+      "instellingen:schrijven",
+    ],
     navItems: [
       ...commonNavItems,
       {
@@ -529,11 +502,11 @@ export const roleConfigs: { [key: string]: RoleConfig } = {
       },
     ],
     contextualFeatures: {
-      showPatientBanner: true,
-      showMedicalRecordTabs: true,
-      showPrescriptionTools: true,
+      showPatientBanner: false,
+      showMedicalRecordTabs: false,
+      showPrescriptionTools: false,
       showBillingDetails: true,
-      showAdvancedClinical: true,
+      showAdvancedClinical: false,
       useRoleBasedDashboard: true,
     },
   },

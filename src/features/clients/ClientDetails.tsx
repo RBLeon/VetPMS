@@ -5,10 +5,15 @@ import {
   useClientPatients,
   useDeleteClient,
 } from "@/lib/hooks/useApi";
-import { PageHeader } from "@/components/ui/page-header";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DataTable } from "@/components/ui/data-table";
+import { PageHeader } from "@/features/ui/components/page-header";
+import { Button } from "@/features/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/features/ui/components/card";
+import { DataTable } from "@/features/ui/components/data-table";
 import { ArrowLeft, Edit, Trash2, Plus, AlertTriangle } from "lucide-react";
 import {
   AlertDialog,
@@ -20,7 +25,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@/features/ui/components/alert-dialog";
 import { format } from "date-fns";
 import type { Patient } from "@/lib/api/types";
 

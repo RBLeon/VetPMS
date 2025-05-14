@@ -1,15 +1,20 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { usePatient } from "@/lib/hooks/useApi";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/features/ui/components/card";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/features/ui/components/alert";
 import type { Patient } from "@/lib/api/types";
-import { PageHeader } from "@/components/ui/page-header";
-import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/features/ui/components/page-header";
+import { Button } from "@/features/ui/components/button";
 import { ArrowLeft } from "lucide-react";
-import { MedicalRecordsList } from "@/components/medical-records/MedicalRecordsList";
+import { MedicalRecordsList } from "@/features/medical-records/components/MedicalRecordsList";
 
 interface PatientDetailsProps {
   patient?: Patient;

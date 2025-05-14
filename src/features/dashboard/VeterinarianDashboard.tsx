@@ -1,13 +1,11 @@
+import { useAppointments, usePatients, useInventory } from "@/lib/hooks/useApi";
 import {
-  useAppointments,
-  usePatients,
-  useClients,
-  useInventory,
-} from "@/lib/hooks/useApi";
-import { useMedicalRecords } from "@/lib/hooks/useMedicalRecords";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/features/ui/components/card";
+import { Skeleton } from "@/features/ui/components/skeleton";
 import {
   AlertCircle,
   Calendar,
@@ -18,21 +16,18 @@ import {
   Activity,
   Syringe,
   FileText,
-  Phone,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/features/ui/components/button";
 import { format } from "date-fns";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/features/ui/components/progress";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import type { Appointment, Patient, MedicalRecord } from "@/lib/api/types";
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/features/ui/components/tabs";
 import { useNavigate } from "react-router-dom";
+import type { Appointment, Patient, MedicalRecord } from "@/lib/api/types";
 
 interface VeterinarianDashboardProps {
   appointments?: Appointment[];
@@ -54,7 +49,6 @@ interface VeterinarianDashboardProps {
 export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
   appointments: propAppointments,
   patients: propPatients,
-  medicalRecords: propMedicalRecords,
   isLoading: propIsLoading,
   onStartConsultation: propOnStartConsultation,
   onCompleteConsultation: propOnCompleteConsultation,
@@ -70,12 +64,6 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
     isLoading: patientsLoading,
     error: patientsError,
   } = usePatients();
-  const { data: hookClients = [], isLoading: clientsLoading } = useClients();
-  const {
-    data: hookMedicalRecords = [],
-    isLoading: recordsLoading,
-    error: recordsError,
-  } = useMedicalRecords();
   const {
     data: inventory = [],
     isLoading: inventoryLoading,
@@ -84,16 +72,10 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
 
   const appointments = propAppointments ?? hookAppointments;
   const patients = propPatients ?? hookPatients;
-  const clients = hookClients;
-  const medicalRecords = propMedicalRecords ?? hookMedicalRecords;
   const isLoading =
     propIsLoading !== undefined
       ? propIsLoading
-      : appointmentsLoading ||
-        patientsLoading ||
-        recordsLoading ||
-        clientsLoading ||
-        inventoryLoading;
+      : appointmentsLoading || patientsLoading || inventoryLoading;
 
   const today = new Date();
 
@@ -131,40 +113,6 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
     navigate(`/patients/${patientId}`);
   };
 
-  const getAppointmentStatusColor = (status: string) => {
-    switch (status) {
-      case "VOLTOOID":
-        return "bg-green-100 text-green-800";
-      case "AANGEMELD":
-        return "bg-blue-100 text-blue-800";
-      case "IN_BEHANDELING":
-        return "bg-yellow-100 text-yellow-800";
-      case "GEANNULEERD":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getAppointmentTypeIcon = (type: string) => {
-    switch (type) {
-      case "CONTROLE":
-        return <Stethoscope className="h-4 w-4" />;
-      case "VACCINATIE":
-        return <Syringe className="h-4 w-4" />;
-      case "OPERATIE":
-        return <Activity className="h-4 w-4" />;
-      case "SPOEDGEVAL":
-        return <AlertTriangle className="h-4 w-4" />;
-      default:
-        return <Stethoscope className="h-4 w-4" />;
-    }
-  };
-
-  const getVitalSigns = (record: MedicalRecord) => {
-    return record.vitalSigns || "N/B";
-  };
-
   if (isLoading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -182,7 +130,7 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
     );
   }
 
-  if (appointmentsError || patientsError || recordsError || inventoryError) {
+  if (appointmentsError || patientsError || inventoryError) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">

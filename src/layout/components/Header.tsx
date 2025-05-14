@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRole } from "@/lib/context/RoleContext";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/features/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,15 +8,18 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/features/ui/components/dropdown-menu";
 import { Bell } from "lucide-react";
-import { SearchBar } from "@/components/dashboard/SearchBar";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { UserMenu } from "@/components/dashboard/UserMenu";
+import { ThemeToggle } from "@/features/ui/components/theme-toggle";
+import { UserMenu } from "@/features/dashboard/components/UserMenu";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/hooks/useAuth";
 
-export function Header() {
+export const Header = () => {
+  const navigate = useNavigate();
   const { role } = useRole();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const { user } = useAuth();
 
   const getRoleSpecificNotifications = () => {
     // This would typically come from a notifications context or API
@@ -75,14 +78,26 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-14 items-center px-4">
-        <div className="flex items-center">
-          <span className="text-xl font-bold tracking-tight">VetPMS</span>
+      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/dashboard")}
+            className="text-lg font-bold"
+          >
+            VetPMS
+          </Button>
         </div>
-        <div className="flex-1 flex justify-center px-4">
-          <div className="w-full max-w-3xl">
-            <SearchBar />
-          </div>
+        <div className="flex items-center space-x-4">
+          {user ? (
+            <Button variant="ghost" onClick={() => navigate("/profile")}>
+              {user.firstName} {user.lastName}
+            </Button>
+          ) : (
+            <Button variant="ghost" onClick={() => navigate("/login")}>
+              Inloggen
+            </Button>
+          )}
         </div>
         <div className="flex items-center space-x-2">
           <ThemeToggle />
@@ -120,4 +135,4 @@ export function Header() {
       </div>
     </header>
   );
-}
+};

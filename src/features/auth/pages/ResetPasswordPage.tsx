@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/features/ui/components/button";
+import { Input } from "@/features/ui/components/input";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/features/ui/components/card";
 import { useNavigate } from "react-router-dom";
 
 export const ResetPasswordPage = () => {

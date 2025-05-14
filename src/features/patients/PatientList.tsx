@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePatients } from "@/lib/hooks/useApi";
-import { DataTable } from "@/components/ui/data-table";
-import { SearchInput } from "@/components/ui/search-input";
-import { Button } from "@/components/ui/button";
+import { DataTable } from "@/features/ui/components/data-table";
+import { SearchInput } from "@/features/ui/components/search-input";
+import { Button } from "@/features/ui/components/button";
 import { Plus } from "lucide-react";
 import { format } from "date-fns";
 import type { Patient } from "@/lib/api/types";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/features/ui/components/alert";
 import { Loader2 } from "lucide-react";
 
 interface PatientListProps {

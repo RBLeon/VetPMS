@@ -1,154 +1,124 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { User, RegisterData } from "@/lib/api/types";
+import { useNavigate } from "react-router-dom";
+
+export interface User {
+  id: string;
+  email: string;
+  displayName: string;
+  avatarUrl?: string;
+  firstName?: string;
+  lastName?: string;
+}
 
 interface AuthContextType {
   user: User | null;
+  signIn: (email: string) => Promise<void>;
+  signOut: () => Promise<void>;
   isLoading: boolean;
   isAuthenticated: boolean;
-  error: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
-  forgotPassword: (email: string) => Promise<void>;
-  resetPassword: (token: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  error: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [user, setUser] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem("vc_user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
-  const [isLoading, setIsLoading] = useState(false);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  // Update localStorage when user changes
   useEffect(() => {
-    if (user) {
-      localStorage.setItem("vc_user", JSON.stringify(user));
-    } else {
-      localStorage.removeItem("vc_user");
-    }
-  }, [user]);
-
-  const login = async (email: string, password: string) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      // Demo credentials check
-      if (email === "demo@vetpms.nl" && password === "demo123") {
+    // Check for existing session
+    const checkSession = async () => {
+      try {
+        // Mock session check - replace with actual auth logic
         const mockUser: User = {
           id: "1",
-          email,
-          firstName: "Demo",
+          email: "test@example.com",
+          displayName: "Test User",
+          firstName: "Test",
           lastName: "User",
-          role: "VETERINARIAN",
-          permissions: [],
-          tenantId: "1",
-          username: "demo",
+          avatarUrl: "https://example.com/avatar.jpg",
         };
         setUser(mockUser);
-        return;
+      } catch (error) {
+        console.error("Session check failed:", error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      // TODO: Implement actual login logic
-      throw new Error("Invalid credentials");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    checkSession();
+  }, []);
 
-  const register = async (data: RegisterData) => {
+  const signIn = async (email: string) => {
     try {
       setIsLoading(true);
       setError(null);
-      // TODO: Implement actual registration logic
+      // Mock sign in - replace with actual auth logic
       const mockUser: User = {
         id: "1",
-        email: data.email,
-        role: "VETERINARIAN",
-        permissions: [],
-        tenantId: "1",
-        username: data.email,
+        email,
+        displayName: email.split("@")[0],
+        firstName: email.split("@")[0],
+        lastName: "User",
       };
       setUser(mockUser);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Sign in failed:", error);
+      setError("Inloggen mislukt. Probeer het opnieuw.");
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const forgotPassword = async (_email: string) => {
+  const signOut = async () => {
     try {
       setIsLoading(true);
       setError(null);
-      // TODO: Implement actual forgot password logic
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const resetPassword = async (_token: string, _password: string) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      // TODO: Implement actual reset password logic
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const logout = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
+      // Mock sign out - replace with actual auth logic
       setUser(null);
-      // Clear all auth-related state from localStorage
-      localStorage.removeItem("vc_user");
-      localStorage.removeItem("vc_role");
-      localStorage.removeItem("vc_theme");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      navigate("/login");
+    } catch (error) {
+      console.error("Sign out failed:", error);
+      setError("Uitloggen mislukt. Probeer het opnieuw.");
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Alias functions for backward compatibility
+  const login = signIn;
+  const logout = signOut;
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        signIn,
+        signOut,
         isLoading,
         isAuthenticated: !!user,
-        error,
         login,
-        register,
-        forgotPassword,
-        resetPassword,
         logout,
+        error,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-};
+}

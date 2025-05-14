@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/features/ui/components/card";
+import { Label } from "@/features/ui/components/label";
+import { Switch } from "@/features/ui/components/switch";
+import { Input } from "@/features/ui/components/input";
 import { useUi } from "@/lib/context/UiContext";
 
 interface Settings {

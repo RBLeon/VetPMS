@@ -2,15 +2,15 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/context/AuthContext";
 import { useRole } from "@/lib/context/RoleContext";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/features/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from "@/features/ui/components/card";
+import { ScrollArea } from "@/features/ui/components/scroll-area";
 import type { Role } from "@/lib/api/types";
 
 const roles: { id: Role; title: string; description: string; icon: string }[] =

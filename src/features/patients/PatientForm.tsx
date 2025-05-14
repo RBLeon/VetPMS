@@ -1,19 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { useCreatePatient, useUpdatePatient } from "@/lib/hooks/useApi";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/features/ui/components/button";
+import { Input } from "@/features/ui/components/input";
+import { Label } from "@/features/ui/components/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/features/ui/components/select";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/features/ui/components/alert";
 import { Loader2 } from "lucide-react";
 import type { Patient } from "@/lib/api/types";
 

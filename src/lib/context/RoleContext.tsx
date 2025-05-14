@@ -17,6 +17,8 @@ interface RoleContextType {
   roleConfig: RoleConfig;
   permissions: string[];
   hasPermission: (permission: string) => boolean;
+  hasAnyPermission: (permissions: string[]) => boolean;
+  hasAllPermissions: (permissions: string[]) => boolean;
   userNavItems: NavItem[];
   quickActions: QuickAction[];
   contextualFeatures: { [key: string]: boolean };
@@ -100,7 +102,19 @@ export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const hasPermission = (permission: string): boolean => {
+    // Check for wildcard permission
+    if (roleConfig.permissions.includes("*")) {
+      return true;
+    }
     return roleConfig.permissions.includes(permission);
+  };
+
+  const hasAnyPermission = (permissions: string[]): boolean => {
+    return permissions.some((permission) => hasPermission(permission));
+  };
+
+  const hasAllPermissions = (permissions: string[]): boolean => {
+    return permissions.every((permission) => hasPermission(permission));
   };
 
   const filterByPermission = <T extends { requiredPermission?: string }>(
@@ -126,6 +140,8 @@ export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({
         roleConfig,
         permissions: roleConfig.permissions,
         hasPermission,
+        hasAnyPermission,
+        hasAllPermissions,
         userNavItems,
         quickActions,
         contextualFeatures: roleConfig.contextualFeatures,

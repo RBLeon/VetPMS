@@ -2,13 +2,16 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, Menu, X, PlusCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/features/ui/components/button";
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/lib/context/AuthContext";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/features/ui/components/avatar";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { useRole } from "@/lib/context/RoleContext";
 import { fadeAnimation } from "@/lib/motion";
-import { FeatureGated } from "@/components/context/AdaptiveContainer";
 
 interface ContextAwareNavigationProps {
   className?: string;
@@ -225,16 +228,14 @@ export function ContextAwareNavigation({
 
             <div className="mb-6 flex items-center gap-4">
               <Avatar className="h-12 w-12">
-                <AvatarImage src="" alt={user?.firstName} />
+                <AvatarImage src="" alt={user?.displayName} />
                 <AvatarFallback>
-                  {user?.firstName?.[0]}
-                  {user?.lastName?.[0] || ""}
+                  {user?.displayName?.[0]}
+                  {user?.displayName?.[1] || ""}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <div className="font-medium">
-                  {user?.firstName} {user?.lastName}
-                </div>
+                <div className="font-medium">{user?.displayName}</div>
                 <div className="text-sm text-muted-foreground">
                   {roleConfig.displayName}
                 </div>
@@ -320,18 +321,6 @@ export function ContextAwareNavigation({
                   )}
                 </div>
               </div>
-
-              <FeatureGated feature="showAdvancedClinical">
-                <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
-                  <h3 className="mb-2 font-medium text-amber-800 dark:text-amber-300">
-                    Klinische Modus Actief
-                  </h3>
-                  <p className="text-sm text-amber-700 dark:text-amber-400">
-                    U heeft toegang tot geavanceerde klinische functies op basis
-                    van uw rol als {roleConfig.displayName}.
-                  </p>
-                </div>
-              </FeatureGated>
             </div>
           </motion.div>
         )}
