@@ -1,18 +1,9 @@
 export enum AppointmentStatus {
-  INGEPLAND = "INGEPLAND",
-  AANGEMELD = "AANGEMELD",
-  IN_BEHANDELING = "IN_BEHANDELING",
-  VOLTOOID = "VOLTOOID",
-  GEANNULEERD = "GEANNULEERD",
-  NIET_VERSCHENEN = "NIET_VERSCHENEN",
-}
-
-export enum AppointmentType {
-  CONSULTATIE = "CONSULTATIE",
-  VACCINATIE = "VACCINATIE",
-  CONTROLE = "CONTROLE",
-  OPERATIE = "OPERATIE",
-  ANDERS = "ANDERS",
+  SCHEDULED = "SCHEDULED",
+  CONFIRMED = "CONFIRMED",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  NO_SHOW = "NO_SHOW",
 }
 
 export interface Appointment {
@@ -22,11 +13,9 @@ export interface Appointment {
   vetId: string;
   date: string;
   time: string;
-  type: AppointmentType;
+  type: string;
   notes?: string;
   status: AppointmentStatus;
-  clientName: string;
-  providerId: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -45,17 +45,6 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-vi.mock("@/lib/hooks/useMedicalRecords", () => ({
-  useMedicalRecords: vi.fn(() => ({
-    medicalRecords: [],
-    isLoading: false,
-    error: undefined,
-    addMedicalRecord: vi.fn(),
-    updateMedicalRecord: vi.fn(),
-    deleteMedicalRecord: vi.fn(),
-  })),
-}));
-
 const renderWithProviders = (component: React.ReactNode) => {
   return render(
     <QueryClientProvider client={queryClient}>

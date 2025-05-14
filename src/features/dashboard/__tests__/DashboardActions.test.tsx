@@ -5,20 +5,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { ReceptionistDashboard } from "../ReceptionistDashboard";
 import { NurseDashboard } from "../NurseDashboard";
+import { VeterinarianDashboard } from "../VeterinarianDashboard";
 import { useAppointments, useClients, usePatients } from "@/lib/hooks/useApi";
-import type { Appointment, Patient, Client } from "@/lib/api/types";
 
-vi.mock("@/lib/hooks/useApi", () => {
-  return {
-    useAppointments: vi.fn(),
-    usePatients: vi.fn(),
-    useClients: vi.fn(),
-    useInventory: () => ({
-      data: [],
-      isLoading: false,
-    }),
-  };
-});
+// Mock the hooks
+vi.mock("@/lib/hooks/useApi", () => ({
+  useAppointments: vi.fn(),
+  useClients: vi.fn(),
+  usePatients: vi.fn(),
+}));
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
@@ -46,8 +41,7 @@ const renderWithProviders = (ui: React.ReactElement) => {
 
 describe("Dashboard Actions", () => {
   const mockNavigate = vi.fn();
-
-  const mockAppointment: Appointment = {
+  const mockAppointment = {
     id: "1",
     patientId: "1",
     patientName: "Max",
@@ -56,47 +50,24 @@ describe("Dashboard Actions", () => {
     time: "09:00",
     date: new Date().toISOString(),
     clientId: "1",
-    clientName: "John Doe",
-    providerId: "1",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
   };
 
-  const mockClient: Client = {
+  const mockClient = {
     id: "1",
-    firstName: "John",
-    lastName: "Doe",
+    name: "John Doe",
     email: "john@example.com",
     phone: "0612345678",
-    preferredCommunication: "email",
-    lastVisit: new Date().toISOString(),
-    address: {
-      street: "Straat 1",
-      city: "Stad",
-      state: "Noord-Holland",
-      postalCode: "1234AB",
-      country: "Nederland",
-    },
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
   };
 
-  const mockPatient: Patient = {
+  const mockPatient = {
     id: "1",
     name: "Max",
-    species: "HOND",
+    species: "Hond",
     breed: "Labrador",
-    gender: "mannelijk",
+    gender: "Mannelijk",
     age: 4,
     weight: 25,
     clientId: "1",
-    dateOfBirth: "2020-01-01",
-    lastVisit: new Date().toISOString(),
-    status: "ACTIVE",
-    needsVitalsCheck: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    registrationDate: new Date().toISOString(),
   };
 
   beforeEach(() => {
@@ -118,30 +89,56 @@ describe("Dashboard Actions", () => {
 
   describe("Receptionist Dashboard Actions", () => {
     it("navigates to scheduler when clicking new appointment button", () => {
-      renderWithProviders(
-        <ReceptionistDashboard
-          appointments={[mockAppointment]}
-          clients={[mockClient]}
-          patients={[mockPatient]}
-        />
-      );
+      renderWithProviders(<ReceptionistDashboard />);
       const newAppointmentButton = screen.getByText("Nieuwe Afspraak");
       fireEvent.click(newAppointmentButton);
       expect(mockNavigate).toHaveBeenCalledWith("/appointments/new");
+    });
+
+    it("navigates to patient details when clicking view patient", () => {
+      renderWithProviders(<ReceptionistDashboard />);
+      const viewPatientButton = screen.getByText("Bekijk Patiënt");
+      fireEvent.click(viewPatientButton);
+      expect(mockNavigate).toHaveBeenCalledWith(`/patients/${mockPatient.id}`);
+    });
+
+    it("navigates to client details when clicking client name", () => {
+      renderWithProviders(<ReceptionistDashboard />);
+      const clientName = screen.getByText(mockClient.name);
+      fireEvent.click(clientName);
+      expect(mockNavigate).toHaveBeenCalledWith(`/clients/${mockClient.id}`);
     });
   });
 
   describe("Nurse Dashboard Actions", () => {
     it("navigates to new treatment form when clicking new treatment button", () => {
-      renderWithProviders(
-        <NurseDashboard
-          appointments={[mockAppointment]}
-          patients={[mockPatient]}
-        />
-      );
+      renderWithProviders(<NurseDashboard />);
       const newTreatmentButton = screen.getByText("Nieuwe Behandeling");
       fireEvent.click(newTreatmentButton);
       expect(mockNavigate).toHaveBeenCalledWith("/treatments/new");
+    });
+
+    it("navigates to vaccination form when clicking vaccination button", () => {
+      renderWithProviders(<NurseDashboard />);
+      const vaccinationButton = screen.getByText("Vaccinatie");
+      fireEvent.click(vaccinationButton);
+      expect(mockNavigate).toHaveBeenCalledWith("/treatments/vaccination");
+    });
+  });
+
+  describe("Veterinarian Dashboard Actions", () => {
+    it("navigates to new consultation form when clicking new consultation button", () => {
+      renderWithProviders(<VeterinarianDashboard />);
+      const newConsultationButton = screen.getByText("Nieuwe Controle");
+      fireEvent.click(newConsultationButton);
+      expect(mockNavigate).toHaveBeenCalledWith("/consultations/new");
+    });
+
+    it("navigates to medical records when clicking medical records button", () => {
+      renderWithProviders(<VeterinarianDashboard />);
+      const medicalRecordsButton = screen.getByText("Dossier");
+      fireEvent.click(medicalRecordsButton);
+      expect(mockNavigate).toHaveBeenCalledWith("/medical-records");
     });
   });
 });

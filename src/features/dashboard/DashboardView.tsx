@@ -1,4 +1,4 @@
-import { RoleBasedDashboard } from "@/features/dashboard/components/RoleBasedDashboard";
+import { RoleBasedDashboard } from "@/components/dashboard/RoleBasedDashboard";
 import { useRole } from "@/lib/context/RoleContext";
 
 export const DashboardView = () => {

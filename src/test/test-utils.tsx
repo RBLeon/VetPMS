@@ -2,7 +2,7 @@ import React from "react";
 import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/features/ui/components/toaster";
+import { Toaster } from "@/components/ui/toaster";
 
 interface TestWrapperProps {
   children: React.ReactNode;

@@ -490,10 +490,3 @@ export interface Metrics {
   totalRevenue: number;
   appointmentsByStatus: Record<string, number>;
 }
-
-export interface AppointmentTypeConfig {
-  id: string;
-  name: string;
-  color: string;
-  defaultDuration: number;
-}

@@ -10,15 +10,15 @@ import {
 } from "lucide-react";
 import { useRole } from "../../lib/context/RoleContext";
 import { roleConfigs } from "../../lib/config/roleConfigs";
-import { Button } from "@/features/ui/components/button";
+import { Button } from "../../components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/features/ui/components/dialog";
-import { Card, CardHeader, CardTitle } from "@/features/ui/components/card";
+} from "../../components/ui/dialog";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "../../lib/utils";
 import type { Role } from "@/lib/context/RoleContext";
 

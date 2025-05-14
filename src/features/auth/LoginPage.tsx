@@ -8,11 +8,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/features/ui/components/card";
-import { Input } from "@/features/ui/components/input";
-import { Label } from "@/features/ui/components/label";
-import { Button } from "@/features/ui/components/button";
-import { Alert, AlertDescription } from "@/features/ui/components/alert";
+} from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Button } from "../../components/ui/button";
+import { Alert, AlertDescription } from "../../components/ui/alert";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 const LoginPage: React.FC = () => {

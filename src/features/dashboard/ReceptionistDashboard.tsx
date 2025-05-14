@@ -1,21 +1,11 @@
 import { useAppointments, usePatients, useClients } from "@/lib/hooks/useApi";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/features/ui/components/card";
-import { Button } from "@/features/ui/components/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { Alert, AlertDescription } from "@/features/ui/components/alert";
-import { Badge } from "@/features/ui/components/badge";
-import { Progress } from "@/features/ui/components/progress";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/features/ui/components/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Calendar,
   Clock,
@@ -344,7 +334,7 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                           </p>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Phone className="h-3 w-3" />
-                            <span>{`${client?.firstName} ${client?.lastName}`}</span>
+                            <span>{client?.phone}</span>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -414,7 +404,7 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                         </p>
                         <div className="flex items-center gap-2 text-sm dark:text-green-300">
                           <Phone className="h-3 w-3" />
-                          <span>{`${client?.firstName} ${client?.lastName}`}</span>
+                          <span>{client?.phone}</span>
                         </div>
                       </div>
                       <Badge
@@ -462,7 +452,7 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                         </p>
                         <div className="flex items-center gap-2 text-sm dark:text-yellow-300">
                           <Phone className="h-3 w-3" />
-                          <span>{`${client?.firstName} ${client?.lastName}`}</span>
+                          <span>{client?.phone}</span>
                         </div>
                       </div>
                       {appointment.status === "INGEPLAND" && (
@@ -530,7 +520,7 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                   >
                     <div>
                       <p className="font-medium dark:text-indigo-100">
-                        {`${client.firstName} ${client.lastName}`}
+                        {client.name}
                       </p>
                       <p className="text-sm text-muted-foreground dark:text-indigo-300">
                         {client.email} - {client.phone}

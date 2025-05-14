@@ -1,12 +1,7 @@
 import { useAppointments, usePatients, useInventory } from "@/lib/hooks/useApi";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/features/ui/components/card";
-import { Badge } from "@/features/ui/components/badge";
-import { Skeleton } from "@/features/ui/components/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Calendar,
   User,
@@ -17,16 +12,12 @@ import {
   Syringe,
   Pill,
   Bandage,
+  Droplet,
 } from "lucide-react";
-import { Button } from "@/features/ui/components/button";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { Progress } from "@/features/ui/components/progress";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/features/ui/components/tabs";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Appointment, Patient, InventoryItem } from "@/lib/api/types";
 import { useNavigate } from "react-router-dom";
 
@@ -71,12 +62,55 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
   const today = new Date();
 
   const waitingRoom = appointments.filter(
-    (appointment: Appointment) => appointment.status === "AANGEMELD"
+    (appointment) => appointment.status === "AANGEMELD"
   );
 
   const stats = propStats ?? {
     completedTreatments: 5,
     averageTreatmentTime: "45",
+  };
+
+  const getAppointmentStatusColor = (status: string) => {
+    switch (status) {
+      case "VOLTOOID":
+        return "bg-green-100 text-green-800";
+      case "AANGEMELD":
+        return "bg-blue-100 text-blue-800";
+      case "IN_BEHANDELING":
+        return "bg-yellow-100 text-yellow-800";
+      case "GEANNULEERD":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getAppointmentTypeIcon = (type: string) => {
+    switch (type) {
+      case "CONTROLE":
+        return <Stethoscope className="h-4 w-4" />;
+      case "VACCINATIE":
+        return <Syringe className="h-4 w-4" />;
+      case "OPERATIE":
+        return <Activity className="h-4 w-4" />;
+      case "SPOEDGEVAL":
+        return <AlertTriangle className="h-4 w-4" />;
+      default:
+        return <Stethoscope className="h-4 w-4" />;
+    }
+  };
+
+  const getInventoryIcon = (category: string) => {
+    switch (category) {
+      case "MEDICATIE":
+        return <Pill className="h-4 w-4" />;
+      case "MATERIAAL":
+        return <Bandage className="h-4 w-4" />;
+      case "VOER":
+        return <Droplet className="h-4 w-4" />;
+      default:
+        return <Activity className="h-4 w-4" />;
+    }
   };
 
   const handleNewTreatment = () => {
@@ -127,7 +161,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
           <CardContent>
             <div className="text-2xl font-bold text-[#3B82F6] dark:text-[#3B82F6]">
               {
-                appointments.filter((a: Appointment) => {
+                appointments.filter((a) => {
                   const d = new Date(a.date);
                   return (
                     d.getDate() === today.getDate() &&
@@ -185,9 +219,8 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
           <CardContent>
             <div className="text-2xl font-bold text-[#3B82F6] dark:text-[#3B82F6]">
               {
-                inventory.filter(
-                  (item: InventoryItem) => item.quantity <= item.reorderLevel
-                ).length
+                inventory.filter((item) => item.quantity <= item.reorderLevel)
+                  .length
               }
             </div>
             <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">Items</p>
@@ -227,7 +260,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {patients.map((patient: Patient) => (
+                {patients.map((patient) => (
                   <div
                     key={patient.id}
                     className="flex items-center justify-between p-4 border rounded-lg bg-[#8B5CF6]/5 dark:bg-[#8B5CF6]/10"
@@ -260,7 +293,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {appointments.map((appointment: Appointment) => (
+                {appointments.map((appointment) => (
                   <div
                     key={appointment.id}
                     className="flex items-center justify-between p-4 border rounded-lg bg-[#10B981]/5 dark:bg-[#10B981]/10"
@@ -318,7 +351,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {inventory.map((item: InventoryItem) => (
+                {inventory.map((item) => (
                   <div
                     key={item.id}
                     className="flex items-center justify-between p-4 border rounded-lg bg-[#3B82F6]/5 dark:bg-[#3B82F6]/10"
@@ -389,8 +422,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
                   <span className="text-sm font-medium">
                     {
                       inventory.filter(
-                        (item: InventoryItem) =>
-                          item.quantity <= item.reorderLevel
+                        (item) => item.quantity <= item.reorderLevel
                       ).length
                     }
                   </span>
@@ -398,8 +430,7 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
                 <Progress
                   value={
                     inventory.filter(
-                      (item: InventoryItem) =>
-                        item.quantity <= item.reorderLevel
+                      (item) => item.quantity <= item.reorderLevel
                     ).length * 10
                   }
                   className="h-2 bg-gray-100 dark:bg-gray-800 [&>div]:bg-[#3B82F6] dark:[&>div]:bg-[#3B82F6]"

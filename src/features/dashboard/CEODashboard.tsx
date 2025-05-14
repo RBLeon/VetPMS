@@ -6,7 +6,7 @@ import { useInventory } from "@/lib/hooks/useInventory";
 import { useClientFeedback } from "@/lib/hooks/useApi";
 import { Invoice } from "@/lib/api/types";
 import type { InventoryItem } from "@/lib/api/types";
-import { Badge } from "@/features/ui/components/badge";
+import { Badge } from "@/components/ui/badge";
 import {
   TrendingUp,
   DollarSign,
@@ -14,7 +14,12 @@ import {
   Calendar,
   AlertTriangle,
   Star,
+  UserPlus,
+  Activity,
 } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Tabs, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 interface DashboardCardProps {
   title: string;

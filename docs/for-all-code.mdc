@@ -21,14 +21,14 @@ alwaysApply: true
 
 ## Deployment Checklist
 - [ ] Before pushing:
-  - [ ] Run `npm test` to ensure all tests pass
-  - [ ] Run `npm build` to ensure build succeeds
+  - [ ] Run `pnpm test` to ensure all tests pass
+  - [ ] Run `pnpm build` to ensure build succeeds
   - [ ] Check for any TypeScript errors
   - [ ] Check for any linting errors
 - [ ] After pushing:
   - [ ] Monitor GitHub Actions workflow at https://github.com/RBLeon/VetPMS/actions
-  - [ ] Verify all steps pass (using check_actions.sh):
-    - [ ] Setup Node.js and npm
+  - [ ] Verify all steps pass:
+    - [ ] Setup Node.js and pnpm
     - [ ] Install dependencies
     - [ ] Run tests
     - [ ] Build application

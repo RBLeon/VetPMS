@@ -6,10 +6,6 @@ export interface Pet {
   age?: number;
   weight?: number;
   ownerId: string;
-  dateOfBirth?: string;
-  lastVisit?: string;
-  status: "ACTIVE" | "INACTIVE" | "DECEASED";
-  needsVitalsCheck: boolean;
   createdAt: string;
   updatedAt: string;
 }

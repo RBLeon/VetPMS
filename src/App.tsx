@@ -6,7 +6,7 @@ import { UiProvider } from "./lib/context/UiContext";
 import { RoleProvider } from "./lib/context/RoleContext";
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/features/ui/components/toaster";
+import { Toaster } from "./components/ui/toaster";
 import { AppRoutes } from "./AppRoutes";
 
 const queryClient = new QueryClient({

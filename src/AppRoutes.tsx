@@ -7,42 +7,33 @@ import {
 } from "react-router-dom";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRole } from "@/lib/context/RoleContext";
-import { LoginPage } from "@/features/auth/pages/LoginPage";
-import { ForgotPasswordPage } from "@/features/auth/pages/ForgotPasswordPage";
-import { ResetPasswordPage } from "@/features/auth/pages/ResetPasswordPage";
-import DashboardPage from "@/features/dashboard/DashboardPage";
-import { NotFoundPage } from "@/features/layout/pages/NotFoundPage";
+import { LoginPage } from "@/pages/auth/LoginPage";
+import { ForgotPasswordPage } from "@/pages/auth/ForgotPasswordPage";
+import { ResetPasswordPage } from "@/pages/auth/ResetPasswordPage";
+import { DashboardPage } from "@/pages/dashboard/DashboardPage";
+import { NotFoundPage } from "@/pages/NotFoundPage";
 import RoleSelectionPage from "@/features/role-selection/RoleSelectionPage";
-import { Layout } from "@/features/layout/components/Layout";
-import AppointmentScheduler from "@/features/appointments/components/AppointmentScheduler";
-import { AppointmentForm } from "@/features/appointments/components/AppointmentForm";
-import { PatientsPage } from "@/features/patients/pages/PatientsPage";
+import { Layout } from "@/components/layout/Layout";
+import AppointmentScheduler from "@/features/appointments/AppointmentScheduler";
+import { AppointmentForm } from "@/features/appointments/AppointmentForm";
+import { PatientsPage } from "@/pages/patients/PatientsPage";
 import { PatientForm } from "@/features/patients/PatientForm";
-import { TasksPage } from "@/features/tasks/pages/TasksPage";
-import { SearchPage } from "@/features/search/pages/SearchPage";
-import { AnalyticsPage } from "@/features/analytics/pages/AnalyticsPage";
-import { SettingsPage } from "@/features/settings/pages/SettingsPage";
-import { BillingPage } from "@/features/billing/pages/BillingPage";
-import { MedicalRecordsPage } from "@/features/medical-records/pages/MedicalRecordsPage";
+import { TasksPage } from "@/pages/tasks/TasksPage";
+import { SearchPage } from "@/pages/search/SearchPage";
+import { AnalyticsPage } from "@/pages/analytics/AnalyticsPage";
+import { SettingsPage } from "@/pages/settings/SettingsPage";
+import { BillingPage } from "@/pages/billing/BillingPage";
+import { MedicalRecordsPage } from "@/pages/medical-records/MedicalRecordsPage";
 import { MedicalRecordForm } from "@/features/medical-records/MedicalRecordForm";
 import { FollowUpForm } from "@/features/medical-records/FollowUpForm";
-import { ClientsPage } from "@/features/clients/pages/ClientsPage";
+import { ClientsPage } from "@/pages/clients/ClientsPage";
 import { ClientForm } from "@/features/clients/ClientForm";
 
 // Wrapper components to handle form navigation and state
 const AppointmentFormWrapper = () => {
   const navigate = useNavigate();
-  const appointmentTypes = [
-    { id: "1", name: "Controle", color: "#22c55e", defaultDuration: 30 },
-    { id: "2", name: "Operatie", color: "#ef4444", defaultDuration: 90 },
-    { id: "3", name: "Vaccinatie", color: "#3b82f6", defaultDuration: 15 },
-    { id: "4", name: "Tandheelkunde", color: "#f97316", defaultDuration: 60 },
-    { id: "5", name: "Spoedgeval", color: "#dc2626", defaultDuration: 45 },
-  ];
-
   return (
     <AppointmentForm
-      appointmentTypes={appointmentTypes}
       onSubmit={() => {
         navigate("/appointments");
       }}

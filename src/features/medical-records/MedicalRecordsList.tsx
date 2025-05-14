@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMedicalRecords, usePatients } from "@/lib/hooks/useApi";
-import { PageHeader } from "@/features/ui/components/page-header";
-import { Button } from "@/features/ui/components/button";
-import { Input } from "@/features/ui/components/input";
-import { Card, CardContent } from "@/features/ui/components/card";
-import { Badge } from "@/features/ui/components/badge";
-import { ScrollArea } from "@/features/ui/components/scroll-area";
-import { Tabs, TabsContent } from "@/features/ui/components/tabs";
-import { Checkbox } from "@/features/ui/components/checkbox";
+import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@/features/ui/components/hover-card";
+} from "@/components/ui/hover-card";
 import { Plus, Filter, Download, Printer, Loader2 } from "lucide-react";
 import { format } from "date-fns";
-import { Label } from "@/features/ui/components/label";
+import { Label } from "@/components/ui/label";
 import { MedicalRecord } from "@/lib/api/types";
 import {
   Select,
@@ -24,7 +24,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/features/ui/components/select";
+} from "@/components/ui/select";
 
 interface MedicalRecordsListProps {
   patientId: string;

@@ -1,7 +1,7 @@
 import React from "react";
-import { Button } from "@/features/ui/components/button";
-import { Input } from "@/features/ui/components/input";
-import { Label } from "@/features/ui/components/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Attachment } from "@/lib/api/types";
 import { X } from "lucide-react";
 

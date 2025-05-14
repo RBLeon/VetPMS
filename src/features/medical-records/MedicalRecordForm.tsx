@@ -3,18 +3,18 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader } from "@/features/ui/components/card";
-import { Button } from "@/features/ui/components/button";
-import { Input } from "@/features/ui/components/input";
-import { Label } from "@/features/ui/components/label";
-import { Textarea } from "@/features/ui/components/textarea";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/features/ui/components/select";
+} from "@/components/ui/select";
 import { useCreateMedicalRecord } from "@/lib/hooks/useApi";
 import { MedicalRecord } from "@/lib/api/types";
 import { Loader2 } from "lucide-react";

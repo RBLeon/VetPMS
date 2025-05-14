@@ -6,7 +6,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/features/ui/components/card";
+} from "../../components/ui/card";
 import { CalendarIcon, CheckCircleIcon, LineChartIcon } from "lucide-react";
 
 interface Activity {
