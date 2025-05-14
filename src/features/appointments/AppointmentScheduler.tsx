@@ -35,11 +35,8 @@ import {
   PlusIcon,
   XIcon,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { Appointment, AppointmentStatus } from "@/types/appointment";
-import { Pet } from "@/types/pet";
-import { nl } from "date-fns/locale";
+import { AppointmentStatus } from "@/types/appointment";
 
 // Type definitions
 interface Resource {
@@ -63,29 +60,6 @@ interface Patient {
   breed: string;
   clientName: string;
 }
-
-// Mock data voor testing
-const mockProviders = [
-  { id: "1", name: "Dr. Smith", role: "Dierenarts" },
-  { id: "2", name: "Dr. Johnson", role: "Dierenarts" },
-];
-
-const mockPets = [
-  {
-    id: "1",
-    name: "Max",
-    species: "Hond",
-    breed: "Labrador",
-    owner: "John Doe",
-  },
-  {
-    id: "2",
-    name: "Luna",
-    species: "Kat",
-    breed: "Siamees",
-    owner: "Jane Doe",
-  },
-];
 
 // Define a local SchedulerAppointment type for the scheduler UI
 export type SchedulerAppointment = {
@@ -116,8 +90,8 @@ const mockAppointments: SchedulerAppointment[] = [
     resourceIds: ["1", "3"],
     typeId: "1",
     type: "Consultatie",
-    startTime: new Date(2024, 2, 20, 9, 0),
-    endTime: new Date(2024, 2, 20, 9, 30),
+    startTime: new Date(new Date().getFullYear(), 2, 20, 9, 0),
+    endTime: new Date(new Date().getFullYear(), 2, 20, 9, 30),
     status: AppointmentStatus.COMPLETED,
     notes: "Jaarlijkse controle",
   },
@@ -131,8 +105,8 @@ const mockAppointments: SchedulerAppointment[] = [
     resourceIds: ["1", "3"],
     typeId: "3",
     type: "Vaccinatie",
-    startTime: new Date(2024, 2, 20, 10, 0),
-    endTime: new Date(2024, 2, 20, 10, 30),
+    startTime: new Date(new Date().getFullYear(), 2, 20, 10, 0),
+    endTime: new Date(new Date().getFullYear(), 2, 20, 10, 30),
     status: AppointmentStatus.CONFIRMED,
     notes: "Jaarlijkse vaccinaties",
   },
@@ -146,8 +120,8 @@ const mockAppointments: SchedulerAppointment[] = [
     resourceIds: ["2", "4"],
     typeId: "4",
     type: "Vaccinatie",
-    startTime: new Date(2024, 2, 20, 11, 0),
-    endTime: new Date(2024, 2, 20, 12, 0),
+    startTime: new Date(new Date().getFullYear(), 2, 20, 11, 0),
+    endTime: new Date(new Date().getFullYear(), 2, 20, 12, 0),
     status: AppointmentStatus.SCHEDULED,
     notes: "Sterilisatie",
   },
@@ -161,8 +135,8 @@ const mockAppointments: SchedulerAppointment[] = [
     resourceIds: ["2", "5", "6"],
     typeId: "2",
     type: "Vaccinatie",
-    startTime: new Date(2024, 2, 20, 13, 0),
-    endTime: new Date(2024, 2, 20, 13, 30),
+    startTime: new Date(new Date().getFullYear(), 2, 20, 13, 0),
+    endTime: new Date(new Date().getFullYear(), 2, 20, 13, 30),
     status: AppointmentStatus.SCHEDULED,
     notes: "Jaarlijkse vaccinaties",
   },
@@ -176,8 +150,8 @@ const mockAppointments: SchedulerAppointment[] = [
     resourceIds: ["1"],
     typeId: "1",
     type: "Consultatie",
-    startTime: new Date(2024, 2, 20, 14, 0),
-    endTime: new Date(2024, 2, 20, 14, 30),
+    startTime: new Date(new Date().getFullYear(), 2, 20, 14, 0),
+    endTime: new Date(new Date().getFullYear(), 2, 20, 14, 30),
     status: AppointmentStatus.SCHEDULED,
     notes: "Controle na operatie",
   },
@@ -191,8 +165,8 @@ const mockAppointments: SchedulerAppointment[] = [
     resourceIds: ["2"],
     typeId: "2",
     type: "Vaccinatie",
-    startTime: new Date(2024, 2, 20, 15, 0),
-    endTime: new Date(2024, 2, 20, 15, 30),
+    startTime: new Date(new Date().getFullYear(), 2, 20, 15, 0),
+    endTime: new Date(new Date().getFullYear(), 2, 20, 15, 30),
     status: AppointmentStatus.SCHEDULED,
     notes: "Jaarlijkse vaccinaties",
   },
@@ -201,7 +175,6 @@ const mockAppointments: SchedulerAppointment[] = [
 const AppointmentScheduler: React.FC = () => {
   const { setCurrentWorkspace } = useUi();
   const { currentTenant } = useTenant();
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -242,10 +215,6 @@ const AppointmentScheduler: React.FC = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<{
-    providerId: number;
-    hour: number;
-  } | null>(null);
 
   // Set appointments as current workspace and fetch data
   useEffect(() => {
@@ -512,35 +481,6 @@ const AppointmentScheduler: React.FC = () => {
     );
   };
 
-  // Calculate the position and size of an appointment in the grid
-  const getAppointmentStyle = (appt: SchedulerAppointment, hour: number) => {
-    const startHour = appt.startTime.getHours();
-    const endHour = appt.endTime.getHours();
-    const startMinute = appt.startTime.getMinutes();
-    const endMinute = appt.endTime.getMinutes();
-
-    const topPercentage = (startMinute / 60) * 100;
-    const appointmentDurationWithinCell = Math.min(
-      endHour * 60 + endMinute - (startHour * 60 + startMinute),
-      60
-    );
-    const heightPercentage = (appointmentDurationWithinCell / 60) * 100;
-
-    const isCompleted = appt.status === AppointmentStatus.COMPLETED;
-    const isCancelled = appt.status === AppointmentStatus.CANCELLED;
-    const isNoShow = appt.status === AppointmentStatus.NO_SHOW;
-
-    // Use a default color for all appointments
-    const defaultColor = "#4338ca";
-
-    return {
-      top: `${topPercentage}%`,
-      height: `${heightPercentage}%`,
-      backgroundColor: defaultColor,
-      opacity: isCancelled || isNoShow ? 0.5 : 1,
-    };
-  };
-
   // Show appointment details when clicking on an appointment
   const handleAppointmentClick = (appointment: SchedulerAppointment) => {
     setSelectedAppointment(appointment);
@@ -573,8 +513,6 @@ const AppointmentScheduler: React.FC = () => {
   };
 
   const handleEmptySlotClick = (providerId: number, hour: number) => {
-    setSelectedTimeSlot({ providerId, hour });
-    // Set initial values for the new appointment form
     setNewAppointmentForm({
       patientId: "",
       patientName: "",
@@ -597,32 +535,6 @@ const AppointmentScheduler: React.FC = () => {
       )
     );
     setIsEditModalOpen(false);
-  };
-
-  const handleCreateAppointment = (
-    newAppointment: Omit<SchedulerAppointment, "id">
-  ) => {
-    const appointment: SchedulerAppointment = {
-      ...newAppointment,
-      id: Math.random().toString(),
-      status: AppointmentStatus.SCHEDULED,
-      type: newAppointment.type,
-    };
-    setAppointments((prevAppointments) => [...prevAppointments, appointment]);
-    setIsNewAppointmentModalOpen(false);
-    toast({
-      title: "Afspraak aangemaakt",
-      description: "De nieuwe afspraak is succesvol aangemaakt.",
-    });
-  };
-
-  const getAppointmentsForTimeSlot = (providerId: number, hour: number) => {
-    return appointments.filter(
-      (apt) =>
-        apt.providerId === providerId &&
-        apt.startTime.getHours() === hour &&
-        apt.status !== AppointmentStatus.CANCELLED
-    );
   };
 
   return (
@@ -736,7 +648,7 @@ const AppointmentScheduler: React.FC = () => {
                               <div
                                 key={appt.id}
                                 className="absolute left-2 right-2 rounded p-2 text-xs text-white overflow-hidden cursor-pointer"
-                                style={getAppointmentStyle(appt, hour)}
+                                style={{ backgroundColor: resource.color }}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleAppointmentClick(appt);

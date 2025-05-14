@@ -520,7 +520,7 @@ export const ReceptionistDashboard: React.FC<ReceptionistDashboardProps> = ({
                   >
                     <div>
                       <p className="font-medium dark:text-indigo-100">
-                        {client.name}
+                        {client?.id}
                       </p>
                       <p className="text-sm text-muted-foreground dark:text-indigo-300">
                         {client.email} - {client.phone}

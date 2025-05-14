@@ -1,15 +1,8 @@
-import {
-  useAppointments,
-  usePatients,
-  useClients,
-  useInventory,
-} from "@/lib/hooks/useApi";
+import { useAppointments, usePatients, useInventory } from "@/lib/hooks/useApi";
 import { useMedicalRecords } from "@/lib/hooks/useMedicalRecords";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  AlertCircle,
   Calendar,
   User,
   AlertTriangle,
@@ -18,26 +11,18 @@ import {
   Activity,
   Syringe,
   FileText,
-  Phone,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import type { Appointment, Patient, MedicalRecord } from "@/lib/api/types";
 import { useNavigate } from "react-router-dom";
+import type { Appointment, Patient } from "@/lib/api/types";
 
 interface VeterinarianDashboardProps {
   appointments?: Appointment[];
   patients?: Patient[];
-  medicalRecords?: MedicalRecord[];
   isLoading?: boolean;
   error?: Error;
   onStartConsultation?: (appointmentId: string) => Promise<void>;
@@ -54,7 +39,6 @@ interface VeterinarianDashboardProps {
 export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
   appointments: propAppointments,
   patients: propPatients,
-  medicalRecords: propMedicalRecords,
   isLoading: propIsLoading,
   onStartConsultation: propOnStartConsultation,
   onCompleteConsultation: propOnCompleteConsultation,
@@ -70,12 +54,8 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
     isLoading: patientsLoading,
     error: patientsError,
   } = usePatients();
-  const { data: hookClients = [], isLoading: clientsLoading } = useClients();
-  const {
-    data: hookMedicalRecords = [],
-    isLoading: recordsLoading,
-    error: recordsError,
-  } = useMedicalRecords();
+  const { isLoading: recordsLoading, error: recordsError } =
+    useMedicalRecords();
   const {
     data: inventory = [],
     isLoading: inventoryLoading,
@@ -84,15 +64,12 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
 
   const appointments = propAppointments ?? hookAppointments;
   const patients = propPatients ?? hookPatients;
-  const clients = hookClients;
-  const medicalRecords = propMedicalRecords ?? hookMedicalRecords;
   const isLoading =
     propIsLoading !== undefined
       ? propIsLoading
       : appointmentsLoading ||
         patientsLoading ||
         recordsLoading ||
-        clientsLoading ||
         inventoryLoading;
 
   const today = new Date();
@@ -129,40 +106,6 @@ export const VeterinarianDashboard: React.FC<VeterinarianDashboardProps> = ({
 
   const handleViewPatient = (patientId: string) => {
     navigate(`/patients/${patientId}`);
-  };
-
-  const getAppointmentStatusColor = (status: string) => {
-    switch (status) {
-      case "VOLTOOID":
-        return "bg-green-100 text-green-800";
-      case "AANGEMELD":
-        return "bg-blue-100 text-blue-800";
-      case "IN_BEHANDELING":
-        return "bg-yellow-100 text-yellow-800";
-      case "GEANNULEERD":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getAppointmentTypeIcon = (type: string) => {
-    switch (type) {
-      case "CONTROLE":
-        return <Stethoscope className="h-4 w-4" />;
-      case "VACCINATIE":
-        return <Syringe className="h-4 w-4" />;
-      case "OPERATIE":
-        return <Activity className="h-4 w-4" />;
-      case "SPOEDGEVAL":
-        return <AlertTriangle className="h-4 w-4" />;
-      default:
-        return <Stethoscope className="h-4 w-4" />;
-    }
-  };
-
-  const getVitalSigns = (record: MedicalRecord) => {
-    return record.vitalSigns || "N/B";
   };
 
   if (isLoading) {

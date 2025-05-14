@@ -3,14 +3,13 @@ import { useAppointments } from "@/lib/hooks/useAppointments";
 import { useInvoices } from "@/lib/hooks/useInvoices";
 import { useStaff } from "@/lib/hooks/useStaff";
 import { useInventory } from "@/lib/hooks/useInventory";
-import { useClientFeedback, useTreatments } from "@/lib/hooks/useApi";
+import { useClientFeedback } from "@/lib/hooks/useApi";
 import type {
   Appointment,
   Invoice,
   StaffMember,
   InventoryItem,
   ClientFeedback,
-  Treatment,
 } from "@/lib/api/types";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -20,11 +19,10 @@ import {
   Users,
   AlertTriangle,
   Star,
-  CheckCircle,
+  CheckCircle2,
   Clock,
   Activity,
   Package,
-  CheckCircle2,
   Stethoscope,
   Bandage,
   UserPlus,
@@ -36,46 +34,12 @@ import { Progress } from "@/components/ui/progress";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
-interface DashboardCardProps {
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-  trend?: {
-    value: number;
-    isPositive: boolean;
-  };
-}
-
-const DashboardCard: React.FC<DashboardCardProps> = ({
-  title,
-  value,
-  icon,
-  trend,
-}) => (
-  <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-    <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-      <h3 className="tracking-tight text-sm font-medium">{title}</h3>
-      {icon}
-    </div>
-    <div className="p-6 pt-0">
-      <div className="text-2xl font-bold">{value}</div>
-      {trend && (
-        <p className="text-xs text-muted-foreground">
-          {trend.isPositive ? "+" : "-"}
-          {Math.abs(trend.value)}% ten opzichte van vorige maand
-        </p>
-      )}
-    </div>
-  </div>
-);
-
 export const ManagerDashboard: React.FC = () => {
   const { data: appointments = [] } = useAppointments();
   const { data: invoices = [] } = useInvoices();
   const { data: staff = [] } = useStaff();
   const { data: inventory = [] } = useInventory();
   const { data: feedback = [] } = useClientFeedback();
-  const { data: treatments = [] } = useTreatments();
   const navigate = useNavigate();
 
   const today = new Date().toISOString().split("T")[0];
@@ -462,22 +426,22 @@ export const ManagerDashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {treatments.map((treatment) => (
+                {appointments.map((appointment) => (
                   <div
-                    key={treatment.id}
+                    key={appointment.id}
                     className="flex items-center justify-between p-4 border rounded-lg bg-[#10B981]/5 dark:bg-[#10B981]/10"
                   >
                     <div>
-                      <p className="font-medium">{treatment.patientName}</p>
+                      <p className="font-medium">{appointment.patientName}</p>
                       <p className="text-sm text-muted-foreground">
-                        {format(new Date(treatment.date), "HH:mm")} -{" "}
-                        {treatment.type}
+                        {format(new Date(appointment.date), "HH:mm")} -{" "}
+                        {appointment.type}
                       </p>
                     </div>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleViewTreatment(treatment.id)}
+                      onClick={() => handleViewTreatment(appointment.id)}
                       className="bg-[#10B981]/10 hover:bg-[#10B981]/20 dark:bg-[#10B981]/20 dark:hover:bg-[#10B981]/30 text-[#10B981] dark:text-[#10B981]"
                     >
                       Bekijk Behandeling

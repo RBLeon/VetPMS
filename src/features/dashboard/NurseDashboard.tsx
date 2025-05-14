@@ -12,7 +12,6 @@ import {
   Syringe,
   Pill,
   Bandage,
-  Droplet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -68,49 +67,6 @@ export const NurseDashboard: React.FC<NurseDashboardProps> = ({
   const stats = propStats ?? {
     completedTreatments: 5,
     averageTreatmentTime: "45",
-  };
-
-  const getAppointmentStatusColor = (status: string) => {
-    switch (status) {
-      case "VOLTOOID":
-        return "bg-green-100 text-green-800";
-      case "AANGEMELD":
-        return "bg-blue-100 text-blue-800";
-      case "IN_BEHANDELING":
-        return "bg-yellow-100 text-yellow-800";
-      case "GEANNULEERD":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getAppointmentTypeIcon = (type: string) => {
-    switch (type) {
-      case "CONTROLE":
-        return <Stethoscope className="h-4 w-4" />;
-      case "VACCINATIE":
-        return <Syringe className="h-4 w-4" />;
-      case "OPERATIE":
-        return <Activity className="h-4 w-4" />;
-      case "SPOEDGEVAL":
-        return <AlertTriangle className="h-4 w-4" />;
-      default:
-        return <Stethoscope className="h-4 w-4" />;
-    }
-  };
-
-  const getInventoryIcon = (category: string) => {
-    switch (category) {
-      case "MEDICATIE":
-        return <Pill className="h-4 w-4" />;
-      case "MATERIAAL":
-        return <Bandage className="h-4 w-4" />;
-      case "VOER":
-        return <Droplet className="h-4 w-4" />;
-      default:
-        return <Activity className="h-4 w-4" />;
-    }
   };
 
   const handleNewTreatment = () => {
