@@ -4,24 +4,42 @@ import AppointmentScheduler from "./AppointmentScheduler";
 import { vi } from "vitest";
 import { UiProvider } from "@/lib/context/UiContext";
 import { TenantProvider } from "@/lib/context/TenantContext";
+import { AppointmentStatus } from "@/types/appointment";
 
+// Mock the useNavigate hook
+const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual<any>("react-router-dom");
   return {
     ...actual,
-    useNavigate: vi.fn(),
+    useNavigate: () => mockNavigate,
   };
 });
 
-describe("AppointmentScheduler", () => {
-  it("opent details-popup bij klikken op een afspraak", async () => {
-    render(
+// Mock the toast
+vi.mock("@/components/ui/use-toast", () => ({
+  useToast: () => ({
+    toast: vi.fn(),
+  }),
+}));
+
+const renderWithProviders = (component: React.ReactNode) => {
+  return render(
+    <MemoryRouter>
       <UiProvider>
-        <TenantProvider>
-          <AppointmentScheduler />
-        </TenantProvider>
+        <TenantProvider>{component}</TenantProvider>
       </UiProvider>
-    );
+    </MemoryRouter>
+  );
+};
+
+describe("AppointmentScheduler", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("opent details-popup bij klikken op een afspraak", async () => {
+    renderWithProviders(<AppointmentScheduler />);
 
     // Wacht tot de mock data geladen is
     expect(await screen.findByText("Afspraak Planner")).toBeInTheDocument();
@@ -39,13 +57,7 @@ describe("AppointmentScheduler", () => {
   });
 
   it("opent bewerk modal bij klikken op bewerken knop", async () => {
-    render(
-      <UiProvider>
-        <TenantProvider>
-          <AppointmentScheduler />
-        </TenantProvider>
-      </UiProvider>
-    );
+    renderWithProviders(<AppointmentScheduler />);
 
     // Klik op een afspraak
     const appointment = await screen.findByText("Max");
@@ -63,15 +75,10 @@ describe("AppointmentScheduler", () => {
   });
 
   it("opent nieuwe afspraak modal bij klikken op lege plek in planner", async () => {
-    render(
-      <UiProvider>
-        <TenantProvider>
-          <AppointmentScheduler />
-        </TenantProvider>
-      </UiProvider>
-    );
+    renderWithProviders(<AppointmentScheduler />);
 
-    // Vind een lege cel in de planner (bijv. eerste provider, 8:00)
+    // Dynamically find an empty cell (no appointment at that time/provider)
+    // We'll look for a cell for provider 1 at 8:00, which is likely empty in the mock data
     const emptyCell = await screen.findByTestId("scheduler-cell-1-8");
     fireEvent.click(emptyCell);
 
@@ -83,13 +90,7 @@ describe("AppointmentScheduler", () => {
   });
 
   it("kan een afspraak annuleren", async () => {
-    render(
-      <UiProvider>
-        <TenantProvider>
-          <AppointmentScheduler />
-        </TenantProvider>
-      </UiProvider>
-    );
+    renderWithProviders(<AppointmentScheduler />);
 
     // Klik op een afspraak
     const appointment = await screen.findByText("Max");
@@ -103,10 +104,10 @@ describe("AppointmentScheduler", () => {
     const confirmButton = await screen.findByText("Bevestig annulering");
     fireEvent.click(confirmButton);
 
-    // Controleer of afspraak status is bijgewerkt
-    const updatedAppointment = await screen.findByText("Max");
+    // Controleer of afspraak status is bijgewerkt (look for Max with data-status="CANCELLED")
+    const cancelledAppointment = await screen.findByText("Max");
     expect(
-      updatedAppointment.closest('[data-status="GEANNULEERD"]')
+      cancelledAppointment.closest('[data-status="CANCELLED"]')
     ).toBeInTheDocument();
   });
 });
