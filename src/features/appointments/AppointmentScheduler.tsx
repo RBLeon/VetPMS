@@ -38,7 +38,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Appointment, AppointmentStatus } from "@/types/appointment";
-import { Provider } from "@/types/provider";
 import { Pet } from "@/types/pet";
 import { nl } from "date-fns/locale";
 
@@ -65,58 +64,136 @@ interface Patient {
   clientName: string;
 }
 
-interface Appointment {
+// Mock data voor testing
+const mockProviders = [
+  { id: "1", name: "Dr. Smith", role: "Dierenarts" },
+  { id: "2", name: "Dr. Johnson", role: "Dierenarts" },
+];
+
+const mockPets = [
+  {
+    id: "1",
+    name: "Max",
+    species: "Hond",
+    breed: "Labrador",
+    owner: "John Doe",
+  },
+  {
+    id: "2",
+    name: "Luna",
+    species: "Kat",
+    breed: "Siamees",
+    owner: "Jane Doe",
+  },
+];
+
+// Define a local SchedulerAppointment type for the scheduler UI
+export type SchedulerAppointment = {
   id: string;
   patientId: string;
   patientName: string;
   clientId: string;
   clientName: string;
-  providerId: string;
+  providerId: number;
   resourceIds: string[];
   typeId: string;
-  type: AppointmentType;
+  type: string;
   startTime: Date;
   endTime: Date;
   notes?: string;
-  status:
-    | "INGEPLAND"
-    | "AANGEMELD"
-    | "IN_BEHANDELING"
-    | "VOLTOOID"
-    | "GEANNULEERD"
-    | "NIET_VERSCHENEN";
-}
+  status: AppointmentStatus;
+};
 
-// Mock data voor testing
-const mockProviders: Provider[] = [
-  { id: 1, name: "Dr. Smith", role: "Dierenarts" },
-  { id: 2, name: "Dr. Johnson", role: "Dierenarts" },
-];
-
-const mockPets: Pet[] = [
-  { id: 1, name: "Max", species: "Hond", breed: "Labrador", owner: "John Doe" },
-  { id: 2, name: "Luna", species: "Kat", breed: "Siamees", owner: "Jane Doe" },
-];
-
-const mockAppointments: Appointment[] = [
+// Use SchedulerAppointment for all local state and mock data
+const mockAppointments: SchedulerAppointment[] = [
   {
-    id: 1,
+    id: "1",
+    patientId: "p1",
+    patientName: "Max",
+    clientId: "c1",
+    clientName: "Jan de Vries",
     providerId: 1,
-    petId: 1,
+    resourceIds: ["1", "3"],
+    typeId: "1",
+    type: "Consultatie",
     startTime: new Date(2024, 2, 20, 9, 0),
     endTime: new Date(2024, 2, 20, 9, 30),
-    status: "GEPLAND",
-    type: "Consultatie",
+    status: AppointmentStatus.COMPLETED,
     notes: "Jaarlijkse controle",
   },
   {
-    id: 2,
-    providerId: 2,
-    petId: 2,
+    id: "2",
+    patientId: "p2",
+    patientName: "Bella",
+    clientId: "c2",
+    clientName: "Emma Jansen",
+    providerId: 1,
+    resourceIds: ["1", "3"],
+    typeId: "3",
+    type: "Vaccinatie",
     startTime: new Date(2024, 2, 20, 10, 0),
     endTime: new Date(2024, 2, 20, 10, 30),
-    status: "GEPLAND",
+    status: AppointmentStatus.CONFIRMED,
+    notes: "Jaarlijkse vaccinaties",
+  },
+  {
+    id: "3",
+    patientId: "p3",
+    patientName: "Charlie",
+    clientId: "c3",
+    clientName: "Michael Bakker",
+    providerId: 2,
+    resourceIds: ["2", "4"],
+    typeId: "4",
     type: "Vaccinatie",
+    startTime: new Date(2024, 2, 20, 11, 0),
+    endTime: new Date(2024, 2, 20, 12, 0),
+    status: AppointmentStatus.SCHEDULED,
+    notes: "Sterilisatie",
+  },
+  {
+    id: "4",
+    patientId: "p4",
+    patientName: "Luna",
+    clientId: "c4",
+    clientName: "Sophia Visser",
+    providerId: 2,
+    resourceIds: ["2", "5", "6"],
+    typeId: "2",
+    type: "Vaccinatie",
+    startTime: new Date(2024, 2, 20, 13, 0),
+    endTime: new Date(2024, 2, 20, 13, 30),
+    status: AppointmentStatus.SCHEDULED,
+    notes: "Jaarlijkse vaccinaties",
+  },
+  {
+    id: "5",
+    patientId: "5",
+    patientName: "Charlie",
+    clientId: "5",
+    clientName: "Emma Brown",
+    providerId: 1,
+    resourceIds: ["1"],
+    typeId: "1",
+    type: "Consultatie",
+    startTime: new Date(2024, 2, 20, 14, 0),
+    endTime: new Date(2024, 2, 20, 14, 30),
+    status: AppointmentStatus.SCHEDULED,
+    notes: "Controle na operatie",
+  },
+  {
+    id: "6",
+    patientId: "6",
+    patientName: "Bella",
+    clientId: "6",
+    clientName: "David Wilson",
+    providerId: 2,
+    resourceIds: ["2"],
+    typeId: "2",
+    type: "Vaccinatie",
+    startTime: new Date(2024, 2, 20, 15, 0),
+    endTime: new Date(2024, 2, 20, 15, 30),
+    status: AppointmentStatus.SCHEDULED,
     notes: "Jaarlijkse vaccinaties",
   },
 ];
@@ -131,7 +208,7 @@ const AppointmentScheduler: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [resources, setResources] = useState<Resource[]>([]);
   const [appointments, setAppointments] =
-    useState<Appointment[]>(mockAppointments);
+    useState<SchedulerAppointment[]>(mockAppointments);
   const [appointmentTypes, setAppointmentTypes] = useState<AppointmentType[]>(
     []
   );
@@ -161,7 +238,7 @@ const AppointmentScheduler: React.FC = () => {
 
   // Appointment details state
   const [selectedAppointment, setSelectedAppointment] =
-    useState<Appointment | null>(null);
+    useState<SchedulerAppointment | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -224,20 +301,20 @@ const AppointmentScheduler: React.FC = () => {
 
         // Mock appointments
         const today = new Date();
-        const mockAppointments: Appointment[] = [
+        const mockAppointments: SchedulerAppointment[] = [
           {
             id: "1",
             patientId: "p1",
             patientName: "Max",
             clientId: "c1",
             clientName: "Jan de Vries",
-            providerId: "1",
+            providerId: 1,
             resourceIds: ["1", "3"],
             typeId: "1",
-            type: mockAppointmentTypes[0],
+            type: mockAppointmentTypes[0].name,
             startTime: new Date(today.setHours(9, 0, 0)),
             endTime: new Date(today.setHours(9, 30, 0)),
-            status: "VOLTOOID",
+            status: AppointmentStatus.COMPLETED,
           },
           {
             id: "2",
@@ -245,13 +322,13 @@ const AppointmentScheduler: React.FC = () => {
             patientName: "Bella",
             clientId: "c2",
             clientName: "Emma Jansen",
-            providerId: "1",
+            providerId: 1,
             resourceIds: ["1", "3"],
             typeId: "3",
-            type: mockAppointmentTypes[2],
+            type: mockAppointmentTypes[2].name,
             startTime: new Date(today.setHours(10, 0, 0)),
             endTime: new Date(today.setHours(10, 15, 0)),
-            status: "AANGEMELD",
+            status: AppointmentStatus.CONFIRMED,
           },
           {
             id: "3",
@@ -259,13 +336,13 @@ const AppointmentScheduler: React.FC = () => {
             patientName: "Charlie",
             clientId: "c3",
             clientName: "Michael Bakker",
-            providerId: "2",
+            providerId: 2,
             resourceIds: ["2", "4"],
             typeId: "4",
-            type: mockAppointmentTypes[3],
+            type: mockAppointmentTypes[3].name,
             startTime: new Date(today.setHours(11, 0, 0)),
             endTime: new Date(today.setHours(12, 0, 0)),
-            status: "INGEPLAND",
+            status: AppointmentStatus.SCHEDULED,
           },
           {
             id: "4",
@@ -273,13 +350,13 @@ const AppointmentScheduler: React.FC = () => {
             patientName: "Luna",
             clientId: "c4",
             clientName: "Sophia Visser",
-            providerId: "2",
+            providerId: 2,
             resourceIds: ["2", "5", "6"],
             typeId: "2",
-            type: mockAppointmentTypes[1],
+            type: mockAppointmentTypes[1].name,
             startTime: new Date(today.setHours(13, 30, 0)),
             endTime: new Date(today.setHours(15, 0, 0)),
-            status: "INGEPLAND",
+            status: AppointmentStatus.SCHEDULED,
           },
         ];
 
@@ -329,22 +406,24 @@ const AppointmentScheduler: React.FC = () => {
       endDateTime.getMinutes() + newAppointmentForm.duration
     );
 
-    const newAppointment: Appointment = {
+    const newAppointment: SchedulerAppointment = {
       id: `new-${Date.now()}`,
       patientId: newAppointmentForm.patientId || "onbekend",
       patientName: newAppointmentForm.patientName,
       clientId: "onbekend",
       clientName: newAppointmentForm.clientName,
-      providerId: newAppointmentForm.providerId,
+      providerId: newAppointmentForm.providerId
+        ? Number(newAppointmentForm.providerId)
+        : 0,
       resourceIds: newAppointmentForm.providerId
         ? [newAppointmentForm.providerId]
         : [],
       typeId: newAppointmentForm.typeId,
-      type: selectedType,
+      type: selectedType.name,
       startTime: startDateTime,
       endTime: endDateTime,
       notes: newAppointmentForm.notes,
-      status: "INGEPLAND",
+      status: AppointmentStatus.SCHEDULED,
     };
 
     // Add to appointments list
@@ -424,70 +503,46 @@ const AppointmentScheduler: React.FC = () => {
 
   // Get appointments for a specific resource at a specific time
   const getAppointmentsForCell = (resourceId: string, hour: number) => {
-    const startHourTime = new Date(selectedDate);
-    startHourTime.setHours(hour, 0, 0, 0);
-
-    const endHourTime = new Date(selectedDate);
-    endHourTime.setHours(hour + 1, 0, 0, 0);
-
-    return appointments.filter((appt) => {
-      const apptStart = new Date(appt.startTime);
-      const apptEnd = new Date(appt.endTime);
-
-      // Check if appointment involves this resource
-      const usesResource = appt.resourceIds.includes(resourceId);
-
-      // Check if appointment overlaps with this time slot
-      const overlapsTimeSlot =
-        (apptStart < endHourTime && apptStart >= startHourTime) ||
-        (apptEnd > startHourTime && apptEnd <= endHourTime) ||
-        (apptStart <= startHourTime && apptEnd >= endHourTime);
-
-      return usesResource && overlapsTimeSlot;
-    });
+    return appointments.filter(
+      (apt) =>
+        apt.resourceIds.includes(resourceId) &&
+        apt.startTime.getHours() <= hour &&
+        apt.endTime.getHours() > hour &&
+        apt.status !== AppointmentStatus.CANCELLED
+    );
   };
 
   // Calculate the position and size of an appointment in the grid
-  const getAppointmentStyle = (appt: Appointment, hour: number) => {
-    const startTime = new Date(appt.startTime);
-    const endTime = new Date(appt.endTime);
+  const getAppointmentStyle = (appt: SchedulerAppointment, hour: number) => {
+    const startHour = appt.startTime.getHours();
+    const endHour = appt.endTime.getHours();
+    const startMinute = appt.startTime.getMinutes();
+    const endMinute = appt.endTime.getMinutes();
 
-    // Calculate offset within the hour cell (in percentage)
-    const hourStartTime = new Date(selectedDate);
-    hourStartTime.setHours(hour, 0, 0, 0);
-
-    const hourEndTime = new Date(selectedDate);
-    hourEndTime.setHours(hour + 1, 0, 0, 0);
-
-    // Calculate top position based on minutes past the hour
-    const startMinutesPastHour =
-      startTime >= hourStartTime
-        ? (startTime.getHours() - hourStartTime.getHours()) * 60 +
-          startTime.getMinutes()
-        : 0;
-
-    const topPercentage = (startMinutesPastHour / 60) * 100;
-
-    // Calculate height based on appointment duration
+    const topPercentage = (startMinute / 60) * 100;
     const appointmentDurationWithinCell = Math.min(
-      ((endTime <= hourEndTime ? endTime : hourEndTime).getTime() -
-        (startTime >= hourStartTime ? startTime : hourStartTime).getTime()) /
-        (1000 * 60),
+      endHour * 60 + endMinute - (startHour * 60 + startMinute),
       60
     );
-
     const heightPercentage = (appointmentDurationWithinCell / 60) * 100;
+
+    const isCompleted = appt.status === AppointmentStatus.COMPLETED;
+    const isCancelled = appt.status === AppointmentStatus.CANCELLED;
+    const isNoShow = appt.status === AppointmentStatus.NO_SHOW;
+
+    // Use a default color for all appointments
+    const defaultColor = "#4338ca";
 
     return {
       top: `${topPercentage}%`,
       height: `${heightPercentage}%`,
-      backgroundColor: appt.type.color,
-      opacity: appt.status === "GEANNULEERD" ? 0.5 : 1,
+      backgroundColor: defaultColor,
+      opacity: isCancelled || isNoShow ? 0.5 : 1,
     };
   };
 
   // Show appointment details when clicking on an appointment
-  const handleAppointmentClick = (appointment: Appointment) => {
+  const handleAppointmentClick = (appointment: SchedulerAppointment) => {
     setSelectedAppointment(appointment);
     setIsDetailsModalOpen(true);
   };
@@ -502,13 +557,12 @@ const AppointmentScheduler: React.FC = () => {
 
   const handleConfirmCancel = () => {
     if (selectedAppointment) {
-      setAppointments(
-        appointments.map((apt) =>
-          apt.id === selectedAppointment.id
-            ? { ...apt, status: "GEANNULEERD" as AppointmentStatus }
-            : apt
-        )
+      const updatedAppointments = appointments.map((appt) =>
+        appt.id === selectedAppointment.id
+          ? { ...appt, status: AppointmentStatus.CANCELLED }
+          : appt
       );
+      setAppointments(updatedAppointments);
       setIsCancelModalOpen(false);
       setSelectedAppointment(null);
       toast({
@@ -520,34 +574,45 @@ const AppointmentScheduler: React.FC = () => {
 
   const handleEmptySlotClick = (providerId: number, hour: number) => {
     setSelectedTimeSlot({ providerId, hour });
+    // Set initial values for the new appointment form
+    setNewAppointmentForm({
+      patientId: "",
+      patientName: "",
+      clientName: "",
+      providerId: providerId.toString(),
+      resourceIds: [providerId.toString()],
+      typeId: "",
+      date: selectedDate,
+      startTime: `${hour.toString().padStart(2, "0")}:00`,
+      duration: 30,
+      notes: "",
+    });
     setIsNewAppointmentModalOpen(true);
   };
 
-  const handleSaveEdit = (updatedAppointment: Appointment) => {
-    setAppointments(
-      appointments.map((apt) =>
+  const handleSaveEdit = (updatedAppointment: SchedulerAppointment) => {
+    setAppointments((prev) =>
+      prev.map((apt) =>
         apt.id === updatedAppointment.id ? updatedAppointment : apt
       )
     );
     setIsEditModalOpen(false);
-    setSelectedAppointment(null);
-    toast({
-      title: "Afspraak bijgewerkt",
-      description: "De afspraak is succesvol bijgewerkt.",
-    });
   };
 
-  const handleCreateAppointment = (newAppointment: Omit<Appointment, "id">) => {
-    const appointment: Appointment = {
+  const handleCreateAppointment = (
+    newAppointment: Omit<SchedulerAppointment, "id">
+  ) => {
+    const appointment: SchedulerAppointment = {
       ...newAppointment,
-      id: Math.max(...appointments.map((a) => a.id)) + 1,
+      id: Math.random().toString(),
+      status: AppointmentStatus.SCHEDULED,
+      type: newAppointment.type,
     };
-    setAppointments([...appointments, appointment]);
+    setAppointments((prevAppointments) => [...prevAppointments, appointment]);
     setIsNewAppointmentModalOpen(false);
-    setSelectedTimeSlot(null);
     toast({
-      title: "Nieuwe afspraak",
-      description: "De afspraak is succesvol aangemaakt.",
+      title: "Afspraak aangemaakt",
+      description: "De nieuwe afspraak is succesvol aangemaakt.",
     });
   };
 
@@ -556,7 +621,7 @@ const AppointmentScheduler: React.FC = () => {
       (apt) =>
         apt.providerId === providerId &&
         apt.startTime.getHours() === hour &&
-        apt.status !== "GEANNULEERD"
+        apt.status !== AppointmentStatus.CANCELLED
     );
   };
 
@@ -657,6 +722,10 @@ const AppointmentScheduler: React.FC = () => {
                         <div
                           key={`${resource.id}-${hour}`}
                           className="flex-1 border-r relative h-24"
+                          data-testid={`scheduler-cell-${resource.id}-${hour}`}
+                          onClick={() =>
+                            handleEmptySlotClick(Number(resource.id), hour)
+                          }
                         >
                           {/* Half-hour line */}
                           <div className="absolute w-full border-t border-dashed border-border opacity-50 top-1/2 left-0"></div>
@@ -668,13 +737,17 @@ const AppointmentScheduler: React.FC = () => {
                                 key={appt.id}
                                 className="absolute left-2 right-2 rounded p-2 text-xs text-white overflow-hidden cursor-pointer"
                                 style={getAppointmentStyle(appt, hour)}
-                                onClick={() => handleAppointmentClick(appt)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAppointmentClick(appt);
+                                }}
+                                data-status={appt.status}
                               >
                                 <div className="font-semibold">
                                   {appt.patientName}
                                 </div>
                                 <div className="text-xs opacity-90">
-                                  {appt.type.name}
+                                  {appt.type}
                                 </div>
                               </div>
                             )
@@ -1049,7 +1122,7 @@ const AppointmentScheduler: React.FC = () => {
               </div>
               <div>
                 <span className="font-semibold">Type: </span>
-                {selectedAppointment.type.name}
+                {selectedAppointment.type}
               </div>
               <div>
                 <span className="font-semibold">Tijd: </span>
@@ -1077,142 +1150,226 @@ const AppointmentScheduler: React.FC = () => {
           )}
           <DialogFooter>
             <Button
-              onClick={() => {
-                /* edit logic placeholder */
-              }}
-            >
-              Bewerken
-            </Button>
-            <Button
               variant="outline"
               onClick={() => setIsDetailsModalOpen(false)}
             >
               Sluiten
+            </Button>
+            <Button variant="outline" onClick={handleEditClick}>
+              Bewerken
+            </Button>
+            <Button variant="destructive" onClick={handleCancelClick}>
+              Annuleren
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Edit Appointment Modal */}
-      {selectedAppointment && (
-        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Afspraak bewerken</DialogTitle>
-            </DialogHeader>
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Afspraak Bewerken</DialogTitle>
+            <DialogDescription>
+              Bewerk de gegevens van deze afspraak.
+            </DialogDescription>
+          </DialogHeader>
+          {selectedAppointment && (
             <div className="space-y-4">
-              <div>
-                <Label>Dier</Label>
-                <Select defaultValue={selectedAppointment.petId.toString()}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockPets.map((pet) => (
-                      <SelectItem key={pet.id} value={pet.id.toString()}>
-                        {pet.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="space-y-2">
+                <Label>Patiënt</Label>
+                <div className="flex justify-between bg-muted p-3 rounded text-sm">
+                  <span>
+                    {selectedAppointment.patientName} •{" "}
+                    {selectedAppointment.clientName}
+                  </span>
+                </div>
               </div>
-              <div>
-                <Label>Type</Label>
-                <Input defaultValue={selectedAppointment.type} />
-              </div>
-              <div>
-                <Label>Notities</Label>
-                <Input defaultValue={selectedAppointment.notes} />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setIsEditModalOpen(false)}
-              >
-                Annuleren
-              </Button>
-              <Button
-                onClick={() =>
-                  handleSaveEdit({
-                    ...selectedAppointment,
-                    type: "Bijgewerkte type",
-                    notes: "Bijgewerkte notities",
-                  })
-                }
-              >
-                Opslaan
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
 
-      {/* New Appointment Modal */}
-      {selectedTimeSlot && (
-        <Dialog
-          open={isNewAppointmentModalOpen}
-          onOpenChange={setIsNewAppointmentModalOpen}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Nieuwe Afspraak</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label>Dier</Label>
-                <Select>
+              <div className="space-y-2">
+                <Label>Afspraak Type</Label>
+                <Select
+                  value={selectedAppointment.typeId}
+                  onValueChange={(value) => {
+                    const selectedType = appointmentTypes.find(
+                      (type) => type.id === value
+                    );
+                    if (selectedType) {
+                      handleSaveEdit({
+                        ...selectedAppointment,
+                        typeId: value,
+                        type: selectedType.name,
+                      });
+                    }
+                  }}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {mockPets.map((pet) => (
-                      <SelectItem key={pet.id} value={pet.id.toString()}>
-                        {pet.name}
+                    {appointmentTypes.map((type) => (
+                      <SelectItem key={type.id} value={type.id}>
+                        <div className="flex items-center">
+                          <div
+                            className="w-3 h-3 rounded-full mr-2"
+                            style={{ backgroundColor: type.color }}
+                          />
+                          <span>{type.name}</span>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label>Type</Label>
-                <Input />
+
+              <div className="space-y-2">
+                <Label>Provider</Label>
+                <Select
+                  value={selectedAppointment.providerId.toString()}
+                  onValueChange={(value) => {
+                    handleSaveEdit({
+                      ...selectedAppointment,
+                      providerId: Number(value),
+                      resourceIds: [value],
+                    });
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {resources
+                      .filter((r) => r.type === "PROVIDER")
+                      .map((provider) => (
+                        <SelectItem key={provider.id} value={provider.id}>
+                          {provider.name}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Start Tijd</Label>
+                  <Select
+                    value={selectedAppointment.startTime.toLocaleTimeString(
+                      [],
+                      {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                      }
+                    )}
+                    onValueChange={(value) => {
+                      const [hours, minutes] = value.split(":").map(Number);
+                      const newStartTime = new Date(
+                        selectedAppointment.startTime
+                      );
+                      newStartTime.setHours(hours, minutes);
+                      const duration =
+                        selectedAppointment.endTime.getTime() -
+                        selectedAppointment.startTime.getTime();
+                      const newEndTime = new Date(
+                        newStartTime.getTime() + duration
+                      );
+
+                      handleSaveEdit({
+                        ...selectedAppointment,
+                        startTime: newStartTime,
+                        endTime: newEndTime,
+                      });
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 24 }, (_, hour) => {
+                        return [
+                          <SelectItem
+                            key={`${hour}:00`}
+                            value={`${hour.toString().padStart(2, "0")}:00`}
+                          >
+                            {hour === 0
+                              ? "12:00 AM"
+                              : hour < 12
+                              ? `${hour}:00 AM`
+                              : hour === 12
+                              ? "12:00 PM"
+                              : `${hour - 12}:00 PM`}
+                          </SelectItem>,
+                          <SelectItem
+                            key={`${hour}:30`}
+                            value={`${hour.toString().padStart(2, "0")}:30`}
+                          >
+                            {hour === 0
+                              ? "12:30 AM"
+                              : hour < 12
+                              ? `${hour}:30 AM`
+                              : hour === 12
+                              ? "12:30 PM"
+                              : `${hour - 12}:30 PM`}
+                          </SelectItem>,
+                        ];
+                      }).flat()}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Duur</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      type="number"
+                      min={5}
+                      max={120}
+                      step={5}
+                      value={Math.round(
+                        (selectedAppointment.endTime.getTime() -
+                          selectedAppointment.startTime.getTime()) /
+                          (1000 * 60)
+                      )}
+                      onChange={(e) => {
+                        const duration = parseInt(e.target.value);
+                        const newEndTime = new Date(
+                          selectedAppointment.startTime.getTime() +
+                            duration * 60 * 1000
+                        );
+                        handleSaveEdit({
+                          ...selectedAppointment,
+                          endTime: newEndTime,
+                        });
+                      }}
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      minuten
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
                 <Label>Notities</Label>
-                <Input />
+                <Textarea
+                  value={selectedAppointment.notes || ""}
+                  onChange={(e) => {
+                    handleSaveEdit({
+                      ...selectedAppointment,
+                      notes: e.target.value,
+                    });
+                  }}
+                />
               </div>
             </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setIsNewAppointmentModalOpen(false)}
-              >
-                Annuleren
-              </Button>
-              <Button
-                onClick={() =>
-                  handleCreateAppointment({
-                    providerId: selectedTimeSlot.providerId,
-                    petId: 1,
-                    startTime: new Date(
-                      selectedDate.setHours(selectedTimeSlot.hour, 0)
-                    ),
-                    endTime: new Date(
-                      selectedDate.setHours(selectedTimeSlot.hour + 1, 0)
-                    ),
-                    status: "GEPLAND",
-                    type: "Nieuwe afspraak",
-                    notes: "",
-                  })
-                }
-              >
-                Aanmaken
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
+              Sluiten
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Cancel Confirmation Modal */}
       <Dialog open={isCancelModalOpen} onOpenChange={setIsCancelModalOpen}>
