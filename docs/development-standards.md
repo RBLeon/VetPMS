@@ -1275,7 +1275,7 @@ export const AppointmentService = {
 
 ### 11.1 Git Workflow
 
-- **Feature Branches**: Create from `develop` branch
+- **Feature Branches**: Create from `development` branch
 - **Branch Naming**: `feature/feature-name`, `bugfix/issue-name`
 - **Commits**: Clear, descriptive commit messages
 - **Pull Requests**: Detailed descriptions with screenshots if relevant
