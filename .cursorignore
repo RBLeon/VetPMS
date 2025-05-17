@@ -1,19 +1,55 @@
 # Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
 
-# Ignore all files in the node_modules directory
+# Dependencies and package management
 node_modules/
+.pnp/
+.pnp.js
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
 
-# Ignore all files in the dist directory
+# Build outputs
 dist/
-
-# Ignore all files in the build directory
 build/
+.next/
+out/
+coverage/
 
-# Ignore all files in the .git directory
-.git/
+# Cache and temporary files
+.cache/
+.temp/
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
 
-# Ignore all files in the .idea directory
-.idea/
+# Environment and config files
+.env*
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Ignore all files in the .vscode directory
+# IDE and editor files
 .vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Documentation
+docs/DetailedDocs/
+
+# System files
+.DS_Store
+Thumbs.db

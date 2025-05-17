@@ -30,6 +30,6 @@ while true; do
         echo -e "${YELLOW}⏳ Workflow status: $status${NC}"
     fi
     
-    # Wait 10 seconds before next check
-    sleep 10
+    # Wait 5 seconds before next check
+    sleep 5
 done 

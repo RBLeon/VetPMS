@@ -3,55 +3,39 @@ description:
 globs: 
 alwaysApply: true
 ---
-# Code Development Rules
+# VetPMS Development Guidelines
 
-## Documentation First Approach
-Before writing any code, developers must review the relevant documentation in the following locations:
+## Core Documentation
+- `vetpms-mvp-implementation-guide.md` - Primary MVP implementation guide with Refine.dev
+- `api-documentation.md` - API specifications for both MVP and full version
+- `strategic-roadmap.md` - Product strategy and feature prioritization
+- `development-standards.md` - Code standards and development patterns
+- `vetpms-integration-strategy.md` - Backend integration and migration approach
 
-### Core Documentation
-- `/docs/VetPMS_PRD.md` - Product Requirements Document
-- `/docs/vetpms-overview.md` - System Overview
-- `/docs/vetpms-development-roadmap.md` - Development Timeline and Milestones
+## Development Principles
 
-### Design Documentation
-- `/docs/vetpms-frontend-design.md` - Frontend Architecture
-- `/docs/vetpms-backend-design.md` - Backend Architecture
-- `/docs/vetpms-data-design.md` - Data Model and Database Design
-- `/docs/vetpms-ai-integration-design.md` - AI Integration Specifications
+1. **MVP Focus**: Follow the implementation guide for building the Minimum Viable Product
+   - Use Refine.dev as outlined in the implementation guide
+   - Begin with Supabase as temporary backend
+   - Build toward eventual ASP.NET Core migration
 
-### MVP-Specific Documentation
-When working on MVP features, refer to:
-- `/docs/mvp/vetpms-mvp-design.md` - MVP Architecture and Design
-- `/docs/mvp/vetpms-mvp-api.md` - MVP API Specifications
-- `/docs/mvp/vetpms-mvp-ui-components.md` - MVP UI Component Library
-- `/docs/mvp/vetpms-mvp-class-diagram.md` - MVP Class Structure
-- `/docs/mvp/vetpms-mvp-sequence-diagram.md` - MVP Process Flows
-- `/docs/mvp/vetpms-mvp-handoff.md` - MVP Handoff Documentation
-- `/docs/mvp/vetpms-mvp-user-guide.md` - MVP User Guide
+2. **Component Development**
+   - Utilize Refine.dev hooks and components for data operations
+   - Follow the component patterns in the development standards document
+   - Maintain consistent styling as specified in the standards
 
-## Development Guidelines
-1. Always start with the MVP documentation when no specific phase is mentioned
-2. Ensure all code changes align with the product requirements and system design
-3. Follow the development roadmap for feature prioritization
-4. Maintain consistency with the established architecture patterns
-5. Document any deviations from the design specifications
-6. All displayed text and dummy data should be in dutch.
-7. DO NOT change styling until asked or before having asked. Current styling is good and should be applied at all new places.
+3. **Testing Approach**
+   - Write tests for critical business logic
+   - Use the test wrappers for Refine.dev components
+   - Focus on pragmatic testing during MVP phase
 
-## Component Development
-1. Before creating a new component:
-   - Search the codebase for existing similar components
-   - Review existing components' functionality and design
-   - Consider enhancing existing components instead of creating new ones
-   - If creating new components is necessary, ensure they follow the established patterns
-2. When enhancing existing components:
-   - Maintain backward compatibility
-   - Document changes and improvements
-   - Update tests to cover new functionality
-   - Consider impact on related components
+4. **Quality Checks**
+   - Run tests before submitting code
+   - Verify builds complete successfully
+   - Ensure TypeScript type safety
+   - Check for console errors
 
-## Quality Assurance
-1. Write tests before implementing features, when running tests keep in mind that you need to press q manually after the tests are done (unless you know a way around this).
-2. Ensure all code changes are covered by appropriate tests
-3. Follow the testing guidelines specified in the documentation
-4. Maintain code quality standards as defined in the project documentation
+5. **Code Organization**
+   - Follow the project structure outlined in the implementation guide
+   - Keep most feature code in the @features folder
+   - Maintain clear separation between UI and data logic
