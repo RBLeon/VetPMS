@@ -10,7 +10,16 @@ branches:
         required_approving_review_count: 1
         dismiss_stale_reviews: true
         require_code_owner_reviews: false
-      restrictions: null
+      restrictions:
+        users: []
+        teams: []
+        apps: []
+      required_conversation_resolution: true
+      allow_force_pushes: false
+      allow_deletions: false
+      block_creations: true
+      required_linear_history: true
+      allow_fork_syncing: false
 
   - name: development
     protection:
@@ -25,3 +34,9 @@ branches:
         dismiss_stale_reviews: true
         require_code_owner_reviews: true
       restrictions: null
+      required_conversation_resolution: true
+      allow_force_pushes: false
+      allow_deletions: false
+      block_creations: false
+      required_linear_history: true
+      allow_fork_syncing: false

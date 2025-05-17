@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - development
     paths:
       - ".github/branch-protection.yml"
 
@@ -22,16 +23,33 @@ jobs:
             const yaml = require('js-yaml');
 
             const config = yaml.load(fs.readFileSync('.github/branch-protection.yml', 'utf8'));
-            const rules = config.branch_protection_rules;
+            const branches = config.branches;
 
-            for (const rule of rules) {
+            for (const branch of branches) {
               await github.rest.repos.updateBranchProtection({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                branch: rule.pattern,
-                required_status_checks: rule.required_status_checks,
-                enforce_admins: rule.enforce_admins,
-                required_pull_request_reviews: rule.required_pull_request_reviews,
-                restrictions: rule.restrictions
+                branch: branch.name,
+                required_status_checks: branch.protection.required_status_checks,
+                enforce_admins: branch.protection.enforce_admins,
+                required_pull_request_reviews: branch.protection.required_pull_request_reviews,
+                restrictions: branch.protection.restrictions,
+                required_conversation_resolution: branch.protection.required_conversation_resolution,
+                allow_force_pushes: branch.protection.allow_force_pushes,
+                allow_deletions: branch.protection.allow_deletions,
+                block_creations: branch.protection.block_creations,
+                required_linear_history: branch.protection.required_linear_history,
+                allow_fork_syncing: branch.protection.allow_fork_syncing
               });
             }
+
+      - name: Set Development as Default Branch
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.repos.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              default_branch: 'development'
+            });
