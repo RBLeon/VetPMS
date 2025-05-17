@@ -15,6 +15,11 @@
     "test:headless": "vitest run --reporter=verbose --no-watch",
     "prepare": "husky"
   },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm test && npm run build"
+    }
+  },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
     "@hookform/resolvers": "^4.1.2",
