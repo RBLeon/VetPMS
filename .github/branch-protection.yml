@@ -1,4 +1,4 @@
-# Branch protection rules for main and develop branches
+# Branch protection rules for main and development branches
 branches:
   - name: main
     protection:
@@ -14,7 +14,7 @@ branches:
         require_code_owner_reviews: true
       restrictions: null
 
-  - name: develop
+  - name: development
     protection:
       required_status_checks:
         strict: true
