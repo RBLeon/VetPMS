@@ -2,7 +2,7 @@ import * as React from "react";
 
 import type { ToastActionElement, ToastProps } from "@/components/ui/toast";
 
-const TOAST_LIMIT = 1;
+const TOAST_LIMIT = 5;
 const TOAST_REMOVE_DELAY = 1000000;
 
 type ToasterToast = ToastProps & {
@@ -38,57 +38,42 @@ interface State {
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
 
-const addToRemoveQueue = (toastId: string) => {
-  if (toastTimeouts.has(toastId)) {
-    return;
-  }
-
-  const timeout = setTimeout(() => {
-    toastTimeouts.delete(toastId);
-    dispatch({
-      type: "REMOVE_TOAST",
-      toastId: toastId,
-    });
-  }, TOAST_REMOVE_DELAY);
-
-  toastTimeouts.set(toastId, timeout);
-};
-
-export const reducer = (state: State, action: Action): State => {
+const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "ADD_TOAST":
       return {
         ...state,
-        toasts: action.toast
-          ? [action.toast, ...state.toasts].slice(0, TOAST_LIMIT)
-          : state.toasts,
+        toasts: [action.toast!, ...state.toasts].slice(0, TOAST_LIMIT),
       };
 
     case "UPDATE_TOAST":
       return {
         ...state,
         toasts: state.toasts.map((t) =>
-          t.id === action.id && action.toast ? { ...t, ...action.toast } : t
+          t.id === action.toast?.id ? { ...t, ...action.toast } : t
         ),
       };
 
     case "DISMISS_TOAST": {
       const { toastId } = action;
 
-      if (toastId === undefined) {
-        return {
-          ...state,
-          toasts: state.toasts.map((t) => ({
-            ...t,
-            open: false,
-          })),
-        };
+      if (toastId) {
+        toastTimeouts.set(
+          toastId,
+          setTimeout(() => {
+            toastTimeouts.delete(toastId);
+            dispatch({
+              type: "REMOVE_TOAST",
+              toastId: toastId,
+            });
+          }, TOAST_REMOVE_DELAY)
+        );
       }
 
       return {
         ...state,
         toasts: state.toasts.map((t) =>
-          t.id === toastId
+          t.id === toastId || toastId === undefined
             ? {
                 ...t,
                 open: false,
