@@ -25,20 +25,11 @@ function genId() {
   return count.toString();
 }
 
-type Action =
-  | {
-      type: ToastActionType;
-      toast: ToasterToast;
-    }
-  | {
-      type: ToastActionType;
-      toast: Partial<ToasterToast>;
-      id: string;
-    }
-  | {
-      type: ToastActionType;
-      toastId?: string;
-    };
+interface Action {
+  type: ToastActionType;
+  toast?: ToasterToast;
+  toastId?: string;
+}
 
 interface State {
   toasts: ToasterToast[];

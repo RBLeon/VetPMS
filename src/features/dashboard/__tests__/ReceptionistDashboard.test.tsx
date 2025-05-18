@@ -65,16 +65,6 @@ describe("ReceptionistDashboard", () => {
     clientId: "1",
   };
 
-  const mockAppointments: MockAppointment[] = [
-    {
-      id: "1",
-      patientName: "Max",
-      date: "2024-05-20",
-      time: "10:00",
-      status: "scheduled",
-    },
-  ];
-
   beforeEach(() => {
     vi.clearAllMocks();
     (useAppointments as any).mockReturnValue({

@@ -2,10 +2,6 @@ import React, { createContext, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Appointment } from "@/lib/api/types";
 import { useAuth } from "./AuthContext";
-import {
-  APPOINTMENT_STATUS,
-  APPOINTMENT_TYPES,
-} from "@/lib/constants/appointments";
 
 interface AppointmentContextType {
   data: Appointment[] | undefined;
