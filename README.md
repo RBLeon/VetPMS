@@ -139,3 +139,12 @@ Test credentials for the demo environment:
 - [API Documentation](./docs/API.md) - API endpoints and usage
 
 ## Directory Structure
+
+## Branch Protection Workflow
+
+This repository follows a strict branch protection workflow:
+
+1. All new branches must be created from the `development` branch
+2. Changes must be reviewed and approved before merging into `development`
+3. Only `development` can be merged into `main`
+4. All merges require reviews and passing tests
