@@ -57,20 +57,6 @@ export const CEODashboard: React.FC = () => {
   const { data: feedback = [] } = useClientFeedback();
 
   const today = new Date().toISOString().split("T")[0];
-  const monthStart = new Date(
-    new Date().getFullYear(),
-    new Date().getMonth(),
-    1
-  )
-    .toISOString()
-    .split("T")[0];
-  const monthEnd = new Date(
-    new Date().getFullYear(),
-    new Date().getMonth() + 1,
-    0
-  )
-    .toISOString()
-    .split("T")[0];
 
   const metrics = useMemo(() => {
     const todayAppointments = appointments.filter((apt) => apt.date === today);
@@ -118,16 +104,7 @@ export const CEODashboard: React.FC = () => {
       lowStockItems: lowStockItems.length,
       averageRating,
     };
-  }, [
-    appointments,
-    invoices,
-    staff,
-    inventory,
-    feedback,
-    today,
-    monthStart,
-    monthEnd,
-  ]);
+  }, [appointments, invoices, staff, inventory, feedback, today]);
 
   return (
     <div className="space-y-6">

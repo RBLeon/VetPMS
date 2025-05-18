@@ -27,6 +27,14 @@ const renderWithProviders = (ui: React.ReactElement) => {
   );
 };
 
+interface MockAppointment {
+  id: string;
+  patientName: string;
+  date: string;
+  time: string;
+  status: "scheduled" | "completed" | "cancelled";
+}
+
 describe("ReceptionistDashboard", () => {
   const mockAppointment = {
     id: "1",
@@ -56,6 +64,16 @@ describe("ReceptionistDashboard", () => {
     weight: 25,
     clientId: "1",
   };
+
+  const mockAppointments: MockAppointment[] = [
+    {
+      id: "1",
+      patientName: "Max",
+      date: "2024-05-20",
+      time: "10:00",
+      status: "scheduled",
+    },
+  ];
 
   beforeEach(() => {
     vi.clearAllMocks();
