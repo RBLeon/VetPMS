@@ -11,10 +11,10 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
 
@@ -28,14 +28,25 @@ jobs:
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+          echo "Using pnpm store path: $STORE_PATH"
 
       - name: Setup pnpm cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
+
+      - name: Debug environment
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Directory contents:"
+          ls -la
+          echo "GitHub context:"
+          echo "Event name: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Head ref: ${{ github.head_ref }}"
 
       - name: Install dependencies
         run: pnpm install
@@ -52,11 +63,12 @@ jobs:
   branch-naming:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Check branch naming convention
         run: |
           BRANCH_NAME=${GITHUB_HEAD_REF:-$GITHUB_REF#refs/heads/}
+          echo "Checking branch name: $BRANCH_NAME"
           if [[ ! $BRANCH_NAME =~ ^(feature|bugfix|hotfix|release)/[a-z0-9-]+$ ]]; then
             echo "Branch name '$BRANCH_NAME' does not follow the convention: (feature|bugfix|hotfix|release)/name"
             exit 1
