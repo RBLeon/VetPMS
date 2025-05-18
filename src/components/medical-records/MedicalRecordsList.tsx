@@ -18,8 +18,6 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import type { Key } from "antd/es/table/interface";
-import { useQuery } from "@tanstack/react-query";
-import { toast } from "@/components/ui/use-toast";
 
 interface MedicalRecordsListProps {
   patientId: string;

@@ -27,14 +27,6 @@ const renderWithProviders = (ui: React.ReactElement) => {
   );
 };
 
-interface MockAppointment {
-  id: string;
-  patientName: string;
-  date: string;
-  time: string;
-  status: "scheduled" | "completed" | "cancelled";
-}
-
 describe("ReceptionistDashboard", () => {
   const mockAppointment = {
     id: "1",
