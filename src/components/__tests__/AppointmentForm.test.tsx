@@ -6,6 +6,23 @@ import AppointmentForm from "../AppointmentForm";
 import { useAuth } from "../../contexts/AuthContext";
 import { useAppointments } from "../../contexts/AppointmentContext";
 
+// Define types for our mocks
+type MockAuthContext = {
+  currentUser: {
+    id: string;
+    name: string;
+    email: string;
+    role: "VET" | "RECEPTIONIST" | "ADMIN";
+    createdAt: string;
+    updatedAt: string;
+  };
+};
+
+type MockAppointmentContext = {
+  createAppointment: (data: any) => Promise<any>;
+  updateAppointment: (data: any) => Promise<any>;
+};
+
 // Mock the hooks
 vi.mock("../../contexts/AuthContext", () => ({
   useAuth: vi.fn(),
@@ -54,13 +71,13 @@ describe("AppointmentForm", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as any).mockReturnValue({
+    (useAuth as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       currentUser: mockCurrentUser,
-    });
-    (useAppointments as any).mockReturnValue({
+    } as MockAuthContext);
+    (useAppointments as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       createAppointment: mockCreateAppointment,
       updateAppointment: mockUpdateAppointment,
-    });
+    } as MockAppointmentContext);
 
     // Mock fetch for pets and vets
     global.fetch = vi.fn().mockImplementation((url) => {

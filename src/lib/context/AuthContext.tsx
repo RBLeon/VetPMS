@@ -86,11 +86,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const forgotPassword = async (_email: string) => {
+  const forgotPassword = async (email: string) => {
     try {
       setIsLoading(true);
       setError(null);
       // TODO: Implement actual forgot password logic
+      console.log(`Password reset requested for: ${email}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -98,11 +99,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const resetPassword = async (_token: string, _password: string) => {
+  const resetPassword = async (token: string, password: string) => {
     try {
       setIsLoading(true);
       setError(null);
       // TODO: Implement actual reset password logic
+      console.log(`Password reset with token: ${token}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {

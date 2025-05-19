@@ -1,7 +1,38 @@
-const dayjs = require("dayjs");
-const React = require("react");
+import dayjs from "dayjs";
+import React from "react";
 
-const MockDatePicker = ({
+interface DatePickerProps {
+  value?: dayjs.Dayjs;
+  onChange?: (value: dayjs.Dayjs) => void;
+  onBlur?: () => void;
+  status?: string;
+  error?: string;
+  [key: string]: any;
+}
+
+interface SelectProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  onBlur?: () => void;
+  children?: React.ReactNode;
+  status?: string;
+  error?: string;
+  [key: string]: any;
+}
+
+interface OptionProps {
+  value: string;
+  children: React.ReactNode;
+}
+
+interface FormItemProps {
+  children: React.ReactNode;
+  help?: string;
+  error?: string;
+  [key: string]: any;
+}
+
+const MockDatePicker: React.FC<DatePickerProps> = ({
   value,
   onChange,
   onBlur,
@@ -23,7 +54,7 @@ const MockDatePicker = ({
   </>
 );
 
-const MockSelect = ({
+const MockSelect: React.FC<SelectProps> = ({
   value,
   onChange,
   onBlur,
@@ -44,18 +75,24 @@ const MockSelect = ({
     {error && <div role="alert">{error}</div>}
   </>
 );
-MockSelect.Option = ({ value, children }) => (
+
+MockSelect.Option = ({ value, children }: OptionProps) => (
   <option value={value}>{children}</option>
 );
 
-const MockFormItem = ({ children, help, error, ...props }) => (
+const MockFormItem: React.FC<FormItemProps> = ({
+  children,
+  help,
+  error,
+  ...props
+}) => (
   <div>
     {children}
     {(help || error) && <div role="alert">{help || error}</div>}
   </div>
 );
 
-module.exports = {
+export default {
   ...(typeof vi !== "undefined" && vi.importActual
     ? vi.importActual("antd")
     : jest.requireActual("antd")),

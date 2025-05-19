@@ -22,16 +22,13 @@ export const PatientList: React.FC<PatientListProps> = ({
   error: propError,
 }) => {
   const navigate = useNavigate();
-  const {
-    data: hookPatients = [],
-    isLoading: hookIsLoading = false,
-    error: hookError = undefined,
-  } = usePatients() || {};
+  const { data: hookPatients = [], isLoading: hookIsLoading = false } =
+    usePatients() || {};
   const [searchQuery, setSearchQuery] = useState("");
 
   const patients = propPatients || hookPatients;
   const isLoading = propIsLoading || hookIsLoading;
-  const error = propError || hookError;
+  const error = propError;
 
   if (isLoading) {
     return (

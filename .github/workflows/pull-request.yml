@@ -55,10 +55,10 @@ jobs:
         run: pnpm lint
 
       - name: Run type checking
-        run: pnpm type-check
+        run: pnpm build
 
       - name: Run tests
-        run: pnpm test
+        run: pnpm test:headless
 
   branch-naming:
     runs-on: ubuntu-latest

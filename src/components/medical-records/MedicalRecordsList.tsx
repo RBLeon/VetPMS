@@ -38,7 +38,6 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
   const {
     medicalRecords,
     isLoading,
-    error,
     addMedicalRecord,
     updateMedicalRecord,
     deleteMedicalRecord,
@@ -219,19 +218,11 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
   ];
 
   if (isLoading) {
-    return (
-      <div style={{ textAlign: "center", padding: "50px" }}>
-        <Spin size="large" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div>Fout: {error}</div>;
+    return <Spin size="large" />;
   }
 
   return (
-    <div>
+    <div className="medical-records-list">
       <div style={{ marginBottom: 16 }}>
         <Tooltip title="Nieuw medisch record toevoegen">
           <Button

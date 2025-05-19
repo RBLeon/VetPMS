@@ -1,5 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { mockApi, type ClientFeedback } from "../api/mockApi";
+import type {
+  Client,
+  Patient,
+  Appointment,
+  MedicalRecord,
+  Invoice,
+  StaffMember,
+  InventoryItem,
+  Treatment,
+} from "../api/types";
 
 // Client hooks
 export const useClients = () => {
@@ -30,7 +40,7 @@ export const useCreateClient = () => {
 export const useUpdateClient = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<Client> }) =>
       mockApi.updateClient(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
@@ -89,7 +99,7 @@ export const useCreatePatient = () => {
 export const useUpdatePatient = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<Patient> }) =>
       mockApi.updatePatient(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["patients"] });
@@ -145,7 +155,7 @@ export const useCreateAppointment = () => {
 export const useUpdateAppointment = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<Appointment> }) =>
       mockApi.updateAppointment(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
@@ -193,7 +203,7 @@ export const useCreateMedicalRecord = () => {
 export const useUpdateMedicalRecord = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<MedicalRecord> }) =>
       mockApi.updateMedicalRecord(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["medicalRecords"] });
@@ -241,7 +251,7 @@ export const useCreateInvoice = () => {
 export const useUpdateInvoice = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<Invoice> }) =>
       mockApi.updateInvoice(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
@@ -289,7 +299,7 @@ export const useCreateStaffMember = () => {
 export const useUpdateStaffMember = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<StaffMember> }) =>
       mockApi.updateStaffMember(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["staff"] });
@@ -337,7 +347,7 @@ export const useCreateInventoryItem = () => {
 export const useUpdateInventoryItem = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<InventoryItem> }) =>
       mockApi.updateInventoryItem(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["inventory"] });
@@ -440,5 +450,17 @@ export const useTreatment = (id: string) => {
     queryKey: ["treatments", id],
     queryFn: () => mockApi.getTreatment(id),
     enabled: !!id,
+  });
+};
+
+export const useUpdateTreatment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Treatment> }) =>
+      mockApi.updateTreatment(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ["treatments"] });
+      queryClient.invalidateQueries({ queryKey: ["treatments", id] });
+    },
   });
 };
