@@ -27,7 +27,7 @@ describe("MedicalRecordsList", () => {
   });
 
   it("renders medical records list", () => {
-    (useMedicalRecords as any).mockReturnValue({
+    (useMedicalRecords as unknown).mockReturnValue({
       medicalRecords: [
         {
           id: "1",

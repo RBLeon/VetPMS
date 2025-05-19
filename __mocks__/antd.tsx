@@ -5,9 +5,8 @@ interface DatePickerProps {
   value?: dayjs.Dayjs;
   onChange?: (value: dayjs.Dayjs) => void;
   onBlur?: () => void;
-  status?: string;
   error?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface SelectProps {
@@ -15,9 +14,8 @@ interface SelectProps {
   onChange?: (value: string) => void;
   onBlur?: () => void;
   children?: React.ReactNode;
-  status?: string;
   error?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface OptionProps {
@@ -29,26 +27,25 @@ interface FormItemProps {
   children: React.ReactNode;
   help?: string;
   error?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const MockDatePicker: React.FC<DatePickerProps> = ({
   value,
   onChange,
   onBlur,
-  status,
   error,
-  ...props
+  ...rest
 }) => (
   <>
     <input
       type="date"
       value={value ? dayjs(value).format("YYYY-MM-DD") : ""}
       onChange={(e) => {
-        onChange && onChange(dayjs(e.target.value));
+        if (onChange) onChange(dayjs(e.target.value));
       }}
       onBlur={onBlur}
-      {...props}
+      {...rest}
     />
     {error && <div role="alert">{error}</div>}
   </>
@@ -59,16 +56,15 @@ const MockSelect: React.FC<SelectProps> = ({
   onChange,
   onBlur,
   children,
-  status,
   error,
-  ...props
+  ...rest
 }) => (
   <>
     <select
       value={value || ""}
       onChange={(e) => onChange && onChange(e.target.value)}
       onBlur={onBlur}
-      {...props}
+      {...rest}
     >
       {children}
     </select>
@@ -80,12 +76,7 @@ MockSelect.Option = ({ value, children }: OptionProps) => (
   <option value={value}>{children}</option>
 );
 
-const MockFormItem: React.FC<FormItemProps> = ({
-  children,
-  help,
-  error,
-  ...props
-}) => (
+const MockFormItem: React.FC<FormItemProps> = ({ children, help, error }) => (
   <div>
     {children}
     {(help || error) && <div role="alert">{help || error}</div>}

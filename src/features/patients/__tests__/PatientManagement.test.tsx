@@ -113,7 +113,7 @@ describe("Patient Management", () => {
 
   describe("PatientDetails", () => {
     it("displays patient information", () => {
-      (usePatient as any).mockReturnValue({
+      (usePatient as unknown as unknown).mockReturnValue({
         data: mockPatient,
         isLoading: false,
       });

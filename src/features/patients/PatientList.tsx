@@ -7,19 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { format } from "date-fns";
 import type { Patient } from "@/lib/api/types";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 
 interface PatientListProps {
   patients?: Patient[];
   isLoading?: boolean;
-  error?: Error;
 }
 
 export const PatientList: React.FC<PatientListProps> = ({
   patients: propPatients,
   isLoading: propIsLoading,
-  error: propError,
 }) => {
   const navigate = useNavigate();
   const { data: hookPatients = [], isLoading: hookIsLoading = false } =
@@ -28,7 +25,6 @@ export const PatientList: React.FC<PatientListProps> = ({
 
   const patients = propPatients || hookPatients;
   const isLoading = propIsLoading || hookIsLoading;
-  const error = propError;
 
   if (isLoading) {
     return (
@@ -36,16 +32,6 @@ export const PatientList: React.FC<PatientListProps> = ({
         <Loader2 className="h-8 w-8 animate-spin" />
         <span className="ml-2">Laden...</span>
       </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <Alert variant="destructive">
-        <AlertDescription>
-          Fout bij het laden van patiënten: {error.message}
-        </AlertDescription>
-      </Alert>
     );
   }
 
@@ -98,7 +84,7 @@ export const PatientList: React.FC<PatientListProps> = ({
         if (!lastVisit) return "Geen bezoeken";
         try {
           return format(new Date(lastVisit), "d MMM yyyy");
-        } catch (error) {
+        } catch {
           return "Ongeldige datum";
         }
       },

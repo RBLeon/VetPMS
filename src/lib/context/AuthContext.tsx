@@ -104,9 +104,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsLoading(true);
       setError(null);
       // TODO: Implement actual reset password logic
-      console.log(`Password reset with token: ${token}`);
+      const mockUser: User = {
+        id: "1",
+        email: "demo@vetpms.nl",
+        firstName: "Demo",
+        lastName: "User",
+        role: "VETERINARIAN",
+        permissions: [],
+        tenantId: "1",
+        username: "demo",
+      };
+      setUser(mockUser);
+      console.log(
+        `Password reset with token: ${token} and new password: ${password}`
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
+      throw err;
     } finally {
       setIsLoading(false);
     }

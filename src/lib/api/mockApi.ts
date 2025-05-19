@@ -348,6 +348,15 @@ const mockApi = {
     status: "VOLTOOID",
     notes: "Jaarlijkse vaccinatie",
   }),
+  updateTreatment: async (id: string, data: Partial<Treatment>) => ({
+    id,
+    patientName: "Max",
+    type: "Vaccinatie",
+    date: new Date().toISOString(),
+    status: "VOLTOOID",
+    notes: "Jaarlijkse vaccinatie",
+    ...data,
+  }),
 };
 
 export { mockApi, queryClient };

@@ -68,7 +68,7 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
       setIsAddModalVisible(false);
       form.resetFields();
       message.success("Medisch record toegevoegd");
-    } catch (error) {
+    } catch {
       message.error("Fout bij het toevoegen van medisch record");
     } finally {
       setIsSubmitting(false);
@@ -90,7 +90,7 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
       setIsEditModalVisible(false);
       editForm.resetFields();
       message.success("Medisch record bijgewerkt");
-    } catch (error) {
+    } catch {
       message.error("Fout bij het bijwerken van medisch record");
     } finally {
       setIsSubmitting(false);
@@ -102,7 +102,7 @@ export const MedicalRecordsList: React.FC<MedicalRecordsListProps> = ({
       setIsSubmitting(true);
       await deleteMedicalRecord(id);
       message.success("Medisch record verwijderd");
-    } catch (error) {
+    } catch {
       message.error("Fout bij het verwijderen van medisch record");
     } finally {
       setIsSubmitting(false);

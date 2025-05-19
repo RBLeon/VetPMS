@@ -28,7 +28,7 @@ export const AppointmentProvider: React.FC<{ children: React.ReactNode }> = ({
       const response = await fetch("/api/appointments");
       if (!response.ok) throw new Error("Failed to fetch appointments");
       const appointments = await response.json();
-      return appointments.map((appointment: any) => ({
+      return appointments.map((appointment: unknown) => ({
         ...appointment,
         patientName: appointment.patient?.name || "Unknown Patient",
       }));

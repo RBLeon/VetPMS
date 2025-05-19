@@ -19,8 +19,8 @@ type MockAuthContext = {
 };
 
 type MockAppointmentContext = {
-  createAppointment: (data: any) => Promise<any>;
-  updateAppointment: (data: any) => Promise<any>;
+  createAppointment: (data: Record<string, unknown>) => Promise<unknown>;
+  updateAppointment: (data: Record<string, unknown>) => Promise<unknown>;
 };
 
 // Mock the hooks

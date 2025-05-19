@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { MockInstance } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ReceptionistDashboard } from "../ReceptionistDashboard";
 import { BrowserRouter } from "react-router-dom";
@@ -59,15 +60,15 @@ describe("ReceptionistDashboard", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAppointments as any).mockReturnValue({
+    (useAppointments as unknown as MockInstance).mockReturnValue({
       data: [mockAppointment],
       isLoading: false,
     });
-    (useClients as any).mockReturnValue({
+    (useClients as unknown as MockInstance).mockReturnValue({
       data: [mockClient],
       isLoading: false,
     });
-    (usePatients as any).mockReturnValue({
+    (usePatients as unknown as MockInstance).mockReturnValue({
       data: [mockPatient],
       isLoading: false,
     });
@@ -81,16 +82,16 @@ describe("ReceptionistDashboard", () => {
   });
 
   it("shows loading state", () => {
-    (useAppointments as any).mockReturnValue({
+    (useAppointments as unknown as MockInstance).mockReturnValue({
       data: [],
       isLoading: true,
       error: null,
     });
-    (useClients as any).mockReturnValue({
+    (useClients as unknown as MockInstance).mockReturnValue({
       data: undefined,
       isLoading: true,
     });
-    (usePatients as any).mockReturnValue({
+    (usePatients as unknown as MockInstance).mockReturnValue({
       data: undefined,
       isLoading: true,
     });
