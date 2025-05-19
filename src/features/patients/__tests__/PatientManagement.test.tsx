@@ -6,6 +6,7 @@ import { PatientForm } from "../PatientForm";
 import { PatientDetails } from "../PatientDetails";
 import { usePatient } from "@/lib/hooks/useApi";
 import { vi } from "vitest";
+import type { MockInstance } from "vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Patient } from "@/lib/api/types";
 
@@ -113,7 +114,7 @@ describe("Patient Management", () => {
 
   describe("PatientDetails", () => {
     it("displays patient information", () => {
-      (usePatient as unknown as unknown).mockReturnValue({
+      (usePatient as unknown as MockInstance).mockReturnValue({
         data: mockPatient,
         isLoading: false,
       });

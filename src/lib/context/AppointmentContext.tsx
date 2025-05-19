@@ -9,6 +9,13 @@ interface AppointmentContextType {
   error: Error | null;
 }
 
+interface RawAppointment {
+  patient?: {
+    name?: string;
+  };
+  [key: string]: unknown;
+}
+
 const AppointmentContext = createContext<AppointmentContextType>({
   data: undefined,
   isLoading: false,
@@ -28,7 +35,7 @@ export const AppointmentProvider: React.FC<{ children: React.ReactNode }> = ({
       const response = await fetch("/api/appointments");
       if (!response.ok) throw new Error("Failed to fetch appointments");
       const appointments = await response.json();
-      return appointments.map((appointment: unknown) => ({
+      return appointments.map((appointment: RawAppointment) => ({
         ...appointment,
         patientName: appointment.patient?.name || "Unknown Patient",
       }));

@@ -4,6 +4,7 @@ import { useMedicalRecords } from "@/hooks/useMedicalRecords";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
+import type { MockInstance } from "vitest";
 
 vi.mock("@/hooks/useMedicalRecords", () => ({
   useMedicalRecords: vi.fn(),
@@ -27,7 +28,7 @@ describe("MedicalRecordsList", () => {
   });
 
   it("renders medical records list", () => {
-    (useMedicalRecords as unknown).mockReturnValue({
+    (useMedicalRecords as unknown as MockInstance).mockReturnValue({
       medicalRecords: [
         {
           id: "1",
