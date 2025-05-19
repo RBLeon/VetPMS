@@ -2,6 +2,8 @@
 
 A modern web application for managing veterinary practices, built with React, TypeScript, and Vite.
 
+<!-- Testing GitHub Actions workflow -->
+
 ## Features
 
 - Patient management
