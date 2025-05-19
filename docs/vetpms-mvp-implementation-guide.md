@@ -428,7 +428,7 @@ classDiagram
 The MVP class diagram simplifies the architecture by:
 
 1. **Removing Multi-tenant Hierarchy**: No franchise/department structure, just single practice
-2. **Simplifying User Management**: Single role per user instead of complex role-permission system
+<!-- 2. not true: **Simplifying User Management**: Single role per user instead of complex role-permission system -->
 3. **Basic Medical Records**: Text-based prescriptions instead of complex prescription management
 4. **Simplified Appointments**: No resource management or complex scheduling
 5. **No Integration Framework**: Direct database operations instead of integration hub

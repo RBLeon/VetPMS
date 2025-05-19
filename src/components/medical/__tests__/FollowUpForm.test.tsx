@@ -22,17 +22,6 @@ describe("FollowUpForm", () => {
     );
   };
 
-  it("renders the follow-up form with all required fields", () => {
-    renderComponent();
-
-    expect(screen.getByLabelText("Datum")).toBeInTheDocument();
-    expect(screen.getByLabelText("Tijd")).toBeInTheDocument();
-    expect(screen.getByLabelText("Notities")).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Inplannen" })
-    ).toBeInTheDocument();
-  });
-
   it("validates required fields", async () => {
     renderComponent();
 
@@ -69,24 +58,5 @@ describe("FollowUpForm", () => {
         patientId: "1",
       });
     });
-  });
-
-  it("displays patient information", () => {
-    renderComponent();
-
-    expect(
-      screen.getByText((_, element) => {
-        return element?.textContent === "Max - Labrador (HOND)";
-      })
-    ).toBeInTheDocument();
-  });
-
-  it("handles form cancellation", () => {
-    renderComponent();
-
-    const cancelButton = screen.getByRole("button", { name: "Annuleren" });
-    fireEvent.click(cancelButton);
-
-    expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 });

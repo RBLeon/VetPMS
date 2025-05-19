@@ -4,14 +4,8 @@
 
 ### High Priority
 
-- [x] Add comprehensive dummy data for all role-specific dashboards
 - [ ] Enhance Appointment Scheduler
 
-  - [x] Add click functionality to appointments (nu via popup/venster met details en bewerken, getest, build geslaagd)
-  - [x] Modal ondersteunt zowel bekijken als bewerken van afspraakgegevens
-  - [x] Implement appointment editing modal
-  - [x] Add ability to create new appointments by clicking empty slots
-  - [x] Add appointment cancellation functionality
   - [ ] Enable drag-and-drop functionality for appointments
   - [ ] Create role-specific views (all staff vs personal schedule as an example, think of more specific things per role)
   - [ ] Add view switching options (day/week/month)
@@ -21,10 +15,6 @@
 
 - [ ] Connect Dashboard Actions
 
-  - [x] Connect all buttons on the dashboard to the correct pages
-  - [x] Connect all tiles under the tabs to the right page
-  - [x] Link "New Appointment" buttons to scheduler
-  - [x] Connect "View Patient" buttons to patient details
   - [ ] Link "Start Consult" to medical records creation
   - [ ] Connect notification badges to notification center
   - [ ] Link financial overview to detailed reports
