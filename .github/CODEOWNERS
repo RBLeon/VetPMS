@@ -1,0 +1,11 @@
+# These owners will be the default owners for everything in the repo
+* @RBLeon
+
+# Frontend specific files
+/src/ @RBLeon
+
+# Documentation
+/docs/ @RBLeon
+
+# GitHub Actions workflows
+/.github/ @RBLeon 
