@@ -2,15 +2,7 @@ import { useAppointments, useClients, usePatients } from "@/lib/hooks/useApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Calendar,
-  Users,
-  User,
-  Clock,
-  CheckCircle,
-  ListChecks,
-  UserPlus,
-} from "lucide-react";
+import { Calendar, Users, User, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format, isValid, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
@@ -59,10 +51,6 @@ export const ReceptionistDashboard: React.FC = () => {
     patientsTotal: patients.length,
   };
 
-  const handleNewAppointment = () => navigate("/appointments/new");
-  const handleNewClient = () => navigate("/clients/new");
-  const handleCheckIn = () => navigate("/appointments/check-in");
-
   if (appointmentsLoading || clientsLoading || patientsLoading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -84,20 +72,6 @@ export const ReceptionistDashboard: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold">Reception Dashboard</h2>
-        <div className="space-x-2">
-          <Button onClick={handleNewAppointment}>
-            <Calendar className="mr-2 h-4 w-4" />
-            New Appointment
-          </Button>
-          <Button onClick={handleNewClient}>
-            <Users className="mr-2 h-4 w-4" />
-            New Client
-          </Button>
-          <Button onClick={handleCheckIn}>
-            <CheckCircle className="mr-2 h-4 w-4" />
-            Check-in
-          </Button>
-        </div>
       </div>
 
       {/* Metrics Cards */}
@@ -272,41 +246,6 @@ export const ReceptionistDashboard: React.FC = () => {
               ))}
             </div>
           </CardContent>
-        </Card>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card
-          className="flex flex-col items-center justify-center p-6 hover:bg-muted/50 cursor-pointer"
-          onClick={handleNewClient}
-        >
-          <UserPlus className="h-10 w-10 mb-4 text-[#10B981]" />
-          <h3 className="font-medium">New Client</h3>
-        </Card>
-
-        <Card
-          className="flex flex-col items-center justify-center p-6 hover:bg-muted/50 cursor-pointer"
-          onClick={handleNewAppointment}
-        >
-          <Calendar className="h-10 w-10 mb-4 text-[#3B82F6]" />
-          <h3 className="font-medium">New Appointment</h3>
-        </Card>
-
-        <Card
-          className="flex flex-col items-center justify-center p-6 hover:bg-muted/50 cursor-pointer"
-          onClick={handleCheckIn}
-        >
-          <CheckCircle className="h-10 w-10 mb-4 text-[#8B5CF6]" />
-          <h3 className="font-medium">Check-in</h3>
-        </Card>
-
-        <Card
-          className="flex flex-col items-center justify-center p-6 hover:bg-muted/50 cursor-pointer"
-          onClick={() => navigate("/clients")}
-        >
-          <ListChecks className="h-10 w-10 mb-4 text-[#F59E0B]" />
-          <h3 className="font-medium">Client List</h3>
         </Card>
       </div>
     </div>

@@ -8,14 +8,6 @@ import { useState, useEffect } from "react";
 import { Calendar, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { AppointmentForm } from "@/features/appointments/AppointmentForm";
 
 export function DashboardPage() {
   const { role } = useRole();
@@ -25,7 +17,6 @@ export function DashboardPage() {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [todayAppointments, setTodayAppointments] = useState<any[]>([]);
-  const [isAppointmentDialogOpen, setIsAppointmentDialogOpen] = useState(false);
 
   // Filter appointments for selected date
   useEffect(() => {
@@ -111,17 +102,6 @@ export function DashboardPage() {
     } catch (error) {
       return "Invalid time";
     }
-  };
-
-  const handleAppointmentSubmit = (data: any) => {
-    // TODO: Implement appointment creation
-    console.log("Creating appointment:", data);
-    setIsAppointmentDialogOpen(false);
-    // You can add actual appointment creation logic here
-  };
-
-  const handleAppointmentCancel = () => {
-    setIsAppointmentDialogOpen(false);
   };
 
   return (
@@ -219,23 +199,12 @@ export function DashboardPage() {
                     ? "Free day! Nothing scheduled today."
                     : "There are no appointments scheduled for this day."}
                 </p>
-                <Dialog
-                  open={isAppointmentDialogOpen}
-                  onOpenChange={setIsAppointmentDialogOpen}
+                <Button
+                  className="mt-4"
+                  onClick={() => navigate("/appointments")}
                 >
-                  <DialogTrigger asChild>
-                    <Button className="mt-4">Schedule an appointment</Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Nieuwe Afspraak</DialogTitle>
-                    </DialogHeader>
-                    <AppointmentForm
-                      onSubmit={handleAppointmentSubmit}
-                      onCancel={handleAppointmentCancel}
-                    />
-                  </DialogContent>
-                </Dialog>
+                  Schedule an appointment
+                </Button>
               </div>
             )}
           </CardContent>

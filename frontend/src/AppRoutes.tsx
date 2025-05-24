@@ -12,7 +12,7 @@ import { NotFoundPage } from "@/pages/NotFoundPage";
 import RoleSelectionPage from "@/features/role-selection/RoleSelectionPage";
 import { Layout } from "@/components/layout/Layout";
 import AppointmentScheduler from "@/features/appointments/AppointmentScheduler";
-import { AppointmentForm } from "@/features/appointments/AppointmentForm";
+
 import { PatientsPage } from "@/pages/patients/PatientsPage";
 import { PatientForm } from "@/features/patients/PatientForm";
 import { TasksPage } from "@/pages/tasks/TasksPage";
@@ -30,15 +30,6 @@ import { notificationProvider } from "@/providers/notification-provider";
 import { accessControlProvider } from "@/providers/access-control-provider";
 
 // Wrapper components to handle form navigation and state
-const AppointmentFormWrapper = () => {
-  const navigate = useNavigate();
-  return (
-    <AppointmentForm
-      onSubmit={() => navigate("/appointments")}
-      onCancel={() => navigate("/appointments")}
-    />
-  );
-};
 
 const MedicalRecordFormWrapper = () => {
   return (
@@ -135,8 +126,6 @@ export const AppRoutes = () => {
         {
           name: "appointments",
           list: "/appointments",
-          create: "/appointments/new",
-          edit: "/appointments/:id/edit",
           meta: {
             label: "Appointments",
             icon: "Calendar",
@@ -285,14 +274,6 @@ export const AppRoutes = () => {
             <Route path="/patients/:id" element={<PatientForm />} />
             <Route path="/patients/:id/edit" element={<PatientForm />} />
             <Route path="/appointments" element={<AppointmentScheduler />} />
-            <Route
-              path="/appointments/new"
-              element={<AppointmentFormWrapper />}
-            />
-            <Route
-              path="/appointments/:id/edit"
-              element={<AppointmentFormWrapper />}
-            />
             <Route path="/medical-records" element={<MedicalRecordsPage />} />
             <Route
               path="/medical-records/new"

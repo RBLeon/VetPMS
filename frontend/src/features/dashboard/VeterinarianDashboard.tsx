@@ -6,14 +6,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Calendar,
-  User,
-  FileText,
-  Pill,
-  CheckCircle2,
-  ListChecks,
-} from "lucide-react";
+import { Calendar, User, FileText, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format, isValid, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
@@ -68,8 +61,6 @@ export const VeterinarianDashboard: React.FC = () => {
       .length,
   };
 
-  const handleNewAppointment = () => navigate("/appointments/new");
-  const handleNewMedicalRecord = () => navigate("/medical-records/new");
   const handleViewPatient = (patientId: string) =>
     navigate(`/patients/${patientId}`);
 
@@ -94,16 +85,6 @@ export const VeterinarianDashboard: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold">Veterinarian Dashboard</h2>
-        <div className="space-x-2">
-          <Button onClick={handleNewAppointment}>
-            <Calendar className="mr-2 h-4 w-4" />
-            New Appointment
-          </Button>
-          <Button onClick={handleNewMedicalRecord}>
-            <FileText className="mr-2 h-4 w-4" />
-            New Medical Record
-          </Button>
-        </div>
       </div>
 
       {/* Metrics Cards */}
@@ -264,41 +245,6 @@ export const VeterinarianDashboard: React.FC = () => {
               ))}
             </div>
           </CardContent>
-        </Card>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card
-          className="flex flex-col items-center justify-center p-6 hover:bg-muted/50 cursor-pointer"
-          onClick={() => navigate("/medical-records/new")}
-        >
-          <FileText className="h-10 w-10 mb-4 text-[#10B981]" />
-          <h3 className="font-medium">New Medical Record</h3>
-        </Card>
-
-        <Card
-          className="flex flex-col items-center justify-center p-6 hover:bg-muted/50 cursor-pointer"
-          onClick={() => navigate("/appointments/new")}
-        >
-          <Calendar className="h-10 w-10 mb-4 text-[#8B5CF6]" />
-          <h3 className="font-medium">New Appointment</h3>
-        </Card>
-
-        <Card
-          className="flex flex-col items-center justify-center p-6 hover:bg-muted/50 cursor-pointer"
-          onClick={() => navigate("/prescriptions/new")}
-        >
-          <Pill className="h-10 w-10 mb-4 text-[#3B82F6]" />
-          <h3 className="font-medium">New Prescription</h3>
-        </Card>
-
-        <Card
-          className="flex flex-col items-center justify-center p-6 hover:bg-muted/50 cursor-pointer"
-          onClick={() => navigate("/patients")}
-        >
-          <ListChecks className="h-10 w-10 mb-4 text-[#F59E0B]" />
-          <h3 className="font-medium">Patient List</h3>
         </Card>
       </div>
     </div>
