@@ -8,9 +8,7 @@ import {
   User,
   Clock,
   CheckCircle,
-  Bell,
   ListChecks,
-  Phone,
   UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,18 +24,6 @@ export const ReceptionistDashboard: React.FC = () => {
 
   const today = new Date();
 
-  const formatAppointmentTime = (dateStr: string) => {
-    try {
-      const date = parseISO(dateStr);
-      if (!isValid(date)) {
-        return "Invalid time";
-      }
-      return format(date, "HH:mm");
-    } catch (error) {
-      return "Invalid time";
-    }
-  };
-
   const isSameDay = (dateStr: string) => {
     try {
       const date = parseISO(dateStr);
@@ -51,15 +37,15 @@ export const ReceptionistDashboard: React.FC = () => {
   };
 
   const todayAppointments = appointments.filter((appointment) =>
-    isSameDay(appointment.startTime)
+    isSameDay(appointment.date)
   );
 
   const waitingRoom = todayAppointments.filter(
-    (appointment) => appointment.status === "CHECKED_IN"
+    (appointment) => appointment.status === "AANGEMELD"
   );
 
   const upcomingAppointments = todayAppointments.filter(
-    (appointment) => appointment.status === "SCHEDULED"
+    (appointment) => appointment.status === "INGEPLAND"
   );
 
   const recentClients = clients.slice(0, 5);
@@ -199,9 +185,9 @@ export const ReceptionistDashboard: React.FC = () => {
                     className="flex items-center justify-between p-3 rounded-md bg-gradient-to-r from-[#8B5CF6]/5 to-transparent hover:from-[#8B5CF6]/10"
                   >
                     <div>
-                      <p className="font-medium">{appointment.patient?.name}</p>
+                      <p className="font-medium">{appointment.patientName}</p>
                       <p className="text-sm text-muted-foreground">
-                        {formatAppointmentTime(appointment.startTime)}
+                        {appointment.time}
                       </p>
                     </div>
                     <Badge className="bg-[#8B5CF6]/80 hover:bg-[#8B5CF6]">
@@ -232,9 +218,9 @@ export const ReceptionistDashboard: React.FC = () => {
                     className="flex items-center justify-between p-3 rounded-md bg-gradient-to-r from-[#3B82F6]/5 to-transparent hover:from-[#3B82F6]/10"
                   >
                     <div>
-                      <p className="font-medium">{appointment.patient?.name}</p>
+                      <p className="font-medium">{appointment.patientName}</p>
                       <p className="text-sm text-muted-foreground">
-                        {formatAppointmentTime(appointment.startTime)}
+                        {appointment.time}
                       </p>
                     </div>
                     <Button

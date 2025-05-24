@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigation } from "@refinedev/core";
 import { useClients } from "@/lib/hooks/useApi";
 import { Button } from "@/components/ui/button";
-import { Plus, Edit, Eye, Trash } from "lucide-react";
+import { Plus, Edit, Eye } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Loader2 } from "lucide-react";
 
@@ -25,19 +25,15 @@ export const ClientListPage: React.FC = () => {
 
   return (
     <div>
-      <PageHeader
-        title="Clients"
-        description="Manage your clients"
-        action={
-          <Button
-            onClick={() => create("clients")}
-            className="flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Add Client
-          </Button>
-        }
-      />
+      <PageHeader title="Clients" description="Manage your clients">
+        <Button
+          onClick={() => create("clients")}
+          className="flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          Add Client
+        </Button>
+      </PageHeader>
 
       <div className="mt-6 overflow-hidden rounded-md border">
         <table className="min-w-full divide-y divide-gray-200">

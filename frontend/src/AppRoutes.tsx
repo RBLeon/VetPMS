@@ -1,16 +1,6 @@
-import {
-  Routes,
-  Route,
-  Navigate,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { Refine } from "@refinedev/core";
-import routerBindings, {
-  UnsavedChangesNotifier,
-  NavigateToResource,
-} from "@refinedev/react-router-v6";
-import { RefineKbar } from "@refinedev/kbar";
+import routerBindings from "@refinedev/react-router-v6";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRole } from "@/lib/context/RoleContext";
 import { useTenant } from "@/lib/context/TenantContext";
@@ -39,43 +29,33 @@ import { dataProvider } from "@/lib/data-providers/supabase-data-provider";
 import { authProvider } from "@/providers/auth-provider";
 import { notificationProvider } from "@/providers/notification-provider";
 import { accessControlProvider } from "@/providers/access-control-provider";
-import { ClientListPage } from "@/features/clients/ClientListPage";
 
 // Wrapper components to handle form navigation and state
 const AppointmentFormWrapper = () => {
   const navigate = useNavigate();
   return (
     <AppointmentForm
-      onSubmit={() => {
-        navigate("/appointments");
-      }}
+      onSubmit={() => navigate("/appointments")}
       onCancel={() => navigate("/appointments")}
     />
   );
 };
 
 const MedicalRecordFormWrapper = () => {
-  const navigate = useNavigate();
-  const { patientId } = useParams();
   return (
     <MedicalRecordForm
-      onSubmit={() => {
-        navigate(`/patients/${patientId}/records`);
-      }}
-      onCancel={() => navigate(`/patients/${patientId}/records`)}
+      patientId="default" // This should be set from URL params in a real implementation
     />
   );
 };
 
 const FollowUpFormWrapper = () => {
   const navigate = useNavigate();
-  const { patientId, recordId } = useParams();
   return (
     <FollowUpForm
-      onSubmit={() => {
-        navigate(`/patients/${patientId}/records`);
-      }}
-      onCancel={() => navigate(`/patients/${patientId}/records`)}
+      recordDate="2023-01-01" // This should be set from the actual record in a real implementation
+      onSchedule={() => navigate("/medical-records")}
+      onCancel={() => navigate("/medical-records")}
     />
   );
 };
@@ -99,7 +79,9 @@ export const AppRoutes = () => {
           list: "/",
           meta: {
             label: "Dashboard",
-            icon: "Dashboard",
+            icon: "Home",
+            color:
+              "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
             canAccess: [
               "CEO",
               "MANAGER",
@@ -117,7 +99,9 @@ export const AppRoutes = () => {
           show: "/clients/:id",
           meta: {
             label: "Clients",
-            icon: "People",
+            icon: "Users",
+            color:
+              "bg-teal-100 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300",
             canAccess: [
               "CEO",
               "MANAGER",
@@ -136,7 +120,9 @@ export const AppRoutes = () => {
           show: "/patients/:id",
           meta: {
             label: "Patients",
-            icon: "Pets",
+            icon: "Stethoscope",
+            color:
+              "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300",
             canAccess: [
               "CEO",
               "MANAGER",
@@ -152,10 +138,11 @@ export const AppRoutes = () => {
           list: "/appointments",
           create: "/appointments/new",
           edit: "/appointments/:id/edit",
-          show: "/appointments/:id",
           meta: {
             label: "Appointments",
             icon: "Calendar",
+            color:
+              "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300",
             canAccess: [
               "CEO",
               "MANAGER",
@@ -169,26 +156,15 @@ export const AppRoutes = () => {
         {
           name: "medical-records",
           list: "/medical-records",
-          create: "/patients/:patientId/records/new",
-          edit: "/patients/:patientId/records/:id/edit",
-          show: "/patients/:patientId/records/:id",
+          create: "/medical-records/new",
+          edit: "/medical-records/:id/edit",
+          show: "/medical-records/:id",
           meta: {
             label: "Medical Records",
-            icon: "MedicalRecords",
+            icon: "FileText",
+            color:
+              "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300",
             canAccess: ["CEO", "MANAGER", "VETERINARIAN", "NURSE"],
-            tenant: currentTenant?.id,
-          },
-        },
-        {
-          name: "billing",
-          list: "/billing",
-          create: "/billing/new",
-          edit: "/billing/:id/edit",
-          show: "/billing/:id",
-          meta: {
-            label: "Billing",
-            icon: "Money",
-            canAccess: ["CEO", "MANAGER", "RECEPTIONIST"],
             tenant: currentTenant?.id,
           },
         },
@@ -197,7 +173,9 @@ export const AppRoutes = () => {
           list: "/tasks",
           meta: {
             label: "Tasks",
-            icon: "Task",
+            icon: "CheckSquare",
+            color:
+              "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300",
             canAccess: [
               "CEO",
               "MANAGER",
@@ -209,11 +187,25 @@ export const AppRoutes = () => {
           },
         },
         {
+          name: "billing",
+          list: "/billing",
+          meta: {
+            label: "Billing",
+            icon: "CreditCard",
+            color:
+              "bg-rose-100 text-rose-700 dark:bg-rose-900/20 dark:text-rose-300",
+            canAccess: ["CEO", "MANAGER", "RECEPTIONIST"],
+            tenant: currentTenant?.id,
+          },
+        },
+        {
           name: "analytics",
           list: "/analytics",
           meta: {
             label: "Analytics",
-            icon: "Analytics",
+            icon: "BarChart3",
+            color:
+              "bg-sky-100 text-sky-700 dark:bg-sky-900/20 dark:text-sky-300",
             canAccess: ["CEO", "MANAGER"],
             tenant: currentTenant?.id,
           },
@@ -224,7 +216,33 @@ export const AppRoutes = () => {
           meta: {
             label: "Settings",
             icon: "Settings",
-            canAccess: ["CEO", "MANAGER"],
+            color:
+              "bg-slate-100 text-slate-700 dark:bg-slate-900/20 dark:text-slate-300",
+            canAccess: [
+              "CEO",
+              "MANAGER",
+              "VETERINARIAN",
+              "NURSE",
+              "RECEPTIONIST",
+            ],
+            tenant: currentTenant?.id,
+          },
+        },
+        {
+          name: "search",
+          list: "/search",
+          meta: {
+            label: "Search",
+            icon: "Search",
+            color:
+              "bg-violet-100 text-violet-700 dark:bg-violet-900/20 dark:text-violet-300",
+            canAccess: [
+              "CEO",
+              "MANAGER",
+              "VETERINARIAN",
+              "NURSE",
+              "RECEPTIONIST",
+            ],
             tenant: currentTenant?.id,
           },
         },
@@ -232,115 +250,103 @@ export const AppRoutes = () => {
       options={{
         syncWithLocation: true,
         warnWhenUnsavedChanges: true,
-        liveMode: "auto",
-        reactQuery: {
-          defaultOptions: {
-            queries: {
-              staleTime: 5 * 60 * 1000, // 5 minutes
-              retry: 1,
-            },
-          },
-        },
-        mutationMode: "optimistic",
-        disableTelemetry: true,
-        meta: {
-          tenant_id: currentTenant?.id,
-        },
       }}
     >
       <Routes>
-        {/* Public routes */}
+        {/* Unauthenticated routes */}
         <Route
           path="/login"
           element={
-            !isAuthenticated ? (
-              <LoginPage />
+            isAuthenticated ? (
+              <Navigate to={role ? "/" : "/role-selection"} />
             ) : (
-              <Navigate to="/role-selection" replace />
+              <LoginPage />
             )
           }
         />
         <Route
           path="/forgot-password"
           element={
-            !isAuthenticated ? (
-              <ForgotPasswordPage />
-            ) : (
-              <Navigate to="/role-selection" replace />
-            )
+            isAuthenticated ? <Navigate to="/" /> : <ForgotPasswordPage />
           }
         />
         <Route
           path="/reset-password"
           element={
-            !isAuthenticated ? (
-              <ResetPasswordPage />
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            isAuthenticated ? <Navigate to="/" /> : <ResetPasswordPage />
           }
         />
+
+        {/* Role selection */}
         <Route
           path="/role-selection"
           element={
-            isAuthenticated && !role ? (
-              <RoleSelectionPage />
+            !isAuthenticated ? (
+              <Navigate to="/login" />
+            ) : role ? (
+              <Navigate to="/" />
             ) : (
-              <Navigate to="/" replace />
+              <RoleSelectionPage />
             )
           }
         />
-        {/* Protected routes */}
+
+        {/* Authenticated routes */}
+        {shouldShowProtectedRoutes && (
+          <Route element={<Layout />}>
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/clients" element={<ClientsPage />} />
+            <Route path="/clients/new" element={<ClientForm />} />
+            <Route path="/clients/:id" element={<ClientForm />} />
+            <Route path="/clients/:id/edit" element={<ClientForm />} />
+            <Route path="/patients" element={<PatientsPage />} />
+            <Route path="/patients/new" element={<PatientForm />} />
+            <Route path="/patients/:id" element={<PatientForm />} />
+            <Route path="/patients/:id/edit" element={<PatientForm />} />
+            <Route path="/appointments" element={<AppointmentScheduler />} />
+            <Route
+              path="/appointments/new"
+              element={<AppointmentFormWrapper />}
+            />
+            <Route
+              path="/appointments/:id/edit"
+              element={<AppointmentFormWrapper />}
+            />
+            <Route path="/medical-records" element={<MedicalRecordsPage />} />
+            <Route
+              path="/medical-records/new"
+              element={<MedicalRecordFormWrapper />}
+            />
+            <Route
+              path="/medical-records/:id"
+              element={<MedicalRecordFormWrapper />}
+            />
+            <Route
+              path="/medical-records/:id/edit"
+              element={<MedicalRecordFormWrapper />}
+            />
+            <Route
+              path="/medical-records/:id/follow-up"
+              element={<FollowUpFormWrapper />}
+            />
+            <Route path="/tasks" element={<TasksPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/settings/profile" element={<SettingsPage />} />
+            <Route path="/billing" element={<BillingPage />} />
+          </Route>
+        )}
+
+        {/* Fallback routes */}
+        <Route path="/404" element={<NotFoundPage />} />
         <Route
-          path="/"
+          path="*"
           element={
-            shouldShowProtectedRoutes ? (
-              <Layout />
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            isAuthenticated ? <Navigate to="/404" /> : <Navigate to="/login" />
           }
-        >
-          <Route index element={<DashboardPage />} />
-          {/* Appointments routes */}
-          <Route path="appointments">
-            <Route index element={<AppointmentScheduler />} />
-            <Route path="new" element={<AppointmentFormWrapper />} />
-          </Route>
-          {/* Patients routes */}
-          <Route path="patients">
-            <Route index element={<PatientsPage />} />
-            <Route path="new" element={<PatientForm />} />
-            <Route path=":patientId/records">
-              <Route index element={<MedicalRecordsPage />} />
-              <Route path="new" element={<MedicalRecordFormWrapper />} />
-              <Route
-                path=":recordId/follow-up"
-                element={<FollowUpFormWrapper />}
-              />
-            </Route>
-          </Route>
-          {/* Clients routes */}
-          <Route path="clients">
-            <Route index element={<ClientListPage />} />
-            <Route path="new" element={<ClientForm />} />
-          </Route>
-          {/* Medical Records routes */}
-          <Route path="medical-records">
-            <Route index element={<MedicalRecordsPage />} />
-          </Route>
-          {/* Other main routes */}
-          <Route path="tasks" element={<TasksPage />} />
-          <Route path="search" element={<SearchPage />} />
-          <Route path="analytics" element={<AnalyticsPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="billing" element={<BillingPage />} />
-        </Route>
-        {/* 404 route */}
-        <Route path="*" element={<NotFoundPage />} />
+        />
       </Routes>
-      <RefineKbar />
-      <UnsavedChangesNotifier />
     </Refine>
   );
 };

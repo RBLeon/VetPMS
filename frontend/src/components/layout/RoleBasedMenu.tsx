@@ -15,7 +15,7 @@ export const RoleBasedMenu: React.FC = () => {
     return null;
   }
 
-  const userRole = role || identity?.role;
+  const userRole = role || identity?.role || "";
 
   // Filter resources based on user role
   const accessibleResources = resources.filter((resource) => {

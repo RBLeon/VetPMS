@@ -1,5 +1,4 @@
 import { AccessControlProvider } from "@refinedev/core";
-import { useRole } from "@/lib/context/RoleContext";
 
 type RoleType = "CEO" | "MANAGER" | "VETERINARIAN" | "NURSE" | "RECEPTIONIST";
 
@@ -138,7 +137,7 @@ const rolePermissions: Record<
 };
 
 export const accessControlProvider: AccessControlProvider = {
-  can: async ({ resource, action, params }) => {
+  can: async ({ resource, action }) => {
     // Get current user role from context
     // Note: This is a hook, so we can't use it directly in this function
     // In a real app, you'd get the role from a state/context that's not a hook
@@ -162,7 +161,8 @@ export const accessControlProvider: AccessControlProvider = {
     }
 
     // Check if role has permissions for the specific resource
-    if (rolePermission[resource]) {
+    // Make sure resource is defined
+    if (resource && rolePermission[resource]) {
       return { can: rolePermission[resource][action] || false };
     }
 

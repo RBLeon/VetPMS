@@ -23,7 +23,7 @@ export function DashboardPage() {
     if (appointments.length) {
       const filtered = appointments.filter((appointment) => {
         try {
-          const appointmentDate = parseISO(appointment.startTime);
+          const appointmentDate = parseISO(appointment.date);
           return (
             isValid(appointmentDate) &&
             format(appointmentDate, "yyyy-MM-dd") ===
@@ -36,8 +36,8 @@ export function DashboardPage() {
 
       // Sort by time
       filtered.sort((a, b) => {
-        const aTime = parseISO(a.startTime);
-        const bTime = parseISO(b.startTime);
+        const aTime = parseISO(`${a.date}T${a.time}`);
+        const bTime = parseISO(`${b.date}T${b.time}`);
         return aTime.getTime() - bTime.getTime();
       });
 
@@ -95,13 +95,10 @@ export function DashboardPage() {
     }
   };
 
-  const formatAppointmentTime = (dateStr: string) => {
+  const formatAppointmentTime = (timeStr: string) => {
     try {
-      const date = parseISO(dateStr);
-      if (!isValid(date)) {
-        return "Invalid time";
-      }
-      return format(date, "HH:mm");
+      // Time is already in HH:mm format
+      return timeStr;
     } catch (error) {
       return "Invalid time";
     }
@@ -127,90 +124,92 @@ export function DashboardPage() {
         </Button>
       </div>
 
-      {/* Quick Scheduler View */}
-      <Card className="mb-8">
-        <CardHeader className="pb-2">
-          <div className="flex justify-between items-center">
-            <CardTitle className="flex items-center space-x-2">
-              <Calendar className="h-6 w-6" />
-              <span>Today's Schedule</span>
-            </CardTitle>
-            <div className="flex space-x-1">
-              <Button variant="outline" size="sm" onClick={goToPreviousDay}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={isToday(selectedDate) ? "default" : "outline"}
-                size="sm"
-                onClick={goToToday}
-              >
-                Today
-              </Button>
-              <Button variant="outline" size="sm" onClick={goToNextDay}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            {format(selectedDate, "EEEE, MMMM d, yyyy")}
-          </p>
-        </CardHeader>
-        <CardContent>
-          {appointmentsLoading ? (
-            <div className="flex items-center justify-center h-40">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <span className="ml-2">Loading appointments...</span>
-            </div>
-          ) : todayAppointments.length > 0 ? (
-            <div className="space-y-1">
-              {todayAppointments.map((appointment) => (
-                <div
-                  key={appointment.id}
-                  className="flex items-center py-2 px-3 rounded-md hover:bg-muted cursor-pointer"
-                  onClick={() => navigate(`/appointments/${appointment.id}`)}
+      {/* Quick Scheduler View - Hide for CEO */}
+      {role !== "CEO" && (
+        <Card className="mb-8">
+          <CardHeader className="pb-2">
+            <div className="flex justify-between items-center">
+              <CardTitle className="flex items-center space-x-2">
+                <Calendar className="h-6 w-6" />
+                <span>Today's Schedule</span>
+              </CardTitle>
+              <div className="flex space-x-1">
+                <Button variant="outline" size="sm" onClick={goToPreviousDay}>
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={isToday(selectedDate) ? "default" : "outline"}
+                  size="sm"
+                  onClick={goToToday}
                 >
-                  <div className="w-16 text-muted-foreground">
-                    {formatAppointmentTime(appointment.startTime)}
-                  </div>
-                  <div className="flex-1 ml-2">
-                    <div className="font-medium">
-                      {appointment.patient?.name}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {appointment.type || "Regular checkup"}
-                    </div>
-                  </div>
+                  Today
+                </Button>
+                <Button variant="outline" size="sm" onClick={goToNextDay}>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {format(selectedDate, "EEEE, MMMM d, yyyy")}
+            </p>
+          </CardHeader>
+          <CardContent>
+            {appointmentsLoading ? (
+              <div className="flex items-center justify-center h-40">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <span className="ml-2">Loading appointments...</span>
+              </div>
+            ) : todayAppointments.length > 0 ? (
+              <div className="space-y-1">
+                {todayAppointments.map((appointment) => (
                   <div
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${getAppointmentStatusColor(
-                      appointment.status
-                    )}`}
+                    key={appointment.id}
+                    className="flex items-center py-2 px-3 rounded-md hover:bg-muted cursor-pointer"
+                    onClick={() => navigate(`/appointments/${appointment.id}`)}
                   >
-                    {appointment.status}
+                    <div className="w-16 text-muted-foreground">
+                      {formatAppointmentTime(appointment.time)}
+                    </div>
+                    <div className="flex-1 ml-2">
+                      <div className="font-medium">
+                        {appointment.patientName}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {appointment.type || "Regular checkup"}
+                      </div>
+                    </div>
+                    <div
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${getAppointmentStatusColor(
+                        appointment.status
+                      )}`}
+                    >
+                      {appointment.status}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Clock className="h-12 w-12 text-muted-foreground mb-2" />
-              <h3 className="font-medium text-lg">
-                No appointments for {format(selectedDate, "MMMM d")}
-              </h3>
-              <p className="text-muted-foreground mt-1">
-                {isToday(selectedDate)
-                  ? "Free day! Nothing scheduled today."
-                  : "There are no appointments scheduled for this day."}
-              </p>
-              <Button
-                className="mt-4"
-                onClick={() => navigate("/appointments/new")}
-              >
-                Schedule an appointment
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <Clock className="h-12 w-12 text-muted-foreground mb-2" />
+                <h3 className="font-medium text-lg">
+                  No appointments for {format(selectedDate, "MMMM d")}
+                </h3>
+                <p className="text-muted-foreground mt-1">
+                  {isToday(selectedDate)
+                    ? "Free day! Nothing scheduled today."
+                    : "There are no appointments scheduled for this day."}
+                </p>
+                <Button
+                  className="mt-4"
+                  onClick={() => navigate("/appointments/new")}
+                >
+                  Schedule an appointment
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <RoleBasedDashboard role={role} />
     </div>

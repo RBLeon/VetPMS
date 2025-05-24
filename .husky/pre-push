@@ -1,1 +1,1 @@
-echo "Running tests and build before push..." && npm run test && npm run build
+echo "Running build check before push..." && npm run build

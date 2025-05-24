@@ -10,17 +10,12 @@ import {
   Calendar,
   User,
   FileText,
-  Stethoscope,
-  Clock,
-  Activity,
   Pill,
   CheckCircle2,
-  ClipboardList,
   ListChecks,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format, isValid, parseISO } from "date-fns";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 
 export const VeterinarianDashboard: React.FC = () => {
@@ -58,7 +53,7 @@ export const VeterinarianDashboard: React.FC = () => {
   };
 
   const todayAppointments = appointments.filter((appointment) =>
-    isSameDay(appointment.startTime)
+    isSameDay(appointment.date)
   );
 
   const recentPatients = patients.slice(0, 5);
@@ -69,7 +64,7 @@ export const VeterinarianDashboard: React.FC = () => {
     todayTotal: todayAppointments.length,
     patientsTotal: patients.length,
     recordsTotal: medicalRecords.length,
-    completedToday: todayAppointments.filter((a) => a.status === "COMPLETED")
+    completedToday: todayAppointments.filter((a) => a.status === "VOLTOOID")
       .length,
   };
 
@@ -196,9 +191,9 @@ export const VeterinarianDashboard: React.FC = () => {
                     className="flex items-center justify-between p-3 rounded-md bg-gradient-to-r from-[#8B5CF6]/5 to-transparent hover:from-[#8B5CF6]/10"
                   >
                     <div>
-                      <p className="font-medium">{appointment.patient?.name}</p>
+                      <p className="font-medium">{appointment.patientName}</p>
                       <p className="text-sm text-muted-foreground">
-                        {formatDate(appointment.startTime, "HH:mm")}
+                        {appointment.time}
                       </p>
                     </div>
                     <Badge className="bg-[#8B5CF6]/80 hover:bg-[#8B5CF6]">
@@ -258,12 +253,12 @@ export const VeterinarianDashboard: React.FC = () => {
                   key={record.id}
                   className="space-y-1 p-3 rounded-md bg-gradient-to-r from-[#10B981]/5 to-transparent hover:from-[#10B981]/10"
                 >
-                  <p className="font-medium">{record.patient?.name}</p>
+                  <p className="font-medium">{record.patientName}</p>
                   <p className="text-sm text-muted-foreground">
                     {record.chiefComplaint}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {formatDate(record.visitDate, "MMM d, yyyy")}
+                    {formatDate(record.date, "MMM d, yyyy")}
                   </p>
                 </div>
               ))}

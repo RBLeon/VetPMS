@@ -1,4 +1,4 @@
-import { DataProvider } from "@refinedev/core";
+import { DataProvider, BaseKey } from "@refinedev/core";
 import { supabaseClient } from "./supabase-client";
 
 // Create a custom error handler since HttpError might not be available
@@ -6,7 +6,7 @@ const handleError = (
   error: any,
   resource?: string,
   action?: string,
-  id?: string
+  id?: BaseKey
 ) => {
   // Create a standardized error object
   const customError = {
@@ -15,7 +15,7 @@ const handleError = (
     data: {
       resource,
       action,
-      id,
+      id: id?.toString(),
       errorData: error,
     },
   };
@@ -245,7 +245,7 @@ export const dataProvider: DataProvider = {
       }
 
       return {
-        data: response.data,
+        data: response?.data || [],
       } as unknown as import("@refinedev/core").CustomResponse<unknown>;
     } catch (error) {
       handleError(error, url, "custom");
