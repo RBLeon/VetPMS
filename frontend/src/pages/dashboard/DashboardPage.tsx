@@ -8,6 +8,10 @@ import { useState, useEffect } from "react";
 import { Calendar, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import {
+  AppointmentDialog,
+  SchedulerAppointment,
+} from "@/features/appointments/AppointmentDialog";
 
 export function DashboardPage() {
   const { role } = useRole();
@@ -17,6 +21,7 @@ export function DashboardPage() {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [todayAppointments, setTodayAppointments] = useState<any[]>([]);
+  const [isAppointmentDialogOpen, setIsAppointmentDialogOpen] = useState(false);
 
   // Filter appointments for selected date
   useEffect(() => {
@@ -102,6 +107,12 @@ export function DashboardPage() {
     } catch (error) {
       return "Invalid time";
     }
+  };
+
+  const handleAppointmentCreated = (appointment: SchedulerAppointment) => {
+    // In a real app, this would update the appointments list
+    console.log("New appointment created:", appointment);
+    // You could refresh the appointments data here or update local state
   };
 
   return (
@@ -201,7 +212,7 @@ export function DashboardPage() {
                 </p>
                 <Button
                   className="mt-4"
-                  onClick={() => navigate("/appointments")}
+                  onClick={() => setIsAppointmentDialogOpen(true)}
                 >
                   Schedule an appointment
                 </Button>
@@ -212,6 +223,13 @@ export function DashboardPage() {
       )}
 
       <RoleBasedDashboard role={role} />
+
+      {/* Appointment Dialog */}
+      <AppointmentDialog
+        isOpen={isAppointmentDialogOpen}
+        onOpenChange={setIsAppointmentDialogOpen}
+        onAppointmentCreated={handleAppointmentCreated}
+      />
     </div>
   );
 }
