@@ -614,7 +614,7 @@ const AppointmentScheduler: React.FC = () => {
           {isLoading ? (
             <div className="p-8 flex items-center justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <span className="ml-2">Loading scheduler...</span>
+              <span className="ml-2">Planner laden...</span>
             </div>
           ) : (
             <div className="relative">
@@ -642,8 +642,7 @@ const AppointmentScheduler: React.FC = () => {
                   <div key={hour} className="flex border-b last:border-b-0">
                     {/* Time cell */}
                     <div className="w-20 shrink-0 px-4 py-3 text-sm text-center border-r">
-                      {hour % 12 === 0 ? 12 : hour % 12}:00{" "}
-                      {hour < 12 ? "AM" : "PM"}
+                      {hour.toString().padStart(2, "0")}:00
                     </div>
 
                     {/* Resource cells */}
@@ -899,25 +898,13 @@ const AppointmentScheduler: React.FC = () => {
                             key={`${hour}:00`}
                             value={`${hour.toString().padStart(2, "0")}:00`}
                           >
-                            {hour === 0
-                              ? "12:00 AM"
-                              : hour < 12
-                              ? `${hour}:00 AM`
-                              : hour === 12
-                              ? "12:00 PM"
-                              : `${hour - 12}:00 PM`}
+                            {`${hour.toString().padStart(2, "0")}:00`}
                           </SelectItem>,
                           <SelectItem
                             key={`${hour}:30`}
                             value={`${hour.toString().padStart(2, "0")}:30`}
                           >
-                            {hour === 0
-                              ? "12:30 AM"
-                              : hour < 12
-                              ? `${hour}:30 AM`
-                              : hour === 12
-                              ? "12:30 PM"
-                              : `${hour - 12}:30 PM`}
+                            {`${hour.toString().padStart(2, "0")}:30`}
                           </SelectItem>,
                         ];
                       }).flat()}
@@ -1222,25 +1209,13 @@ const AppointmentScheduler: React.FC = () => {
                             key={`${hour}:00`}
                             value={`${hour.toString().padStart(2, "0")}:00`}
                           >
-                            {hour === 0
-                              ? "12:00 AM"
-                              : hour < 12
-                              ? `${hour}:00 AM`
-                              : hour === 12
-                              ? "12:00 PM"
-                              : `${hour - 12}:00 PM`}
+                            {`${hour.toString().padStart(2, "0")}:00`}
                           </SelectItem>,
                           <SelectItem
                             key={`${hour}:30`}
                             value={`${hour.toString().padStart(2, "0")}:30`}
                           >
-                            {hour === 0
-                              ? "12:30 AM"
-                              : hour < 12
-                              ? `${hour}:30 AM`
-                              : hour === 12
-                              ? "12:30 PM"
-                              : `${hour - 12}:30 PM`}
+                            {`${hour.toString().padStart(2, "0")}:30`}
                           </SelectItem>,
                         ];
                       }).flat()}

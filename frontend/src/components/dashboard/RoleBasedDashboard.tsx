@@ -10,7 +10,7 @@ interface RoleBasedDashboardProps {
 
 export const RoleBasedDashboard = ({ role }: RoleBasedDashboardProps) => {
   if (!role) {
-    return <div>Please select a role</div>;
+    return <div>Selecteer een rol</div>;
   }
 
   switch (role) {
@@ -25,6 +25,6 @@ export const RoleBasedDashboard = ({ role }: RoleBasedDashboardProps) => {
     case "VETERINARIAN":
       return <VeterinarianDashboard />;
     default:
-      return <div>No dashboard available for this role</div>;
+      return <div>Geen dashboard beschikbaar voor deze rol</div>;
   }
 };

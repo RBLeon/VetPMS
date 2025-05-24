@@ -475,25 +475,13 @@ export const AppointmentDialog: React.FC<AppointmentDialogProps> = ({
                           key={`${hour}:00`}
                           value={`${hour.toString().padStart(2, "0")}:00`}
                         >
-                          {hour === 0
-                            ? "12:00 AM"
-                            : hour < 12
-                            ? `${hour}:00 AM`
-                            : hour === 12
-                            ? "12:00 PM"
-                            : `${hour - 12}:00 PM`}
+                          {`${hour.toString().padStart(2, "0")}:00`}
                         </SelectItem>,
                         <SelectItem
                           key={`${hour}:30`}
                           value={`${hour.toString().padStart(2, "0")}:30`}
                         >
-                          {hour === 0
-                            ? "12:30 AM"
-                            : hour < 12
-                            ? `${hour}:30 AM`
-                            : hour === 12
-                            ? "12:30 PM"
-                            : `${hour - 12}:30 PM`}
+                          {`${hour.toString().padStart(2, "0")}:30`}
                         </SelectItem>,
                       ];
                     }).flat()}

@@ -131,7 +131,7 @@ export function DashboardPage() {
           className="bg-primary"
         >
           <Calendar className="mr-2 h-4 w-4" />
-          Full Scheduler
+          Volledige Planner
         </Button>
       </div>
 
@@ -142,7 +142,7 @@ export function DashboardPage() {
             <div className="flex justify-between items-center">
               <CardTitle className="flex items-center space-x-2">
                 <Calendar className="h-6 w-6" />
-                <span>Today's Schedule</span>
+                <span>Planning van Vandaag</span>
               </CardTitle>
               <div className="flex space-x-1">
                 <Button variant="outline" size="sm" onClick={goToPreviousDay}>
@@ -153,7 +153,7 @@ export function DashboardPage() {
                   size="sm"
                   onClick={goToToday}
                 >
-                  Today
+                  Vandaag
                 </Button>
                 <Button variant="outline" size="sm" onClick={goToNextDay}>
                   <ChevronRight className="h-4 w-4" />
@@ -168,7 +168,7 @@ export function DashboardPage() {
             {appointmentsLoading ? (
               <div className="flex items-center justify-center h-40">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                <span className="ml-2">Loading appointments...</span>
+                <span className="ml-2">Afspraken laden...</span>
               </div>
             ) : todayAppointments.length > 0 ? (
               <div className="space-y-1">
@@ -203,18 +203,18 @@ export function DashboardPage() {
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <Clock className="h-12 w-12 text-muted-foreground mb-2" />
                 <h3 className="font-medium text-lg">
-                  No appointments for {format(selectedDate, "MMMM d")}
+                  Geen afspraken voor {format(selectedDate, "MMMM d")}
                 </h3>
                 <p className="text-muted-foreground mt-1">
                   {isToday(selectedDate)
-                    ? "Free day! Nothing scheduled today."
-                    : "There are no appointments scheduled for this day."}
+                    ? "Vrije dag! Niets ingepland voor vandaag."
+                    : "Er zijn geen afspraken ingepland voor deze dag."}
                 </p>
                 <Button
                   className="mt-4"
                   onClick={() => setIsAppointmentDialogOpen(true)}
                 >
-                  Schedule an appointment
+                  Plan een afspraak
                 </Button>
               </div>
             )}

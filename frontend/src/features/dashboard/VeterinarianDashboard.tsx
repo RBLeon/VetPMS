@@ -91,7 +91,7 @@ export const VeterinarianDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold">Veterinarian Dashboard</h2>
+        <h2 className="text-3xl font-bold">Dierenarts Dashboard</h2>
       </div>
 
       {/* Metrics Cards */}
@@ -99,7 +99,7 @@ export const VeterinarianDashboard: React.FC = () => {
         <Card className="bg-gradient-to-br from-[#8B5CF6]/10 to-[#8B5CF6]/20 dark:from-[#8B5CF6]/20 dark:to-[#8B5CF6]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Today's Appointments
+              Afspraken Vandaag
             </CardTitle>
             <Calendar className="h-4 w-4 text-[#8B5CF6] dark:text-[#8B5CF6]" />
           </CardHeader>
@@ -107,14 +107,16 @@ export const VeterinarianDashboard: React.FC = () => {
             <div className="text-2xl font-bold text-[#8B5CF6] dark:text-[#8B5CF6]">
               {metrics.todayTotal}
             </div>
-            <p className="text-xs text-[#8B5CF6] dark:text-[#8B5CF6]">Today</p>
+            <p className="text-xs text-[#8B5CF6] dark:text-[#8B5CF6]">
+              Vandaag
+            </p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-[#3B82F6]/10 to-[#3B82F6]/20 dark:from-[#3B82F6]/20 dark:to-[#3B82F6]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Completed Appointments
+              Voltooide Afspraken
             </CardTitle>
             <CheckCircle2 className="h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
           </CardHeader>
@@ -122,14 +124,16 @@ export const VeterinarianDashboard: React.FC = () => {
             <div className="text-2xl font-bold text-[#3B82F6] dark:text-[#3B82F6]">
               {metrics.completedToday}
             </div>
-            <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">Today</p>
+            <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">
+              Vandaag
+            </p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-[#10B981]/10 to-[#10B981]/20 dark:from-[#10B981]/20 dark:to-[#10B981]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Medical Records
+              Medische Dossiers
             </CardTitle>
             <FileText className="h-4 w-4 text-[#10B981] dark:text-[#10B981]" />
           </CardHeader>
@@ -137,14 +141,14 @@ export const VeterinarianDashboard: React.FC = () => {
             <div className="text-2xl font-bold text-[#10B981] dark:text-[#10B981]">
               {metrics.recordsTotal}
             </div>
-            <p className="text-xs text-[#10B981] dark:text-[#10B981]">Total</p>
+            <p className="text-xs text-[#10B981] dark:text-[#10B981]">Totaal</p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-[#F59E0B]/10 to-[#F59E0B]/20 dark:from-[#F59E0B]/20 dark:to-[#F59E0B]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Registered Patients
+              Geregistreerde Patiënten
             </CardTitle>
             <User className="h-4 w-4 text-[#F59E0B] dark:text-[#F59E0B]" />
           </CardHeader>
@@ -152,7 +156,7 @@ export const VeterinarianDashboard: React.FC = () => {
             <div className="text-2xl font-bold text-[#F59E0B] dark:text-[#F59E0B]">
               {metrics.patientsTotal}
             </div>
-            <p className="text-xs text-[#F59E0B] dark:text-[#F59E0B]">Total</p>
+            <p className="text-xs text-[#F59E0B] dark:text-[#F59E0B]">Totaal</p>
           </CardContent>
         </Card>
       </div>
@@ -163,13 +167,13 @@ export const VeterinarianDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Calendar className="mr-2 h-5 w-5 text-[#8B5CF6]" />
-              Today's Appointments
+              Afspraken Vandaag
             </CardTitle>
           </CardHeader>
           <CardContent>
             {todayAppointments.length === 0 ? (
               <p className="text-muted-foreground">
-                No appointments scheduled for today
+                Geen afspraken ingepland voor vandaag
               </p>
             ) : (
               <div className="space-y-4">
@@ -198,7 +202,7 @@ export const VeterinarianDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <User className="mr-2 h-5 w-5 text-[#F59E0B]" />
-              Recent Patients
+              Recente Patiënten
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -219,7 +223,7 @@ export const VeterinarianDashboard: React.FC = () => {
                     className="bg-[#F59E0B]/80 hover:bg-[#F59E0B] text-white"
                     size="sm"
                   >
-                    View
+                    Bekijken
                   </Button>
                 </div>
               ))}
@@ -231,7 +235,7 @@ export const VeterinarianDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <FileText className="mr-2 h-5 w-5 text-[#10B981]" />
-              Recent Medical Records
+              Recente Medische Dossiers
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -262,7 +266,7 @@ export const VeterinarianDashboard: React.FC = () => {
           onClick={() => navigate("/medical-records/new")}
         >
           <FileText className="h-10 w-10 mb-4 text-[#10B981]" />
-          <h3 className="font-medium">New Medical Record</h3>
+          <h3 className="font-medium">Nieuw Medisch Dossier</h3>
         </Card>
 
         <Card
@@ -270,7 +274,7 @@ export const VeterinarianDashboard: React.FC = () => {
           onClick={() => navigate("/appointments")}
         >
           <Calendar className="h-10 w-10 mb-4 text-[#8B5CF6]" />
-          <h3 className="font-medium">New Appointment</h3>
+          <h3 className="font-medium">Nieuwe Afspraak</h3>
         </Card>
 
         <Card
@@ -278,7 +282,7 @@ export const VeterinarianDashboard: React.FC = () => {
           onClick={() => navigate("/prescriptions/new")}
         >
           <Pill className="h-10 w-10 mb-4 text-[#3B82F6]" />
-          <h3 className="font-medium">New Prescription</h3>
+          <h3 className="font-medium">Nieuw Recept</h3>
         </Card>
 
         <Card
@@ -286,7 +290,7 @@ export const VeterinarianDashboard: React.FC = () => {
           onClick={() => navigate("/patients")}
         >
           <ListChecks className="h-10 w-10 mb-4 text-[#F59E0B]" />
-          <h3 className="font-medium">Patient List</h3>
+          <h3 className="font-medium">Patiëntenlijst</h3>
         </Card>
       </div>
     </div>

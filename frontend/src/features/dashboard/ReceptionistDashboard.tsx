@@ -82,7 +82,7 @@ export const ReceptionistDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold">Reception Dashboard</h2>
+        <h2 className="text-3xl font-bold">Receptie Dashboard</h2>
       </div>
 
       {/* Metrics Cards */}
@@ -90,7 +90,7 @@ export const ReceptionistDashboard: React.FC = () => {
         <Card className="bg-gradient-to-br from-[#3B82F6]/10 to-[#3B82F6]/20 dark:from-[#3B82F6]/20 dark:to-[#3B82F6]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Today's Appointments
+              Afspraken Vandaag
             </CardTitle>
             <Calendar className="h-4 w-4 text-[#3B82F6] dark:text-[#3B82F6]" />
           </CardHeader>
@@ -98,13 +98,15 @@ export const ReceptionistDashboard: React.FC = () => {
             <div className="text-2xl font-bold text-[#3B82F6] dark:text-[#3B82F6]">
               {metrics.todayTotal}
             </div>
-            <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">Today</p>
+            <p className="text-xs text-[#3B82F6] dark:text-[#3B82F6]">
+              Vandaag
+            </p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-[#8B5CF6]/10 to-[#8B5CF6]/20 dark:from-[#8B5CF6]/20 dark:to-[#8B5CF6]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Waiting Room</CardTitle>
+            <CardTitle className="text-sm font-medium">Wachtkamer</CardTitle>
             <Clock className="h-4 w-4 text-[#8B5CF6] dark:text-[#8B5CF6]" />
           </CardHeader>
           <CardContent>
@@ -112,7 +114,7 @@ export const ReceptionistDashboard: React.FC = () => {
               {metrics.waitingCount}
             </div>
             <p className="text-xs text-[#8B5CF6] dark:text-[#8B5CF6]">
-              Patients
+              Patiënten
             </p>
           </CardContent>
         </Card>
@@ -120,7 +122,7 @@ export const ReceptionistDashboard: React.FC = () => {
         <Card className="bg-gradient-to-br from-[#10B981]/10 to-[#10B981]/20 dark:from-[#10B981]/20 dark:to-[#10B981]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Registered Clients
+              Geregistreerde Klanten
             </CardTitle>
             <Users className="h-4 w-4 text-[#10B981] dark:text-[#10B981]" />
           </CardHeader>
@@ -128,14 +130,14 @@ export const ReceptionistDashboard: React.FC = () => {
             <div className="text-2xl font-bold text-[#10B981] dark:text-[#10B981]">
               {metrics.clientsTotal}
             </div>
-            <p className="text-xs text-[#10B981] dark:text-[#10B981]">Total</p>
+            <p className="text-xs text-[#10B981] dark:text-[#10B981]">Totaal</p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-[#F59E0B]/10 to-[#F59E0B]/20 dark:from-[#F59E0B]/20 dark:to-[#F59E0B]/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Registered Patients
+              Geregistreerde Patiënten
             </CardTitle>
             <User className="h-4 w-4 text-[#F59E0B] dark:text-[#F59E0B]" />
           </CardHeader>
@@ -143,7 +145,7 @@ export const ReceptionistDashboard: React.FC = () => {
             <div className="text-2xl font-bold text-[#F59E0B] dark:text-[#F59E0B]">
               {metrics.patientsTotal}
             </div>
-            <p className="text-xs text-[#F59E0B] dark:text-[#F59E0B]">Total</p>
+            <p className="text-xs text-[#F59E0B] dark:text-[#F59E0B]">Totaal</p>
           </CardContent>
         </Card>
       </div>
@@ -154,13 +156,13 @@ export const ReceptionistDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Clock className="mr-2 h-5 w-5 text-[#8B5CF6]" />
-              Waiting Room
+              Wachtkamer
             </CardTitle>
           </CardHeader>
           <CardContent>
             {waitingRoom.length === 0 ? (
               <p className="text-muted-foreground">
-                No patients in waiting room
+                Geen patiënten in de wachtkamer
               </p>
             ) : (
               <div className="space-y-4">
@@ -176,7 +178,7 @@ export const ReceptionistDashboard: React.FC = () => {
                       </p>
                     </div>
                     <Badge className="bg-[#8B5CF6]/80 hover:bg-[#8B5CF6]">
-                      Waiting
+                      Wachtend
                     </Badge>
                   </div>
                 ))}
@@ -189,12 +191,12 @@ export const ReceptionistDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Calendar className="mr-2 h-5 w-5 text-[#3B82F6]" />
-              Upcoming Appointments
+              Komende Afspraken
             </CardTitle>
           </CardHeader>
           <CardContent>
             {upcomingAppointments.length === 0 ? (
-              <p className="text-muted-foreground">No upcoming appointments</p>
+              <p className="text-muted-foreground">Geen komende afspraken</p>
             ) : (
               <div className="space-y-4">
                 {upcomingAppointments.map((appointment) => (
@@ -215,7 +217,7 @@ export const ReceptionistDashboard: React.FC = () => {
                         navigate(`/appointments/${appointment.id}/check-in`)
                       }
                     >
-                      Check-in
+                      Aanmelden
                     </Button>
                   </div>
                 ))}
@@ -228,7 +230,7 @@ export const ReceptionistDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Users className="mr-2 h-5 w-5 text-[#10B981]" />
-              Recent Clients
+              Recente Klanten
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -251,7 +253,7 @@ export const ReceptionistDashboard: React.FC = () => {
                     size="sm"
                     onClick={() => navigate(`/clients/${client.id}`)}
                   >
-                    View
+                    Bekijken
                   </Button>
                 </div>
               ))}
@@ -267,7 +269,7 @@ export const ReceptionistDashboard: React.FC = () => {
           onClick={handleNewClient}
         >
           <UserPlus className="h-10 w-10 mb-4 text-[#10B981]" />
-          <h3 className="font-medium">New Client</h3>
+          <h3 className="font-medium">Nieuwe Klant</h3>
         </Card>
 
         <Card
@@ -275,7 +277,7 @@ export const ReceptionistDashboard: React.FC = () => {
           onClick={() => navigate("/appointments")}
         >
           <Calendar className="h-10 w-10 mb-4 text-[#3B82F6]" />
-          <h3 className="font-medium">New Appointment</h3>
+          <h3 className="font-medium">Nieuwe Afspraak</h3>
         </Card>
 
         <Card
@@ -283,7 +285,7 @@ export const ReceptionistDashboard: React.FC = () => {
           onClick={handleCheckIn}
         >
           <CheckCircle className="h-10 w-10 mb-4 text-[#8B5CF6]" />
-          <h3 className="font-medium">Check-in</h3>
+          <h3 className="font-medium">Aanmelden</h3>
         </Card>
 
         <Card
@@ -291,7 +293,7 @@ export const ReceptionistDashboard: React.FC = () => {
           onClick={() => navigate("/clients")}
         >
           <ListChecks className="h-10 w-10 mb-4 text-[#F59E0B]" />
-          <h3 className="font-medium">Client List</h3>
+          <h3 className="font-medium">Klantenlijst</h3>
         </Card>
       </div>
     </div>
