@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useUi } from "../../lib/context/UiContext";
 import { useTenant } from "../../lib/context/TenantContext";
+import { useRole } from "../../lib/context/RoleContext";
 import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import {
@@ -175,6 +176,7 @@ const mockAppointments: SchedulerAppointment[] = [
 const AppointmentScheduler: React.FC = () => {
   const { setCurrentWorkspace } = useUi();
   const { currentTenant } = useTenant();
+  const { role } = useRole();
   const { toast } = useToast();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -230,7 +232,7 @@ const AppointmentScheduler: React.FC = () => {
       // Mock implementation with setTimeout to simulate API latency
       setTimeout(() => {
         // Mock resources
-        const mockResources: Resource[] = [
+        const allResources: Resource[] = [
           { id: "1", name: "Dhr. Jansen", type: "PROVIDER", color: "#4338ca" },
           {
             id: "2",
@@ -243,6 +245,23 @@ const AppointmentScheduler: React.FC = () => {
           { id: "5", name: "Onderzoekskamer 3", type: "ROOM" },
           { id: "6", name: "Echografie", type: "EQUIPMENT" },
         ];
+
+        // Filter resources based on role
+        let mockResources: Resource[] = [];
+        if (role === "RECEPTIONIST") {
+          // Receptionists see all providers and rooms for scheduling
+          mockResources = allResources;
+        } else if (role === "VETERINARIAN") {
+          // Veterinarians primarily see their own schedule but can view others
+          // For now, show all but could be filtered to current user's provider
+          mockResources = allResources;
+        } else if (role === "NURSE") {
+          // Nurses see all providers and rooms
+          mockResources = allResources;
+        } else {
+          // Default: show all resources
+          mockResources = allResources;
+        }
 
         // Mock appointment types
         const mockAppointmentTypes: AppointmentType[] = [

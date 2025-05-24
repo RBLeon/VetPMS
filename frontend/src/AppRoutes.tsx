@@ -16,7 +16,6 @@ import { AppointmentForm } from "@/features/appointments/AppointmentForm";
 import { PatientsPage } from "@/pages/patients/PatientsPage";
 import { PatientForm } from "@/features/patients/PatientForm";
 import { TasksPage } from "@/pages/tasks/TasksPage";
-import { SearchPage } from "@/pages/search/SearchPage";
 import { AnalyticsPage } from "@/pages/analytics/AnalyticsPage";
 import { SettingsPage } from "@/pages/settings/SettingsPage";
 import { BillingPage } from "@/pages/billing/BillingPage";
@@ -228,24 +227,6 @@ export const AppRoutes = () => {
             tenant: currentTenant?.id,
           },
         },
-        {
-          name: "search",
-          list: "/search",
-          meta: {
-            label: "Search",
-            icon: "Search",
-            color:
-              "bg-violet-100 text-violet-700 dark:bg-violet-900/20 dark:text-violet-300",
-            canAccess: [
-              "CEO",
-              "MANAGER",
-              "VETERINARIAN",
-              "NURSE",
-              "RECEPTIONIST",
-            ],
-            tenant: currentTenant?.id,
-          },
-        },
       ]}
       options={{
         syncWithLocation: true,
@@ -330,7 +311,6 @@ export const AppRoutes = () => {
               element={<FollowUpFormWrapper />}
             />
             <Route path="/tasks" element={<TasksPage />} />
-            <Route path="/search" element={<SearchPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/settings/profile" element={<SettingsPage />} />

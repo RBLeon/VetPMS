@@ -5,7 +5,6 @@ import {
   Settings,
   Stethoscope,
   Users,
-  Search,
   Database,
   CalendarRange,
   User,
@@ -43,24 +42,7 @@ const commonNavItems: NavItem[] = [
 ];
 
 // Common quick actions shared across multiple roles
-const commonQuickActions: QuickAction[] = [
-  {
-    title: "Search",
-    href: "/search",
-    icon: Search,
-    color:
-      "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300",
-    onClick: () => {
-      // Implement search functionality
-      const searchInput = document.querySelector<HTMLInputElement>(
-        '[data-testid="global-search"]'
-      );
-      if (searchInput) {
-        searchInput.focus();
-      }
-    },
-  },
-];
+const commonQuickActions: QuickAction[] = [];
 
 export interface RoleConfig {
   displayName: string;

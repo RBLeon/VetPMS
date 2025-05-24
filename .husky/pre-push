@@ -1,1 +1,1 @@
-echo "Running build check before push..." && npm run build
+echo "Running build check before push..." && cd frontend && npm run build
