@@ -1,0 +1,15 @@
+{
+  "description": "This is a shadcn-ui template. It includes a basic project structure with directories such as frontend/src/hooks, frontend/src/lib, and frontend/src/components. The frontend/src/components directory contains all the shadcn-ui components, with no additional installation commands required. If it's not necessary do not modify files outside the frontend/src directory. If it's not necessary do not modify frontend/src/index.css.",
+  "required_fields": [],
+  "required_files": [
+    "README.md",
+    "frontend/src/App.tsx",
+    "frontend/src/index.css",
+    "frontend/src/App.css",
+    "frontend/src/main.tsx"
+  ],
+  "lang": "typescript",
+  "framework": "react",
+  "style": "shadcn/ui",
+  "scene": "Personal Demonstration Template"
+}

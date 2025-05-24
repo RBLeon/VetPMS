@@ -10,6 +10,7 @@ import { RoleProvider } from "./lib/context/RoleContext";
 import { UiProvider } from "./lib/context/UiContext";
 import { AuthProvider } from "./lib/context/AuthContext";
 import { AppRoutes } from "./AppRoutes";
+import { ErrorBoundaryContext } from "./components/error-boundary/ErrorBoundary";
 import "./App.css";
 
 function App() {
@@ -22,7 +23,9 @@ function App() {
           <RoleProvider>
             <UiProvider>
               <RefineKbarProvider>
-                <AppRoutes />
+                <ErrorBoundaryContext>
+                  <AppRoutes />
+                </ErrorBoundaryContext>
               </RefineKbarProvider>
               <div className="min-h-screen bg-background">
                 <Toaster />
