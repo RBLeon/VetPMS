@@ -1,8 +1,9 @@
 import React, { ErrorInfo } from "react";
-import { useNavigation, useResource, useNotification } from "@refinedev/core";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/use-toast";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -57,16 +58,16 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({
   error,
   resetErrorBoundary,
 }) => {
-  const { list } = useNavigation();
-  const { open } = useNotification();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
-    open?.({
-      type: "error",
-      message: error?.message || "An unexpected error occurred",
-      key: "error-boundary",
+    // Show a toast notification when an error occurs
+    toast({
+      title: "An error occurred",
+      description: error?.message || "An unexpected error occurred",
+      variant: "destructive",
     });
-  }, [error, open]);
+  }, [error]);
 
   return (
     <div className="flex items-center justify-center min-h-[400px]">
@@ -93,7 +94,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({
             className="flex items-center gap-2"
             onClick={() => {
               resetErrorBoundary();
-              list("dashboard");
+              navigate("/");
             }}
           >
             <Home className="h-4 w-4" />

@@ -1,5 +1,30 @@
-import { DataProvider, HttpError } from "@refinedev/core";
+import { DataProvider } from "@refinedev/core";
 import { supabaseClient } from "./supabase-client";
+
+// Create a custom error handler since HttpError might not be available
+const handleError = (
+  error: any,
+  resource?: string,
+  action?: string,
+  id?: string
+) => {
+  // Create a standardized error object
+  const customError = {
+    message: error?.message || "An error occurred",
+    statusCode: error?.code || 500,
+    data: {
+      resource,
+      action,
+      id,
+      errorData: error,
+    },
+  };
+
+  console.error("Data provider error:", customError);
+
+  // Throw a regular Error with the message
+  throw new Error(customError.message);
+};
 
 export const dataProvider: DataProvider = {
   getList: async ({ resource, pagination, filters, sorters, meta }) => {
@@ -41,11 +66,7 @@ export const dataProvider: DataProvider = {
       const { data, error, count } = await query;
 
       if (error) {
-        throw new HttpError(error.message, error.code, {
-          errorData: error,
-          resource,
-          action: "getList",
-        });
+        handleError(error, resource, "getList");
       }
 
       return {
@@ -53,14 +74,9 @@ export const dataProvider: DataProvider = {
         total: count ?? 0,
       };
     } catch (error) {
-      if (error instanceof HttpError) {
-        throw error;
-      }
-
-      throw new HttpError("An error occurred while fetching data", 500, {
-        resource,
-        action: "getList",
-      });
+      handleError(error, resource, "getList");
+      // This return is needed for TypeScript but won't be reached
+      return { data: [], total: 0 };
     }
   },
 
@@ -76,27 +92,16 @@ export const dataProvider: DataProvider = {
         .single();
 
       if (error) {
-        throw new HttpError(error.message, error.code, {
-          errorData: error,
-          resource,
-          action: "getOne",
-          id,
-        });
+        handleError(error, resource, "getOne", id);
       }
 
       return {
         data,
       };
     } catch (error) {
-      if (error instanceof HttpError) {
-        throw error;
-      }
-
-      throw new HttpError("An error occurred while fetching data", 500, {
-        resource,
-        action: "getOne",
-        id,
-      });
+      handleError(error, resource, "getOne", id);
+      // This return is needed for TypeScript but won't be reached
+      return { data: {} as any };
     }
   },
 
@@ -111,25 +116,16 @@ export const dataProvider: DataProvider = {
         .single();
 
       if (error) {
-        throw new HttpError(error.message, error.code, {
-          errorData: error,
-          resource,
-          action: "create",
-        });
+        handleError(error, resource, "create");
       }
 
       return {
         data,
       };
     } catch (error) {
-      if (error instanceof HttpError) {
-        throw error;
-      }
-
-      throw new HttpError("An error occurred while creating data", 500, {
-        resource,
-        action: "create",
-      });
+      handleError(error, resource, "create");
+      // This return is needed for TypeScript but won't be reached
+      return { data: {} as any };
     }
   },
 
@@ -146,27 +142,16 @@ export const dataProvider: DataProvider = {
         .single();
 
       if (error) {
-        throw new HttpError(error.message, error.code, {
-          errorData: error,
-          resource,
-          action: "update",
-          id,
-        });
+        handleError(error, resource, "update", id);
       }
 
       return {
         data,
       };
     } catch (error) {
-      if (error instanceof HttpError) {
-        throw error;
-      }
-
-      throw new HttpError("An error occurred while updating data", 500, {
-        resource,
-        action: "update",
-        id,
-      });
+      handleError(error, resource, "update", id);
+      // This return is needed for TypeScript but won't be reached
+      return { data: {} as any };
     }
   },
 
@@ -183,27 +168,16 @@ export const dataProvider: DataProvider = {
         .single();
 
       if (error) {
-        throw new HttpError(error.message, error.code, {
-          errorData: error,
-          resource,
-          action: "deleteOne",
-          id,
-        });
+        handleError(error, resource, "deleteOne", id);
       }
 
       return {
         data: data ?? { id },
       };
     } catch (error) {
-      if (error instanceof HttpError) {
-        throw error;
-      }
-
-      throw new HttpError("An error occurred while deleting data", 500, {
-        resource,
-        action: "deleteOne",
-        id,
-      });
+      handleError(error, resource, "deleteOne", id);
+      // This return is needed for TypeScript but won't be reached
+      return { data: { id } };
     }
   },
 
@@ -243,11 +217,7 @@ export const dataProvider: DataProvider = {
         const { data, error } = await filterBuilder;
 
         if (error) {
-          throw new HttpError(error.message, error.code, {
-            errorData: error,
-            resource: url,
-            action: "custom",
-          });
+          handleError(error, url, "custom");
         }
 
         return {
@@ -267,14 +237,10 @@ export const dataProvider: DataProvider = {
       }
 
       if (!response || response.error) {
-        throw new HttpError(
-          response?.error?.message || "Unknown error in custom method",
-          response?.error?.code || 500,
-          {
-            errorData: response?.error,
-            resource: url,
-            action: "custom",
-          }
+        handleError(
+          response?.error || new Error("Unknown error in custom method"),
+          url,
+          "custom"
         );
       }
 
@@ -282,18 +248,11 @@ export const dataProvider: DataProvider = {
         data: response.data,
       } as unknown as import("@refinedev/core").CustomResponse<unknown>;
     } catch (error) {
-      if (error instanceof HttpError) {
-        throw error;
-      }
-
-      throw new HttpError(
-        "An error occurred while executing custom action",
-        500,
-        {
-          resource: url,
-          action: "custom",
-        }
-      );
+      handleError(error, url, "custom");
+      // This return is needed for TypeScript but won't be reached
+      return {
+        data: {},
+      } as unknown as import("@refinedev/core").CustomResponse<unknown>;
     }
   },
 };
